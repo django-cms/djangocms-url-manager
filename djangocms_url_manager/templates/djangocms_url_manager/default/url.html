@@ -1,17 +1,6 @@
-{% load cms_tags %}{% spaceless %}
+{% load cms_tags djangocms_url_manager_tags %}{% spaceless %}
 
 {# this needs to be in one line for rendering purpose #}
-{% endspaceless %}<a href="{{ instance.url.get_url }}"{% if instance.target %} target="{{ instance.target }}"{% endif %}{% if instance.attributes %} {{ instance.attributes_str }}{% endif %}>{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% empty %}{{ instance.name }}{% endfor %}</a>{% spaceless %}
+{% endspaceless %}<a href="{% render_url instance.url %}"{% if instance.target %} target="{{ instance.target }}"{% endif %}{% if instance.attributes %} {{ instance.attributes_str }}{% endif %}>{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% empty %}{{ instance.name }}{% endfor %}</a>{% spaceless %}
 
-{% endspaceless %}{% comment %}
-# https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
-    {{ instance.name }}
-    {{ instance.url.get_url }} summarizes:
-        {{ instance.url.external_link }}
-        {{ instance.url.page }}
-        {{ instance.url.anchor }}
-        {{ instance.url.mailto }}
-        {{ instance.url.phone }}
-    {{ instance.target }}
-    {{ instance.attributes_str }}
-{% endcomment %}
+{% endspaceless %}

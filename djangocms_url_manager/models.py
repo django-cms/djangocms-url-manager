@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from djangocms_attributes_field.fields import AttributesField
 
 from cms.models import CMSPlugin, Page
+from cms.utils.i18n import get_default_language_for_site
 
 
 __all__ = [
@@ -70,22 +71,27 @@ class AbstractUrl(models.Model):
         max_length=255,
     )
 
-    def get_url(self):
-        if self.page:
+    def get_url(self, site):
+        try:
+            obj = self.urloverride_set.get(site=site)
+        except UrlOverride.DoesNotExist:
+            obj = self
+        language = get_default_language_for_site(obj.site)
+        if obj.page:
             url = '//{}{}'.format(
-                self.site.domain,
-                self.page.get_absolute_url(),
+                obj.site.domain,
+                obj.page.get_absolute_url(language=language),
             )
-        elif self.manual_url:
-            url = self.manual_url
-        elif self.phone:
-            url = 'tel:{}'.format(self.phone.replace(' ', ''))
-        elif self.mailto:
-            url = 'mailto:{}'.format(self.mailto)
+        elif obj.manual_url:
+            url = obj.manual_url
+        elif obj.phone:
+            url = 'tel:{}'.format(obj.phone.replace(' ', ''))
+        elif obj.mailto:
+            url = 'mailto:{}'.format(obj.mailto)
         else:
             url = ''
-        if (not self.phone and not self.mailto) and self.anchor:
-            url += '#{}'.format(self.anchor)
+        if (not obj.phone and not obj.mailto) and obj.anchor:
+            url += '#{}'.format(obj.anchor)
 
         return url
 
