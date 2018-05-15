@@ -92,3 +92,15 @@ class UrlOverrideForm(forms.ModelForm):
         fields = (
             'url', 'site', 'manual_url', 'page', 'anchor', 'mailto', 'phone',
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        url = cleaned_data.get('url')
+        site = cleaned_data.get('site')
+
+        if url and url.site == site:
+            raise forms.ValidationError({
+                'site': _('Overriden site must be different from the original.'),  # noqa: E501
+            })
+
+        return cleaned_data

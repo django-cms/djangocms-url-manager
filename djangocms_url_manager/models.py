@@ -71,11 +71,28 @@ class AbstractUrl(models.Model):
         max_length=255,
     )
 
+    class Meta:
+        abstract = True
+
+
+class Url(AbstractUrl):
+    label = models.CharField(
+        verbose_name=_('label'),
+        max_length=120,
+    )
+
+    class Meta:
+        verbose_name = _('url')
+        verbose_name_plural = _('urls')
+
     def get_url(self, site):
-        try:
-            obj = self.urloverride_set.get(site=site)
-        except UrlOverride.DoesNotExist:
+        if self.site == site:
             obj = self
+        else:
+            try:
+                obj = self.urloverride_set.get(site=site)
+            except UrlOverride.DoesNotExist:
+                obj = self
         language = get_default_language_for_site(obj.site)
         if obj.page:
             url = '//{}{}'.format(
@@ -95,20 +112,6 @@ class AbstractUrl(models.Model):
 
         return url
 
-    class Meta:
-        abstract = True
-
-
-class Url(AbstractUrl):
-    label = models.CharField(
-        verbose_name=_('label'),
-        max_length=120,
-    )
-
-    class Meta:
-        verbose_name = _('url')
-        verbose_name_plural = _('urls')
-
     def __str__(self):
         return self.label
 
@@ -122,6 +125,9 @@ class UrlOverride(AbstractUrl):
     class Meta:
         verbose_name = _('url override')
         verbose_name_plural = _('url overrides')
+        unique_together = (
+            ('site', 'url'),
+        )
 
 
 class UrlPlugin(CMSPlugin):

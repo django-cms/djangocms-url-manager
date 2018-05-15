@@ -18,7 +18,10 @@
                             term: term,
                             page: page,
                             limit: itemsPerPage,
-                            site: $(this.context).closest('fieldset').find('.field-site select').val()
+                            site: $(this.context)
+                                .closest('fieldset')
+                                .find('.field-site select')
+                                .val()
                         };
                     },
                     results: function(data, page) {
@@ -47,11 +50,17 @@
                 }
             });
         }
-        initializeSiteWidget($('#id_site'));
-        initializePageWidget($('#id_page'));
-        django.jQuery(document).on('formset:added', function(event, $row, formsetName) {
-            initializeSiteWidget($($row).find('select[id$="site"]'));
-            initializePageWidget($($row).find('input[id$="page"]'));
+        $(':not([id*=__prefix__])[id$="site"]').each(function(i, element) {
+            initializeSiteWidget($(element));
         });
+        $(':not([id*=__prefix__])[id$="page"]').each(function(i, element) {
+            initializePageWidget($(element));
+        });
+        django
+            .jQuery(document)
+            .on('formset:added', function(event, $row, formsetName) {
+                initializeSiteWidget($($row).find('select[id$="site"]'));
+                initializePageWidget($($row).find('input[id$="page"]'));
+            });
     });
 })(CMS.$);
