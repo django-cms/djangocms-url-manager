@@ -85,7 +85,7 @@ class Url(AbstractUrl):
         verbose_name = _('url')
         verbose_name_plural = _('urls')
 
-    def get_url(self, site):
+    def _get_url_obj(self, site):
         if self.site == site:
             obj = self
         else:
@@ -93,6 +93,10 @@ class Url(AbstractUrl):
                 obj = self.urloverride_set.get(site=site)
             except UrlOverride.DoesNotExist:
                 obj = self
+        return obj
+
+    def get_url(self, site):
+        obj = self._get_url_obj(site)
         language = get_default_language_for_site(obj.site)
         if obj.page:
             url = '//{}{}'.format(
