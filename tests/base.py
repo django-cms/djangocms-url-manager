@@ -21,7 +21,9 @@ class BaseUrlManagerPluginTestCase(CMSTestCase):
             published=True,
             in_navigation=True,
         )
-        self.placeholder = self.page.placeholders.get(slot='content')
+        self.placeholders = self.page.get_placeholders(self.language).get(
+            slot='content'
+        )
         self.url = self._create_url(
             page=self.page,
             label='Test',

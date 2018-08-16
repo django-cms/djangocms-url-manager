@@ -39,7 +39,10 @@ TARGET_CHOICES = (
 
 
 class AbstractUrl(models.Model):
-    site = models.ForeignKey(Site)
+    site = models.ForeignKey(
+        Site,
+        on_delete=models.CASCADE,
+    )
     manual_url = models.URLField(
         verbose_name=_('manual URL'),
         blank=True,

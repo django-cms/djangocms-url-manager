@@ -127,7 +127,9 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
         self.assertEqual(str(self.url), self.url.label)
 
     def test_urlplugin_str(self):
-        placeholder = self.page.placeholders.get(slot='content')
+        placeholder = self.page.get_placeholders(self.language).get(
+            slot='content'
+        )
         plugin = add_plugin(
             placeholder,
             'Url',
