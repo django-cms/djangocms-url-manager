@@ -1,6 +1,7 @@
 from cms.api import add_plugin
 
 from djangocms_url_manager.cms_plugins import Url
+from djangocms_url_manager.compat import get_page_placeholders
 
 from .base import BaseUrlManagerPluginTestCase
 
@@ -8,9 +9,10 @@ from .base import BaseUrlManagerPluginTestCase
 class UrlManagerPluginTestCase(BaseUrlManagerPluginTestCase):
 
     def test_get_render_template(self):
-        placeholder = self.page.get_placeholders(self.language).get(
-            slot='content'
-        )
+        placeholder = get_page_placeholders(
+            self.page,
+            self.language,
+        ).get(slot='content')
         plugin = add_plugin(
             placeholder,
             'Url',

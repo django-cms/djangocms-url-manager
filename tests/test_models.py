@@ -4,6 +4,7 @@ from django.contrib.sites.models import Site
 
 from cms.api import add_plugin
 
+from djangocms_url_manager.compat import get_page_placeholders
 from .base import BaseUrlManagerPluginTestCase
 
 
@@ -127,9 +128,10 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
         self.assertEqual(str(self.url), self.url.label)
 
     def test_urlplugin_str(self):
-        placeholder = self.page.get_placeholders(self.language).get(
-            slot='content'
-        )
+        placeholder = get_page_placeholders(
+            self.page,
+            self.language,
+        ).get(slot='content')
         plugin = add_plugin(
             placeholder,
             'Url',

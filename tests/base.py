@@ -7,6 +7,7 @@ from cms.utils.urlutils import admin_reverse
 from djangocms_url_manager.constants import SELECT2_PAGE_URL_NAME
 from djangocms_url_manager.models import Url as UrlModel
 from djangocms_url_manager.models import UrlOverride
+from djangocms_url_manager.compat import get_page_placeholders
 
 
 class BaseUrlManagerPluginTestCase(CMSTestCase):
@@ -21,9 +22,10 @@ class BaseUrlManagerPluginTestCase(CMSTestCase):
             published=True,
             in_navigation=True,
         )
-        self.placeholders = self.page.get_placeholders(self.language).get(
-            slot='content'
-        )
+        self.placeholders = get_page_placeholders(
+            self.page,
+            self.language,
+        ).get(slot='content')
         self.url = self._create_url(
             page=self.page,
             label='Test',
