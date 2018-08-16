@@ -4,10 +4,9 @@ from cms.api import create_page
 from cms.test_utils.testcases import CMSTestCase
 from cms.utils.urlutils import admin_reverse
 
-from djangocms_url_manager.constants import SELECT2_PAGE_URL_NAME
-from djangocms_url_manager.models import Url as UrlModel
-from djangocms_url_manager.models import UrlOverride
 from djangocms_url_manager.compat import get_page_placeholders
+from djangocms_url_manager.constants import SELECT2_PAGE_URL_NAME
+from djangocms_url_manager.models import Url as UrlModel, UrlOverride
 
 
 class BaseUrlManagerPluginTestCase(CMSTestCase):

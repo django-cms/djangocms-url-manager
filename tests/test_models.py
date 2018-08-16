@@ -5,6 +5,7 @@ from django.contrib.sites.models import Site
 from cms.api import add_plugin
 
 from djangocms_url_manager.compat import get_page_placeholders
+
 from .base import BaseUrlManagerPluginTestCase
 
 

@@ -2,10 +2,11 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from djangocms_attributes_field.fields import AttributesField
 
 from cms.models import CMSPlugin, Page
 from cms.utils.i18n import get_default_language_for_site
+
+from djangocms_attributes_field.fields import AttributesField
 
 
 __all__ = [
