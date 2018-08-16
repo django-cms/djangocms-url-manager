@@ -24,7 +24,6 @@ py35default: &py35default
    - run: docker load -i caches/py35.tar || true
    - run: docker run py35 tox -e $CIRCLE_STAGE
 
-
 py36default: &py36default
   docker:
     - image: circleci/python:3.6
@@ -64,20 +63,6 @@ jobs:
          key: py34-{{ .Environment.CIRCLE_SHA1 }}
          paths:
             - "caches/"
-  py36_base:
-    docker:
-      - image: circleci/python:3.6
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run: docker build -f .circleci/Dockerfile --build-arg PYTHON_VERSION=3.6 -t py36 .
-      - run: mkdir caches
-      - run: docker save -o caches/py36.tar py36
-      - save_cache:
-         key: py36-{{ .Environment.CIRCLE_SHA1 }}
-         paths:
-            - "caches/"
 
   py35_base:
     docker:
@@ -94,6 +79,21 @@ jobs:
          paths:
             - "caches/"
 
+  py36_base:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run: docker build -f .circleci/Dockerfile --build-arg PYTHON_VERSION=3.6 -t py36 .
+      - run: mkdir caches
+      - run: docker save -o caches/py36.tar py36
+      - save_cache:
+         key: py36-{{ .Environment.CIRCLE_SHA1 }}
+         paths:
+            - "caches/"
+            
   flake8:
     <<: *py35default
   isort:
@@ -111,6 +111,19 @@ jobs:
   py35-dj20-sqlite-cms36:
     <<: *py35default
   py36-dj20-sqlite-cms36:
+    <<: *py36default
+
+  py35-dj111-sqlite-cms40:
+    <<: *py35default
+  py35-dj20-sqlite-cms40:
+    <<: *py35default
+  py35-dj21-sqlite-cms40:
+    <<: *py35default
+  py36-dj111-sqlite-cms40:
+    <<: *py36default
+  py36-dj20-sqlite-cms40:
+    <<: *py36default
+  py36-dj21-sqlite-cms40:
     <<: *py36default
 
 #######################
@@ -149,3 +162,23 @@ workflows:
       - py36-dj20-sqlite-cms36:
           requires:
             - py36_base
+
+
+- py35-dj111-sqlite-cms40:
+    requires:
+      - py35_base
+  py35-dj20-sqlite-cms40:
+    requires:
+      - py35_base
+  py35-dj21-sqlite-cms40:
+    requires:
+      - py35_base
+  py36-dj111-sqlite-cms40:
+    requires:
+      - py36_base
+  py36-dj20-sqlite-cms40:
+    requires:
+      - py36_base
+  py36-dj21-sqlite-cms40:
+    requires:
+      - py36_base
