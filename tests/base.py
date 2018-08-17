@@ -21,7 +21,7 @@ class BaseUrlManagerPluginTestCase(CMSTestCase):
             published=True,
             in_navigation=True,
         )
-        self.placeholders = get_page_placeholders(
+        self.placeholder = get_page_placeholders(
             self.page,
             self.language,
         ).get(slot='content')
