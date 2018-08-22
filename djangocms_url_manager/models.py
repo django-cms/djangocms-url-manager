@@ -11,7 +11,7 @@ from djangocms_attributes_field.fields import AttributesField
 
 __all__ = [
     'Url',
-    'UrlPlugin',
+    'LinkPlugin',
 ]
 
 
@@ -125,28 +125,23 @@ class Url(AbstractUrl):
 
 
 class UrlOverride(AbstractUrl):
-    url = models.ForeignKey(
-        Url,
-        on_delete=models.CASCADE,
-    )
+    url = models.ForeignKey(Url, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _('url override')
         verbose_name_plural = _('url overrides')
-        unique_together = (
-            ('site', 'url'),
-        )
+        unique_together = (('site', 'url'),)
 
 
-class UrlPlugin(CMSPlugin):
+class LinkPlugin(CMSPlugin):
     url = models.ForeignKey(
         Url,
         verbose_name=_('url'),
         related_name='cms_plugins',
         on_delete=models.CASCADE,
     )
-    name = models.CharField(
-        verbose_name=_('name'),
+    label = models.CharField(
+        verbose_name=_('label'),
         max_length=120,
     )
     template = models.CharField(
@@ -172,4 +167,4 @@ class UrlPlugin(CMSPlugin):
         verbose_name_plural = _('url plugin models')
 
     def __str__(self):
-        return self.name
+        return self.label

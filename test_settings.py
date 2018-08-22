@@ -36,36 +36,6 @@ HELPER_SETTINGS = {
             },
         ],
     },
-    'PARLER_LANGUAGES': {
-        1: [
-            {
-                'code': 'en',
-                'fallbacks': ['de', 'fr'],
-                'hide_untranslated': False,
-            },
-            {
-                'code': 'de',
-                'fallbacks': ['en'],
-                'hide_untranslated': False,
-            },
-            {
-                'code': 'fr',
-                'fallbacks': ['en'],
-                'hide_untranslated': False,
-            },
-            {
-                'code': 'it',
-                'fallbacks': ['fr'],  # FOR TESTING, LEAVE AS ONLY 'fr'
-                'hide_untranslated': False,
-            },
-        ],
-        'default': {
-            'code': 'en',
-            'fallbacks': ['en'],
-            'hide_untranslated': False,
-        }
-    },
-    'PARLER_ENABLE_CACHING': False,
     'LANGUAGE_CODE': 'en',
 }
 

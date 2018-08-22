@@ -135,9 +135,9 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
         ).get(slot='content')
         plugin = add_plugin(
             placeholder,
-            'Url',
+            'HtmlLink',
             language=self.language,
             url=self.url,
-            name='Test URL plugin',
+            label='Test URL plugin',
         )
-        self.assertEqual(str(plugin), plugin.name)
+        self.assertEqual(str(plugin), plugin.label)
