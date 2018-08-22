@@ -27,7 +27,6 @@ class BaseUrlManagerPluginTestCase(CMSTestCase):
         ).get(slot='content')
         self.url = self._create_url(
             page=self.page,
-            label='Test',
         )
         self.superuser = self.get_superuser()
         self.default_site = Site.objects.first()
@@ -49,7 +48,7 @@ class BaseUrlManagerPluginTestCase(CMSTestCase):
             self.page2,
         )
 
-    def _create_url(self, label, site=None, page=None, manual_url='',
+    def _create_url(self, site=None, page=None, manual_url='',
                     phone='', mailto='', anchor=''):
         if site is None:
             if page is None:
@@ -59,7 +58,6 @@ class BaseUrlManagerPluginTestCase(CMSTestCase):
 
         return UrlModel.objects.create(
             site=site,
-            label=label,
             page=page,
             manual_url=manual_url,
             phone=phone,

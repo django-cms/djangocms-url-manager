@@ -36,7 +36,6 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
     def test_get_url_page(self):
         url = self._create_url(
             page=self.page,
-            label='Test',
         )
         parsed = urlparse(url.get_url(url.site))
         self.assertEqual(parsed.netloc, 'example.com')
@@ -45,33 +44,28 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
     def test_get_url_manual_url(self):
         url = self._create_url(
             manual_url='https://google.com',
-            label='Test',
         )
         self.assertEqual(url.get_url(url.site), 'https://google.com')
 
     def test_get_url_phone(self):
         url = self._create_url(
             phone='555555555',
-            label='Test',
         )
         self.assertEqual(url.get_url(url.site), 'tel:555555555')
 
     def test_get_url_mailto(self):
         url = self._create_url(
             mailto='test@example.com',
-            label='Test',
         )
         self.assertEqual(url.get_url(url.site), 'mailto:test@example.com')
 
     def test_get_url_no_data(self):
         url = self._create_url(
-            label='Test',
         )
         self.assertEqual(url.get_url(url.site), '')
 
     def test_get_url_anchor(self):
         url = self._create_url(
-            label='Test',
             anchor='foo',
         )
         self.assertEqual(url.get_url(url.site), '#foo')
@@ -79,7 +73,6 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
     def test_get_url_page_combined_with_anchor(self):
         url = self._create_url(
             page=self.page,
-            label='Test',
             anchor='foo',
         )
         parsed = urlparse(url.get_url(url.site))
@@ -90,7 +83,6 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
     def test_get_url_phone_not_combined_with_anchor(self):
         url = self._create_url(
             phone='555555555',
-            label='Test',
             anchor='foo',
         )
         self.assertEqual(url.get_url(url.site), 'tel:555555555')
@@ -99,7 +91,6 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
         url = self._create_url(
             phone='555555555',
             mailto='test@example.com',
-            label='Test',
             anchor='foo',
         )
         self.assertEqual(url.get_url(url.site), 'tel:555555555')
@@ -108,7 +99,6 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
         url = self._create_url(
             manual_url='https://google.com',
             phone='555555555',
-            label='Test',
             anchor='foo',
         )
         self.assertEqual(url.get_url(url.site), 'https://google.com')
@@ -117,7 +107,6 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
         url = self._create_url(
             page=self.page,
             manual_url='https://google.com',
-            label='Test',
             anchor='foo',
         )
         parsed = urlparse(url.get_url(url.site))
@@ -126,7 +115,7 @@ class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
         self.assertEqual(parsed.fragment, 'foo')
 
     def test_url_str(self):
-        self.assertEqual(str(self.url), self.url.label)
+        self.assertEqual(str(self.url), '//example.com/en/test/')
 
     def test_urlplugin_str(self):
         placeholder = get_page_placeholders(

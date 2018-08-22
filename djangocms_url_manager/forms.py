@@ -61,7 +61,7 @@ class UrlForm(forms.ModelForm):
     class Meta:
         model = Url
         fields = (
-            'label', 'site', 'manual_url', 'page', 'anchor', 'mailto', 'phone',
+            'site', 'manual_url', 'page', 'anchor', 'mailto', 'phone',
         )
 
 

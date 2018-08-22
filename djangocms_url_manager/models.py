@@ -80,10 +80,6 @@ class AbstractUrl(models.Model):
 
 
 class Url(AbstractUrl):
-    label = models.CharField(
-        verbose_name=_('label'),
-        max_length=120,
-    )
 
     class Meta:
         verbose_name = _('url')
@@ -121,7 +117,7 @@ class Url(AbstractUrl):
         return url
 
     def __str__(self):
-        return self.label
+        return self.get_url(self.site)
 
 
 class UrlOverride(AbstractUrl):

@@ -19,7 +19,6 @@ class UrlOverrideInlineAdmin(admin.StackedInline):
 
 @admin.register(Url)
 class UrlAdmin(admin.ModelAdmin):
-    list_display = ['label']
     form = UrlForm
     inlines = [UrlOverrideInlineAdmin]
 
