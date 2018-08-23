@@ -4,10 +4,14 @@ from django.http import JsonResponse
 from django.views.generic import ListView
 
 from cms.models import Page
+from .compat import CMS_36
 
 
 class PageSelect2View(ListView):
-    queryset = Page.objects.drafts()
+    if CMS_36:
+        queryset = Page.objects.drafts()
+    else:
+        queryset = Page.objects.all()
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
