@@ -24,7 +24,6 @@ class UrlManagerViewsTestCase(BaseUrlManagerPluginTestCase):
             title='test 3',
             template='page.html',
             language=self.language,
-            published=True,
             in_navigation=True,
         )
         with self.login_user_context(self.superuser):
@@ -54,7 +53,6 @@ class UrlManagerViewsTestCase(BaseUrlManagerPluginTestCase):
             title='foo',
             template='page.html',
             language=self.language,
-            published=True,
             in_navigation=True,
         )
         with self.login_user_context(self.superuser):

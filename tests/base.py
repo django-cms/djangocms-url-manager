@@ -18,7 +18,6 @@ class BaseUrlManagerPluginTestCase(CMSTestCase):
             title='test',
             template='page.html',
             language=self.language,
-            published=True,
             in_navigation=True,
         )
         self.placeholder = get_page_placeholders(
@@ -38,7 +37,6 @@ class BaseUrlManagerPluginTestCase(CMSTestCase):
             title='test2',
             template='page.html',
             language=self.language,
-            published=True,
             in_navigation=True,
             site=self.site2,
         )
