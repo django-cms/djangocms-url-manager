@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.generic import ListView
 
 from cms.models import Page
+
 from .compat import CMS_36
 
 from .compat import CMS_36
