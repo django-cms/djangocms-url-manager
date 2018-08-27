@@ -2,10 +2,10 @@ from django.contrib.sites.models import Site
 
 from djangocms_url_manager.forms import PageSelectWidget, UrlOverrideForm
 
-from .base import BaseUrlManagerPluginTestCase
+from .base import BaseUrlTestCase
 
 
-class UrlManagerFormsTestCase(BaseUrlManagerPluginTestCase):
+class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     def test_urloverrideform(self):
         site3 = Site.objects.create(

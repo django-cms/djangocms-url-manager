@@ -1,9 +1,9 @@
 from cms.api import create_page
 
-from .base import BaseUrlManagerPluginTestCase
+from .base import BaseUrlTestCase
 
 
-class UrlManagerViewsTestCase(BaseUrlManagerPluginTestCase):
+class UrlManagerViewsTestCase(BaseUrlTestCase):
 
     def test_select2_view_no_permission(self):
         response = self.client.get(self.select2_endpoint)

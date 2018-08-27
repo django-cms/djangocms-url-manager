@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from cms.models import Page
 from cms.utils.urlutils import admin_reverse
 
+from djangocms_url_manager.compat import CMS_36
+
 from .constants import SELECT2_PAGE_URL_NAME
 from .models import Url, UrlOverride
 
@@ -39,7 +41,7 @@ class PageSelectWidget(Select2Mixin, forms.TextInput):
 class UrlForm(forms.ModelForm):
     site = forms.ModelChoiceField(
         label=_('Site'),
-        queryset=Site.objects.all(),
+        queryset=Page.objects.drafts() if CMS_36 else Site.objects.all(),
         widget=SiteSelectWidget(
             attrs={
                 'data-placeholder': _('Select site to choose pages from'),
@@ -49,7 +51,7 @@ class UrlForm(forms.ModelForm):
     )
     page = forms.ModelChoiceField(
         label=_('Page'),
-        queryset=Page.objects.all(),
+        queryset=Page.objects.drafts() if CMS_36 else Site.objects.all(),
         widget=PageSelectWidget(
             attrs={
                 'data-placeholder': _('Select a page'),

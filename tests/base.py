@@ -9,7 +9,7 @@ from djangocms_url_manager.constants import SELECT2_PAGE_URL_NAME
 from djangocms_url_manager.models import Url as UrlModel, UrlOverride
 
 
-class BaseUrlManagerPluginTestCase(CMSTestCase):
+class BaseUrlTestCase(CMSTestCase):
     select2_endpoint = admin_reverse(SELECT2_PAGE_URL_NAME)
 
     def setUp(self):

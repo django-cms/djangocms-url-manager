@@ -42,7 +42,7 @@ TARGET_CHOICES = (
 class AbstractUrl(models.Model):
     site = models.ForeignKey(
         Site,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
     )
     manual_url = models.URLField(
         verbose_name=_('manual URL'),
@@ -86,7 +86,7 @@ class Url(AbstractUrl):
         verbose_name_plural = _('urls')
 
     def _get_url_obj(self, site):
-        if self.site == site:
+        if self.site_id == site:
             obj = self
         else:
             try:

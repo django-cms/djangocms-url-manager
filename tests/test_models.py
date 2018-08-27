@@ -6,10 +6,10 @@ from cms.api import add_plugin
 
 from djangocms_url_manager.compat import get_page_placeholders
 
-from .base import BaseUrlManagerPluginTestCase
+from .base import BaseUrlTestCase
 
 
-class UrlManagerModelsTestCase(BaseUrlManagerPluginTestCase):
+class UrlManagerModelsTestCase(BaseUrlTestCase):
 
     def test__get_url_obj(self):
         self.assertEqual(

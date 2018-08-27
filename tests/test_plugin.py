@@ -3,10 +3,10 @@ from cms.api import add_plugin
 from djangocms_url_manager.cms_plugins import HtmlLink
 from djangocms_url_manager.compat import get_page_placeholders
 
-from .base import BaseUrlManagerPluginTestCase
+from .base import BaseUrlTestCase
 
 
-class UrlManagerPluginTestCase(BaseUrlManagerPluginTestCase):
+class UrlManagerPluginTestCase(BaseUrlTestCase):
 
     def test_get_render_template(self):
         placeholder = get_page_placeholders(

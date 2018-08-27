@@ -2,10 +2,10 @@ from urllib.parse import urlparse
 
 from django.test import override_settings
 
-from .base import BaseUrlManagerPluginTestCase
+from .base import BaseUrlTestCase
 
 
-class UrlManagerTemplateTagsTestCase(BaseUrlManagerPluginTestCase):
+class UrlManagerTemplateTagsTestCase(BaseUrlTestCase):
     url_template = """{% load djangocms_url_manager_tags %}{% render_url url %}"""  # noqa: E501
 
     def test_render_url(self):
