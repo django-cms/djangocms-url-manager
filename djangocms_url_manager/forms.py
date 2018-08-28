@@ -41,7 +41,7 @@ class PageSelectWidget(Select2Mixin, forms.TextInput):
 class UrlForm(forms.ModelForm):
     site = forms.ModelChoiceField(
         label=_('Site'),
-        queryset=Page.objects.drafts() if CMS_36 else Site.objects.all(),
+        queryset=Site.objects.all(),
         widget=SiteSelectWidget(
             attrs={
                 'data-placeholder': _('Select site to choose pages from'),
@@ -51,7 +51,7 @@ class UrlForm(forms.ModelForm):
     )
     page = forms.ModelChoiceField(
         label=_('Page'),
-        queryset=Page.objects.drafts() if CMS_36 else Site.objects.all(),
+        queryset=Page.objects.drafts() if CMS_36 else Page.objects.all(),
         widget=PageSelectWidget(
             attrs={
                 'data-placeholder': _('Select a page'),
@@ -80,7 +80,7 @@ class UrlOverrideForm(forms.ModelForm):
     )
     page = forms.ModelChoiceField(
         label=_('Page'),
-        queryset=Page.objects.all(),
+        queryset=Page.objects.drafts() if CMS_36 else Page.objects.all(),
         widget=PageSelectWidget(
             attrs={
                 'data-placeholder': _('Select a page'),
