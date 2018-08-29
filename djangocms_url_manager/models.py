@@ -55,8 +55,9 @@ class AbstractUrl(models.Model):
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
+        null=True,
     )
-    object_id = models.PositiveIntegerField()
+    object_id = models.PositiveIntegerField(null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
     anchor = models.CharField(
         verbose_name=_('anchor'),
@@ -99,10 +100,10 @@ class Url(AbstractUrl):
     def get_url(self, site):
         obj = self._get_url_obj(site)
         language = get_default_language_for_site(obj.site)
-        if obj.page:
+        if obj.content_object:
             url = '//{}{}'.format(
                 obj.site.domain,
-                obj.page.get_absolute_url(language=language),
+                obj.content_object.get_absolute_url(language=language),
             )
         elif obj.manual_url:
             url = obj.manual_url

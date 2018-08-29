@@ -25,7 +25,7 @@ class BaseUrlTestCase(CMSTestCase):
             self.language,
         ).get(slot='content')
         self.url = self._create_url(
-            page=self.page,
+            content_object=self.page,
         )
         self.superuser = self.get_superuser()
         self.default_site = Site.objects.first()
@@ -46,29 +46,32 @@ class BaseUrlTestCase(CMSTestCase):
             self.page2,
         )
 
-    def _create_url(self, site=None, page=None, manual_url='',
+    def _create_url(self, site=None, content_object=None, manual_url='',
                     phone='', mailto='', anchor=''):
-        if site is None:
-            if page is None:
-                site = self.default_site
-            else:
-                site = page.node.site
+        # if site is None:
+        #     if content_object is None:
+        #         site = self.default_site
+        #     else:
+        #         # TODO: nie zawsze bedzie to page!!!
+        #         site = content_object.node.site
+
+        site = Site.objects.first()
 
         return UrlModel.objects.create(
             site=site,
-            page=page,
+            content_object=content_object,
             manual_url=manual_url,
             phone=phone,
             mailto=mailto,
             anchor=anchor,
         )
 
-    def _create_url_override(self, url, site, page=None, manual_url='',
+    def _create_url_override(self, url, site, content_object=None, manual_url='',
                              phone='', mailto='', anchor=''):
         return UrlOverride.objects.create(
             url=url,
             site=site,
-            page=page,
+            content_object=content_object,
             manual_url=manual_url,
             phone=phone,
             mailto=mailto,
