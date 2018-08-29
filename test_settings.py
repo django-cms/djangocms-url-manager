@@ -2,6 +2,8 @@ HELPER_SETTINGS = {
     'TIME_ZONE': 'Europe/Zurich',
     'INSTALLED_APPS': [
         'djangocms_url_manager',
+        'djangocms_url_manager.test_utils.polls',
+        'djangocms_url_manager.test_utils.blogpost',
     ],
     'CMS_PERMISSION': True,
     # At present, testing requires bootstrap to be disabled.
