@@ -4,8 +4,9 @@ import djangocms_url_manager
 
 
 INSTALL_REQUIREMENTS = [
-    'Django>=1.11,<2.1',
-    'django-cms>=3.5.0',
+    'Django>=1.11,<2.2',
+    'django-cms>=3.5,<4.1',
+    'djangocms-attributes-field>=0.1.1',
 ]
 
 
