@@ -46,7 +46,7 @@ class PageSelect2View(ListView):
             pk = None
         q = Q()
         if term:
-            q |= Q(title_set__title__icontains=term)
+            q |= Q(pagecontent_set__title__icontains=term)
         if site:
             queryset = queryset.on_site(site)
         if pk:
