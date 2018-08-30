@@ -57,7 +57,9 @@ class AbstractUrl(models.Model):
         on_delete=models.CASCADE,
         null=True,
     )
-    object_id = models.PositiveIntegerField(null=True)
+    object_id = models.PositiveIntegerField(
+        null=True,
+    )
     content_object = GenericForeignKey('content_type', 'object_id')
     anchor = models.CharField(
         verbose_name=_('anchor'),

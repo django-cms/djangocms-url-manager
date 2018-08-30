@@ -7,8 +7,6 @@ from cms.models import Page
 
 from .compat import CMS_36
 
-from .compat import CMS_36
-
 
 class PageSelect2View(ListView):
     if CMS_36:

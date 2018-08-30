@@ -26,14 +26,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.pk)
-
-
-# class CommentContent(models.Model):
-#     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-#     text = models.TextField()
-#
-#     def __str__(self):
-#         return self.text
-#
-#     def get_absolute_url(self):
-#         return reverse('admin:blogpost_commentcontent_changelist')
