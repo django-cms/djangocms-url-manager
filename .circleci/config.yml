@@ -111,19 +111,6 @@ jobs:
   py36-dj21-sqlite-cms40:
     <<: *py36default
 
-  py35-dj111-sqlite-cms40:
-    <<: *py35default
-  py35-dj20-sqlite-cms40:
-    <<: *py35default
-  py35-dj21-sqlite-cms40:
-    <<: *py35default
-  py36-dj111-sqlite-cms40:
-    <<: *py36default
-  py36-dj20-sqlite-cms40:
-    <<: *py36default
-  py36-dj21-sqlite-cms40:
-    <<: *py36default
-
 #######################
 
 workflows:
@@ -166,23 +153,3 @@ workflows:
       - py36-dj21-sqlite-cms40:
           requires:
             - py36_base
-
-
-- py35-dj111-sqlite-cms40:
-    requires:
-      - py35_base
-  py35-dj20-sqlite-cms40:
-    requires:
-      - py35_base
-  py35-dj21-sqlite-cms40:
-    requires:
-      - py35_base
-  py36-dj111-sqlite-cms40:
-    requires:
-      - py36_base
-  py36-dj20-sqlite-cms40:
-    requires:
-      - py36_base
-  py36-dj21-sqlite-cms40:
-    requires:
-      - py36_base
