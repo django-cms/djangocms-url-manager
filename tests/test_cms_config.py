@@ -66,9 +66,9 @@ class CMSConfigUnitTestCase(CMSTestCase):
         self.assertListEqual(
             extension.url_support_content_types_models, [poll_content_type_item, blog_content_type_item])
 
-    def test_is_content_model_versioned(self):
-        """Test that is_content_model_versioned returns True for
-        content model that's versioned
+    def test_is_content_model_enabled(self):
+        """Test that is_content_model_enabled returns True for
+        content model that's enabled to use in url manager.
         """
         extension = UrlManagerCMSExtension()
         cms_config = Mock(
@@ -79,9 +79,9 @@ class CMSConfigUnitTestCase(CMSTestCase):
         extension.handle_url_manager_setting(cms_config)
         self.assertTrue(extension.is_content_model_enabled(PollContent))
 
-    def test_is_content_model_not_versioned(self):
-        """Test that is_content_model_versioned returns False for
-        content model that's not versioned
+    def test_is_content_model_not_enabled(self):
+        """Test that is_content_model_enabled returns False for
+        content model that's enabled to use in url manager.
         """
         extension = UrlManagerCMSExtension()
         cms_config = Mock(
