@@ -1,3 +1,5 @@
+import collections
+
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -10,10 +12,14 @@ def validate_settings(config, attr_name):
     """Validates settings for url manager"""
     if not hasattr(config, attr_name):
         raise ImproperlyConfigured(
-            "{} must be defined in your settings".format(attr_name))
-    if not isinstance(getattr(config, attr_name), list):
+            "{} must be defined in your {}".format(
+                attr_name,
+                'settings' if CMS_36 else 'cms_config',
+            )
+        )
+    if not isinstance(getattr(config, attr_name), collections.Iterable):
         raise ImproperlyConfigured(
-            "{} not defined as an list".format(attr_name))
+            "{} not defined as an ".format(attr_name))
 
     if CMS_36:
         models = supported_models()
