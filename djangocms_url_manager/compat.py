@@ -7,6 +7,11 @@ CMS_VERSION = cms.__version__
 
 CMS_36 = LooseVersion(CMS_VERSION) < LooseVersion('3.7')
 
+try:
+    from djangocms_url_manager.cms_config import UrlManagerCMSExtension
+except ImportError:
+    UrlManagerCMSExtension = None
+
 
 def get_page_placeholders(page, language=None):
     try:

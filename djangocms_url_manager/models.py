@@ -54,7 +54,7 @@ class AbstractUrl(models.Model):
     )
     content_type = models.ForeignKey(
         ContentType,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
     )
     object_id = models.PositiveIntegerField(

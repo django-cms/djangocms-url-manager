@@ -1,12 +1,10 @@
 from cms.app_base import CMSAppConfig
 
-from djangocms_url_manager.datastructures import UrlContentItem
-
 from .models import BlogContent
 
 
 class BlogpostCMSConfig(CMSAppConfig):
     djangocms_url_manager_enabled = True
-    url_manager_models_support = [
-        UrlContentItem(content_model=BlogContent),
+    url_manager_supported_models = [
+        BlogContent,
     ]

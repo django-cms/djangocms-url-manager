@@ -4,7 +4,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import djangocms_attributes_field.fields
 
-from djangocms_url_manager.models import get_templates
+from djangocms_url_manager.models import get_templates, TEMPLATE_DEFAULT, TARGET_CHOICES
 
 
 class Migration(migrations.Migration):
@@ -13,7 +13,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('sites', '0002_alter_domain_unique'),
-        ('cms', '0032_remove_title_to_pagecontent'),
         ('contenttypes', '0002_remove_content_type_name'),
     ]
 
@@ -23,8 +22,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('cmsplugin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='djangocms_url_manager_linkplugin', serialize=False, to='cms.CMSPlugin')),
                 ('label', models.CharField(max_length=120, verbose_name='label')),
-                ('template', models.CharField(choices=get_templates(), default='default', max_length=255, verbose_name='Template')),
-                ('target', models.CharField(blank=True, choices=[('_blank', 'Open in new window'), ('_self', 'Open in same window'), ('_parent', 'Delegate to parent'), ('_top', 'Delegate to top')], max_length=255, verbose_name='Target')),
+                ('template', models.CharField(choices=get_templates(), default=TEMPLATE_DEFAULT, max_length=255, verbose_name='Template')),
+                ('target', models.CharField(blank=True, choices=TARGET_CHOICES, max_length=255, verbose_name='Target')),
                 ('attributes', djangocms_attributes_field.fields.AttributesField(blank=True, default=dict, verbose_name='Attributes')),
             ],
             options={
