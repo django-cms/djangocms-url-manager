@@ -1,4 +1,5 @@
 import collections
+from functools import lru_cache
 
 from django.apps import apps
 from django.conf import settings
@@ -35,6 +36,7 @@ def validate_settings(config, attr_name):
                 "{} needs to implement get_absolute_url method".format(model.__name__))
 
 
+@lru_cache(maxsize=1)
 def supported_models():
     """Return a list with supported models to use with url manager"""
     if CMS_36:
