@@ -1,16 +1,21 @@
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 
 from cms.api import create_page
+from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
 from cms.utils.urlutils import admin_reverse
 
 from djangocms_url_manager.compat import get_page_placeholders
-from djangocms_url_manager.constants import SELECT2_PAGE_URL_NAME
+from djangocms_url_manager.constants import (
+    SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
+)
 from djangocms_url_manager.models import Url as UrlModel, UrlOverride
+from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 
 
 class BaseUrlTestCase(CMSTestCase):
-    select2_endpoint = admin_reverse(SELECT2_PAGE_URL_NAME)
+    select2_endpoint = admin_reverse(SELECT2_CONTENT_TYPE_OBJECT_URL_NAME)
 
     def setUp(self):
         self.language = 'en'
@@ -45,6 +50,19 @@ class BaseUrlTestCase(CMSTestCase):
             self.site2,
             self.page2,
         )
+        self.poll = Poll.objects.create(name='Test poll')
+        self.poll_content = PollContent.objects.create(
+            poll=self.poll,
+            language=self.language,
+            text='example'
+        )
+        self.poll_content2 = PollContent.objects.create(
+            poll=self.poll,
+            language=self.language,
+            text='example2',
+        )
+        self.page_content_id = ContentType.objects.get_for_model(Page).id
+        self.poll_content_id = ContentType.objects.get_for_model(PollContent).id
 
     def _create_url(self, site=None, content_object=None, manual_url='',
                     phone='', mailto='', anchor=''):
