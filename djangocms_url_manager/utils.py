@@ -20,7 +20,7 @@ def validate_settings(config, attr_name):
         )
     if not isinstance(getattr(config, attr_name), collections.Iterable):
         raise ImproperlyConfigured(
-            "{} not defined as an ".format(attr_name))
+            "{} not defined as an Iterable".format(attr_name))
 
     if CMS_36:
         models = supported_models()
