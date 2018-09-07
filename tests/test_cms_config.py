@@ -10,7 +10,7 @@ from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 
 
 @skipIf(CMS_36, "CMS>=4.0")
-class CMSConfigTestCase(CMSTestCase):
+class UrlManagerCMSExtensionTestCase(CMSTestCase):
 
     def test_missing_cms_config_url_manager_supported_models_attribute(self):
         """Tests, if the url_manager_supported_models attribute has not been specified,

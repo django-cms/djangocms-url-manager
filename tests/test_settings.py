@@ -22,7 +22,7 @@ class CMSSettingsUnitTestCase(CMSTestCase):
         with self.assertRaises(ImproperlyConfigured):
             apps.get_app_config('djangocms_url_manager').ready()
 
-    @override_settings(URL_MANAGER_SUPPORTED_MODELS='polls.PollContent')
+    @override_settings(URL_MANAGER_SUPPORTED_MODELS='polls.Poll')
     def test_raises_exception_if_url_manager_models_support_is_not_list(self):
         """Tests ImproperlyConfigured exception is raised if
         URL_MANAGER_SUPPORT_MODELS setting is not a list

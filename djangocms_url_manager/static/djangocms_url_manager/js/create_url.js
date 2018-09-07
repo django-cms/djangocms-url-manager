@@ -63,7 +63,6 @@
             });
         }
         function hideFields($element) {
-
             $element.closest('fieldset').find('.field-content_object').hide();
             $element.closest('fieldset').find('.field-manual_url').hide();
             $element.closest('fieldset').find('.field-anchor').hide();
@@ -71,13 +70,12 @@
             $element.closest('fieldset').find('.field-phone').hide();
         }
         function checkTypeField($element) {
-            let e = $element;
             hideFields($element);
 
-            if (jQuery.isNumeric(e.val())) {
+            if (jQuery.isNumeric($element.val())) {
                 $element.closest('fieldset').find('.field-content_object').show();
             } else {
-                switch(e.val()) {
+                switch($element.val()) {
                     case "manual_url":
                         $element.closest('fieldset').find('.field-manual_url').show();
                         break;

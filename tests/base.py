@@ -13,6 +13,7 @@ from djangocms_url_manager.constants import (
 )
 from djangocms_url_manager.models import Url as UrlModel, UrlOverride
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
+from djangocms_url_manager.utils import supported_models
 
 
 class BaseUrlTestCase(CMSTestCase):
@@ -65,6 +66,9 @@ class BaseUrlTestCase(CMSTestCase):
         )
         self.page_content_id = ContentType.objects.get_for_model(Page).id
         self.poll_content_id = ContentType.objects.get_for_model(PollContent).id
+
+    def tearDown(self):
+        supported_models.cache_clear()
 
     def _create_url(self, site=None, content_object=None, manual_url='',
                     phone='', mailto='', anchor=''):

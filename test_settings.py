@@ -40,8 +40,8 @@ HELPER_SETTINGS = {
     },
     'LANGUAGE_CODE': 'en',
     'URL_MANAGER_SUPPORTED_MODELS': [
-        'cms.Page',
         'polls.PollContent',
+        'cms.Page',
         'blogpost.BlogContent',
     ]
 }

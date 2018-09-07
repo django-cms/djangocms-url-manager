@@ -1,5 +1,8 @@
+from unittest import skipIf, skipUnless
+
 from django.contrib.sites.models import Site
 
+from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.forms import (
     ContentTypeObjectSelectWidget,
     UrlForm,
@@ -43,7 +46,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
                 'type_object': ['This field is required.'],
                 'content_object': ['Field is required'],
                 'site': ['Overriden site must be different from the original.']
-             }
+            }
         )
 
     def test_data_select_widget_build_attrs(self):
@@ -58,7 +61,24 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         })
         self.assertFalse(form.is_valid())
 
-    def test_url_form_type_object_choices(self):
+    @skipUnless(CMS_36, "CMS<4.0")
+    def test_url_form_type_object_choices_for_cms36(self):
+        form = UrlForm()
+        self.assertListEqual(
+            form.fields['type_object'].choices,
+            [
+                (28, 'Poll content'),
+                (2, 'Page'),
+                (30, 'Blog content'),
+                ('manual_url', 'Manual URL'),
+                ('anchor', 'Anchor'),
+                ('mailto', 'Email address'),
+                ('phone', 'Phone')
+            ]
+        )
+
+    @skipIf(CMS_36, "CMS<4.0")
+    def test_url_form_type_object_choices_for_cms40(self):
         form = UrlForm()
         self.assertListEqual(
             form.fields['type_object'].choices,
