@@ -7,7 +7,7 @@ from cms.models import User
 from .base import BaseUrlTestCase
 
 
-class UrlManagerViewsTestCase(BaseUrlTestCase):
+class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
 
     def test_select2_view_no_content_id(self):
         with self.login_user_context(self.superuser):

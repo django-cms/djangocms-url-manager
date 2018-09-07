@@ -40,6 +40,13 @@ TARGET_CHOICES = (
     ('_top', _('Delegate to top')),
 )
 
+BASIC_TYPE_CHOICES = (
+    ('manual_url', _('Manual URL')),
+    ('anchor', _('Anchor')),
+    ('mailto', _('Email address')),
+    ('phone', _('Phone')),
+)
+
 
 class AbstractUrl(models.Model):
     site = models.ForeignKey(
