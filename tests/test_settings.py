@@ -43,7 +43,7 @@ class CMSSettingsUnitTestCase(CMSTestCase):
         """Tests LookupError exception is raised if elements
         in the URL_MANAGER_SUPPORT_MODELS list are not valid django app.
         """
-        with self.assertRaises(LookupError):
+        with self.assertRaises(ImproperlyConfigured):
             apps.get_app_config('djangocms_url_manager').ready()
 
     @override_settings(URL_MANAGER_SUPPORTED_MODELS=['polls.Poll'])
