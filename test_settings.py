@@ -5,6 +5,14 @@ HELPER_SETTINGS = {
         'djangocms_url_manager.test_utils.polls',
         'djangocms_url_manager.test_utils.blogpost',
     ],
+    'MIGRATION_MODULES': {
+        'sites': None,
+        'contenttypes': None,
+        'auth': None,
+        'cms': None,
+        'menus': None,
+        'djangocms_url_manager': None,
+    },
     'CMS_PERMISSION': True,
     # At present, testing requires bootstrap to be disabled.
     # 'ALDRYN_BOILERPLATE_NAME': 'bootstrap3',

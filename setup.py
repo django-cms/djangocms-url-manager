@@ -29,4 +29,5 @@ setup(
     author_email='info@divio.ch',
     url='http://github.com/divio/djangocms-url-manager',
     license='BSD',
+    test_suite='test_settings.run',
 )
