@@ -1,6 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic import ListView
 
@@ -33,26 +32,33 @@ class ContentTypeObjectSelect2View(ListView):
         content_id = self.request.GET.get('content_id', None)
         site = self.request.GET.get('site')
 
-        content_object = ContentType.objects.get_for_id(content_id)
-        model = content_object.model_class()
+        try:
+            content_object = ContentType.objects.get_for_id(content_id)
+        except ContentType.DoesNotExist:
+            raise ValueError(
+                'Content type with id {} does not exists.'.format(content_id)
+            )
 
+        model = content_object.model_class()
         if not is_model_supported(model):
             raise ValueError(
-                    "{} is not available to use, check content_id param".format(model)
+                '{} is not available to use, check content_id param'.format(model)
             )
 
         queryset = model.objects.all()
-
         try:
             pk = int(self.request.GET.get('pk'))
         except (TypeError, ValueError):
             pk = None
-        q = Q()
+
         if site:
-            queryset = queryset.on_site(site)
+            if hasattr(model.objects, 'on_site'):
+                queryset = queryset.on_site(site)
+            elif hasattr(model, 'site'):
+                queryset = queryset.filter(site=site)
         if pk:
-            q |= Q(pk=pk)
-        return queryset.filter(q)
+            queryset = queryset.filter(pk=pk)
+        return queryset
 
     def get_paginate_by(self, queryset):
         return self.request.GET.get('limit', 30)

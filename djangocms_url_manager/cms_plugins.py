@@ -15,6 +15,7 @@ __all__ = [
 class HtmlLink(CMSPluginBase):
     name = _('Link')
     model = LinkPlugin
+    allow_children = True
 
     def get_render_template(self, context, instance, placeholder):
         return 'djangocms_url_manager/{}/url.html'.format(instance.template)

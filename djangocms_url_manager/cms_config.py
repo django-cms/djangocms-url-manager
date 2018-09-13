@@ -1,6 +1,12 @@
-from cms.app_base import CMSAppExtension
+from cms.app_base import CMSAppConfig, CMSAppExtension
+from cms.models import Page
 
-import djangocms_url_manager.utils
+from djangocms_url_manager.utils import validate_settings
+
+
+class UrlCMSAppConfig(CMSAppConfig):
+    djangocms_url_manager_enabled = True
+    url_manager_supported_models = [Page]
 
 
 class UrlManagerCMSExtension(CMSAppExtension):
@@ -12,7 +18,7 @@ class UrlManagerCMSExtension(CMSAppExtension):
         """Check the url_manager_supported_models settings has been correctly set
         and add it to the masterlist
         """
-        djangocms_url_manager.utils.validate_settings(cms_config, 'url_manager_supported_models')
+        validate_settings(cms_config, 'url_manager_supported_models')
         self.url_manager_supported_models.extend(cms_config.url_manager_supported_models)
 
     def configure_app(self, cms_config):

@@ -10,7 +10,7 @@ from cms.test_utils.testcases import CMSTestCase
 from djangocms_url_manager.compat import CMS_36
 
 
-@skipUnless(CMS_36, "CMS<4.0")
+@skipUnless(CMS_36, "Test relevant only for CMS<4.0")
 class CMSSettingsUnitTestCase(CMSTestCase):
 
     @override_settings()

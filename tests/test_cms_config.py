@@ -5,17 +5,18 @@ from django.core.exceptions import ImproperlyConfigured
 
 from cms.test_utils.testcases import CMSTestCase
 
-from djangocms_url_manager.compat import CMS_36, UrlManagerCMSExtension
+from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 
 
-@skipIf(CMS_36, "CMS>=4.0")
+@skipIf(CMS_36, "Test relevant only for CMS>=4.0")
 class UrlManagerCMSExtensionTestCase(CMSTestCase):
 
     def test_missing_cms_config_url_manager_supported_models_attribute(self):
         """Tests, if the url_manager_supported_models attribute has not been specified,
         an ImproperlyConfigured exception is raised
         """
+        from djangocms_url_manager.cms_config import UrlManagerCMSExtension
         extensions = UrlManagerCMSExtension()
         cms_config = Mock(
             spec=[],
@@ -28,6 +29,7 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         """Tests ImproperlyConfigured exception is raised if
         url_manager_supported_models setting is not a list
         """
+        from djangocms_url_manager.cms_config import UrlManagerCMSExtension
         extensions = UrlManagerCMSExtension()
         cms_config = Mock(
             spec=[],
@@ -41,6 +43,7 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         """Tests ImproperlyConfigured exception is raised if elements
         in the url_manager_supported_models list are not valid django models class.
         """
+        from djangocms_url_manager.cms_config import UrlManagerCMSExtension
         extensions = UrlManagerCMSExtension()
         cms_config = Mock(
             spec=[],
@@ -54,6 +57,7 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         """Tests ImproperlyConfigured exception is raised if a
         model does not have get_absolute_url implemented
         """
+        from djangocms_url_manager.cms_config import UrlManagerCMSExtension
         extensions = UrlManagerCMSExtension()
         cms_config = Mock(
             spec=[],

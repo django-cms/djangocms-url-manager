@@ -28,7 +28,7 @@ class SiteSelectWidget(Select2Mixin, forms.Select):
     pass
 
 
-class TypeSelectWidget(Select2Mixin, forms.Select):
+class UrlTypeSelectWidget(Select2Mixin, forms.Select):
     pass
 
 
@@ -45,52 +45,24 @@ class ContentTypeObjectSelectWidget(Select2Mixin, forms.TextInput):
 
 class UrlForm(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Set choices based on setup models for type field
-        choices = []
-        for model in supported_models():
-            choices.append((
-                ContentType.objects.get_for_model(model).id,
-                model._meta.verbose_name.capitalize(),
-            ))
-
-        # Add basic options for type field.
-        choices += BASIC_TYPE_CHOICES
-
-        self.fields['type_object'] = forms.ChoiceField(choices=choices)
-
-        # Set type if object exists
-        if self.instance:
-            if self.instance.content_type_id:
-                self.fields['type_object'].initial = self.instance.content_type_id
-                self.fields['content_object'].initial = self.instance.object_id
-            else:
-                for type_name in dict(BASIC_TYPE_CHOICES).keys():
-                    if getattr(self.instance, type_name):
-                        self.fields['type_object'].initial = type_name
-
-    site = forms.ModelChoiceField(
-        label=_('Site'),
-        queryset=Site.objects.all(),
-        widget=SiteSelectWidget(
-            attrs={
-                'data-placeholder': _('Select site to choose pages from'),
-            },
-        ),
-        empty_label='',
-    )
-
-    type_object = forms.ChoiceField(
+    url_type = forms.ChoiceField(
         label=_('Type'),
-        widget=TypeSelectWidget(
+        widget=UrlTypeSelectWidget(
             attrs={
                 'data-placeholder': _('Select type'),
             },
         ),
     )
-
+    site = forms.ModelChoiceField(
+        label=_('Site'),
+        queryset=Site.objects.all(),
+        widget=SiteSelectWidget(
+            attrs={
+                'data-placeholder': _('Select site'),
+            },
+        ),
+        empty_label='',
+    )
     content_object = forms.CharField(
         label=_('Content type object'),
         widget=ContentTypeObjectSelectWidget(
@@ -104,74 +76,109 @@ class UrlForm(forms.ModelForm):
     class Meta:
         model = Url
         fields = (
-            'site', 'type_object', 'manual_url', 'anchor', 'mailto', 'phone',
+            'url_type',
+            'site',
+            'content_object',
+            'manual_url',
+            'anchor',
+            'mailto',
+            'phone',
         )
 
-    def clean(self):
-        data = self.cleaned_data
-        type_object = data.get('type_object')
-        content_object = data.get('content_object')
-        is_base_type = type_object in dict(BASIC_TYPE_CHOICES).keys()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        if is_base_type:
-            if type_object not in self.errors and not data[type_object]:
-                self.add_error(type_object, 'Field is required')
-        else:
-            if content_object:
-                try:
-                    model = ContentType.objects.get_for_id(type_object).model_class()
-                    model.objects.get(id=int(content_object))
-                except ObjectDoesNotExist:
-                    self.add_error('content_object', 'Object not exist in selected model')
+        # Set choices based on setup models for type field
+        choices = []
+        for model in supported_models():
+            choices.append((
+                ContentType.objects.get_for_model(model).id,
+                model._meta.verbose_name.capitalize(),
+            ))
+        # Add basic options for type field.
+        choices += BASIC_TYPE_CHOICES
+        self.fields['url_type'].choices = choices
+
+        # Set type if object exists
+        if self.instance:
+            if self.instance.content_type_id:
+                self.fields['url_type'].initial = self.instance.content_type_id
+                self.fields['content_object'].initial = self.instance.object_id
             else:
-                self.add_error('content_object', 'Field is required')
+                for type_name in dict(BASIC_TYPE_CHOICES).keys():
+                    if getattr(self.instance, type_name):
+                        self.fields['url_type'].initial = type_name
+                        break
 
+    def clean(self):
+        data = super().clean()
+        url_type = data.get('url_type')
+        content_object = data.get('content_object')
+        is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
+
+        for type_name in dict(BASIC_TYPE_CHOICES).keys():
+            if type_name != url_type:
+                data[type_name] = ''
+
+        if is_basic_type:
+            if url_type not in self.errors and not data[url_type]:
+                self.add_error(url_type, _('Field is required'))
+        elif content_object:
+            site = data.get('site')
+            try:
+                content_type = ContentType.objects.get_for_id(url_type)
+                model = content_type.model_class()
+                content_object_qs = model.objects.all()
+                if hasattr(model.objects, 'on_site'):
+                    content_object_qs = content_object_qs.on_site(site)
+                elif hasattr(model, 'site'):
+                    content_object_qs = content_object_qs.filter(site=site)
+                content_object = content_object_qs.get(pk=int(content_object))
+                if Url.objects.filter(content_type=content_type, object_id=data['content_object']).exists():
+                    self.add_error('content_object', _('Url with this object already exists'))
+                data['content_object'] = content_object
+            except ObjectDoesNotExist:
+                self.add_error(
+                    'content_object',
+                    _('Object does not exist in a given content type id: {} and site: {}'.format(
+                        # url_type from cleaned_data can be None when it dont
+                        # pass validation
+                        self.data['url_type'],
+                        site,
+                    ))
+                )
+        else:
+            self.add_error('content_object', _('Field is required'))
         return data
 
     def clean_anchor(self):
         anchor = self.cleaned_data.get('anchor')
 
-        if anchor:
-            if anchor[0] == '#':
-                self.add_error('anchor', 'Do not include a preceding "#" symbol.')
+        if anchor and anchor[0] == '#':
+            self.add_error('anchor', _('Do not include a preceding "#" symbol.'))
         return anchor
 
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        type_object = self.cleaned_data['type_object']
-
-        for type_name in dict(BASIC_TYPE_CHOICES).keys():
-            setattr(instance, type_name, '')
-
-        instance.content_object = None
-
-        if type_object in dict(BASIC_TYPE_CHOICES).keys():
-            setattr(instance, type_object, self.cleaned_data[type_object])
-        else:
-            instance.content_type = ContentType.objects.get_for_id(int(type_object))
-            instance.object_id = int(self.cleaned_data.get('content_object'))
-
-        if commit:
-            instance.save()
-        return instance
+    def save(self, **kwargs):
+        url_type = self.cleaned_data.get('url_type')
+        is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
+        if not is_basic_type:
+            self.instance.content_object = self.cleaned_data['content_object']
+        return super().save(**kwargs)
 
 
 class UrlOverrideForm(UrlForm):
 
     class Meta:
         model = UrlOverride
-        fields = (
-            'url', 'site', 'type_object', 'manual_url', 'anchor', 'mailto', 'phone',
-        )
+        fields = ('url',) + UrlForm.Meta.fields
 
     def clean(self):
-        cleaned_data = super().clean()
-        url = cleaned_data.get('url')
-        site = cleaned_data.get('site')
+        data = super().clean()
+        url = data.get('url')
+        site = data.get('site')
 
         if url and url.site == site:
             raise forms.ValidationError({
                 'site': _('Overriden site must be different from the original.'),  # noqa: E501
             })
-
-        return cleaned_data
+        return data

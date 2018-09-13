@@ -30,7 +30,7 @@
                                 .val(),
                             content_id: $(this.context)
                                 .closest('fieldset')
-                                .find('.field-type_object select')
+                                .find('.field-url_type select')
                                 .val()
                         };
                     },
@@ -40,7 +40,7 @@
                 },
                 initSelection: function(element, callback) {
                     var objectId = element.val();
-                    var contentId = element.closest('fieldset').find('select[id$="type_object"]').val();
+                    var contentId = element.closest('fieldset').find('select[id$="url_type"]').val();
                     $.ajax({
                         url: endpoint,
                         dataType: 'json',
@@ -73,7 +73,7 @@
             hideFields($element);
 
             if (jQuery.isNumeric($element.val())) {
-                $element.closest('fieldset').find('.field-content_object').show();
+                $element.closest('fieldset').find('.field-content_object').css('display', 'block');
             } else {
                 switch($element.val()) {
                     case "manual_url":
@@ -95,7 +95,7 @@
         $(':not([id*=__prefix__])[id$="site"]').each(function(i, element) {
             initializeSiteWidget($(element));
         });
-        $(':not([id*=__prefix__])[id$="type_object"]').each(function(i, element) {
+        $(':not([id*=__prefix__])[id$="url_type"]').each(function(i, element) {
             initializeTypeWidget($(element));
             $($(element)).change(function(){
                 checkTypeField($(element));
@@ -107,13 +107,13 @@
         django
             .jQuery(document)
             .on('formset:added', function(event, $row, formsetName) {
-                let type_object = $($row).find('select[id$="type_object"]');
-                $(type_object).change(function(){
-                    checkTypeField(type_object);
+                let url_type = $($row).find('[id$="url_type"]');
+                $(url_type).change(function(){
+                    checkTypeField(url_type);
                 });
-                initializeSiteWidget($($row).find('select[id$="site"]'));
-                initializeTypeWidget(type_object);
-                initializeContentObjectWidget($($row).find('select[id$="content_object"]'));
+                initializeTypeWidget(url_type);
+                initializeSiteWidget($($row).find('[id$="site"]'));
+                initializeContentObjectWidget($($row).find('[id$="content_object"]'));
             });
     });
 })(CMS.$);

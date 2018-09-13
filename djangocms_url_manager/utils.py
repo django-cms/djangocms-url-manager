@@ -1,4 +1,4 @@
-import collections
+from collections import Iterable
 from functools import lru_cache
 
 from django.apps import apps
@@ -10,7 +10,6 @@ from djangocms_url_manager.compat import CMS_36
 
 
 def validate_settings(config, attr_name):
-    """Validates settings for url manager"""
     if not hasattr(config, attr_name):
         raise ImproperlyConfigured(
             "{} must be defined in your {}".format(
@@ -18,16 +17,19 @@ def validate_settings(config, attr_name):
                 'settings' if CMS_36 else 'cms_config',
             )
         )
-    if not isinstance(getattr(config, attr_name), collections.Iterable):
+    models = getattr(config, attr_name)
+    if not isinstance(models, Iterable):
         raise ImproperlyConfigured(
             "{} not defined as an Iterable".format(attr_name))
 
-    if CMS_36:
-        models = supported_models()
-    else:
-        models = getattr(config, attr_name)
-
     for model in models:
+        if isinstance(model, str):
+            try:
+                model = apps.get_model(model)
+            except LookupError:
+                raise ImproperlyConfigured('"{}" app for this model is not in INSTALLED_APPS'.format(model))
+            except ValueError:
+                raise ImproperlyConfigured('"{}" is not valid path to model'.format(model))
         if not isinstance(model, ModelBase):
             raise ImproperlyConfigured(
                 "{!r} is not a subclass of django.db.models.base.ModelBase".format(model))
@@ -38,20 +40,15 @@ def validate_settings(config, attr_name):
 
 @lru_cache(maxsize=1)
 def supported_models():
-    """Return a list with supported models to use with url manager"""
-    if CMS_36:
-        models = []
-        for app_label in getattr(settings, 'URL_MANAGER_SUPPORTED_MODELS', []):
-            try:
-                models.append(apps.get_model(app_label))
-            except ValueError:
-                return '"{}" is not valid path to model'.format(app_label)
-        return models
-    else:
+    try:
         extension = apps.get_app_config('djangocms_url_manager').cms_extension
         return extension.url_manager_supported_models
+    except AttributeError:
+        return [
+            apps.get_model(model)
+            for model in getattr(settings, 'URL_MANAGER_SUPPORTED_MODELS', [])
+        ]
 
 
 def is_model_supported(model):
-    """Checks if model is supported to use with url manager"""
     return model in supported_models()

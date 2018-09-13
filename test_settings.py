@@ -3,7 +3,6 @@ HELPER_SETTINGS = {
     'INSTALLED_APPS': [
         'djangocms_url_manager',
         'djangocms_url_manager.test_utils.polls',
-        'djangocms_url_manager.test_utils.blogpost',
     ],
     'MIGRATION_MODULES': {
         'sites': None,
@@ -11,6 +10,7 @@ HELPER_SETTINGS = {
         'auth': None,
         'cms': None,
         'menus': None,
+        'polls': None,
         'djangocms_url_manager': None,
     },
     'CMS_PERMISSION': True,
@@ -48,9 +48,8 @@ HELPER_SETTINGS = {
     },
     'LANGUAGE_CODE': 'en',
     'URL_MANAGER_SUPPORTED_MODELS': [
-        'polls.PollContent',
         'cms.Page',
-        'blogpost.BlogContent',
+        'polls.PollContent',
     ]
 }
 

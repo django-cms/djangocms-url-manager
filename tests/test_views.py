@@ -1,5 +1,4 @@
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
 
 from cms.api import create_page
 from cms.models import User
@@ -11,8 +10,12 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
 
     def test_select2_view_no_content_id(self):
         with self.login_user_context(self.superuser):
-            with self.assertRaises(ObjectDoesNotExist):
+            with self.assertRaises(ValueError) as err:
                 self.client.get(self.select2_endpoint)
+            self.assertEqual(
+                str(err.exception),
+                'Content type with id None does not exists.'
+            )
 
     def test_select2_view_no_permission(self):
         response = self.client.get(self.select2_endpoint)
@@ -22,7 +25,7 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,
-                data={'content_id': self.page_content_id},
+                data={'content_id': self.page_contenttype_id},
             )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -34,7 +37,7 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,
-                data={'content_id': self.poll_content_id},
+                data={'content_id': self.poll_content_contenttype_id},
             )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -60,7 +63,7 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,
-                data={'content_id': self.page_content_id, 'limit': 2},
+                data={'content_id': self.page_contenttype_id, 'limit': 2},
             )
 
         content = response.json()
@@ -73,7 +76,7 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,
-                data={'content_id': self.page_content_id},
+                data={'content_id': self.page_contenttype_id},
             )
 
         self.assertEqual(response.status_code, 200)
@@ -86,7 +89,7 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,
-                data={'content_id': self.poll_content_id},
+                data={'content_id': self.poll_content_contenttype_id},
             )
 
         self.assertEqual(response.status_code, 200)
@@ -100,7 +103,7 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
             response = self.client.get(
                 self.select2_endpoint,
                 data={
-                    'content_id': self.page_content_id,
+                    'content_id': self.page_contenttype_id,
                     'site': self.site2.pk,
                 },
             )
@@ -115,8 +118,9 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
             response = self.client.get(
                 self.select2_endpoint,
                 data={
-                    'content_id': self.page_content_id,
-                    'pk': self.site2.pk,
+                    'content_id': self.page_contenttype_id,
+                    'site': self.site2.pk,
+                    'pk': self.page2.pk,
                 },
             )
         self.assertEqual(response.status_code, 200)
@@ -130,7 +134,8 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
             response = self.client.get(
                 self.select2_endpoint,
                 data={
-                    'content_id': self.poll_content_id,
+                    'content_id': self.poll_content_contenttype_id,
+                    'site': self.site2.pk,
                     'pk': self.poll_content.pk,
                 },
             )

@@ -8,7 +8,6 @@ from cms.utils.urlutils import admin_reverse
 
 from djangocms_url_manager.compat import get_page_placeholders
 from djangocms_url_manager.constants import (
-    CREATE_URL_URL_NAME,
     SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
 )
 from djangocms_url_manager.models import Url as UrlModel, UrlOverride
@@ -18,7 +17,7 @@ from djangocms_url_manager.utils import supported_models
 
 class BaseUrlTestCase(CMSTestCase):
     select2_endpoint = admin_reverse(SELECT2_CONTENT_TYPE_OBJECT_URL_NAME)
-    create_url_endpoint = admin_reverse(CREATE_URL_URL_NAME)
+    create_url_endpoint = admin_reverse('djangocms_url_manager_url_add')
 
     def setUp(self):
         self.language = 'en'
@@ -64,8 +63,8 @@ class BaseUrlTestCase(CMSTestCase):
             language=self.language,
             text='example2',
         )
-        self.page_content_id = ContentType.objects.get_for_model(Page).id
-        self.poll_content_id = ContentType.objects.get_for_model(PollContent).id
+        self.page_contenttype_id = ContentType.objects.get_for_model(Page).id
+        self.poll_content_contenttype_id = ContentType.objects.get_for_model(PollContent).id
 
     def tearDown(self):
         supported_models.cache_clear()
