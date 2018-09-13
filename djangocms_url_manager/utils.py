@@ -44,10 +44,11 @@ def supported_models():
         extension = apps.get_app_config('djangocms_url_manager').cms_extension
         return extension.url_manager_supported_models
     except AttributeError:
-        return [
-            apps.get_model(model)
-            for model in set(getattr(settings, 'URL_MANAGER_SUPPORTED_MODELS', []))
-        ]
+        url_manager_supported_models = []
+        for model in getattr(settings, 'URL_MANAGER_SUPPORTED_MODELS', []):
+            if model not in url_manager_supported_models:
+                url_manager_supported_models.append(apps.get_model(model))
+        return url_manager_supported_models
 
 
 def is_model_supported(model):
