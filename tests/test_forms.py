@@ -62,17 +62,17 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     def test_url_form_url_type_choices(self):
         form = UrlForm()
-        self.assertListEqual(
-            form.fields['url_type'].choices,
-            [
-                (self.page_contenttype_id, 'Page'),
-                (self.poll_content_contenttype_id, 'Poll content'),
-                ('manual_url', 'Manual URL'),
-                ('anchor', 'Anchor'),
-                ('mailto', 'Email address'),
-                ('phone', 'Phone')
-            ]
-        )
+        choices = form.fields['url_type'].choices
+        expected_choices = [
+            (self.page_contenttype_id, 'Page'),
+            (self.poll_content_contenttype_id, 'Poll content'),
+            ('manual_url', 'Manual URL'),
+            ('anchor', 'Anchor'),
+            ('mailto', 'Email address'),
+            ('phone', 'Phone')
+        ]
+        self.assertEqual(len(choices), len(expected_choices))
+        self.assertTrue(all(model in expected_choices for model in choices))
 
     def test_url_form_create_url_with_valid_manual_url(self):
         form = UrlForm({

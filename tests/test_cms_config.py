@@ -1,5 +1,4 @@
 import warnings
-
 from unittest import skipIf
 from unittest.mock import Mock, patch
 

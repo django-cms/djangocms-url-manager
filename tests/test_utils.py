@@ -14,10 +14,9 @@ from .base import BaseUrlTestCase
 class UtilsTestCase(BaseUrlTestCase):
 
     def test_supported_models(self):
-        self.assertListEqual(
-            supported_models(),
-            [Page, PollContent]
-        )
+        expected_models = [Page, PollContent]
+        self.assertEqual(len(supported_models()), len(expected_models))
+        self.assertTrue(all(model in expected_models for model in supported_models()))
 
     @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
     @override_settings(URL_MANAGER_SUPPORTED_MODELS=['polls.PollContent'])

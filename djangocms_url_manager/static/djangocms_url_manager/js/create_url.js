@@ -63,11 +63,9 @@
             });
         }
         function hideFields($element) {
-            $element.closest('fieldset').find('.field-content_object').hide();
-            $element.closest('fieldset').find('.field-manual_url').hide();
-            $element.closest('fieldset').find('.field-anchor').hide();
-            $element.closest('fieldset').find('.field-mailto').hide();
-            $element.closest('fieldset').find('.field-phone').hide();
+            $element.closest('fieldset').find(
+              '.field-content_object, .field-manual_url, .field-anchor, .field-mailto, .field-phone'
+            ).hide();
         }
         function checkTypeField($element) {
             hideFields($element);
@@ -97,7 +95,7 @@
         });
         $(':not([id*=__prefix__])[id$="url_type"]').each(function(i, element) {
             initializeTypeWidget($(element));
-            $($(element)).change(function(){
+            $(element).on('change', function() {
                 checkTypeField($(element));
             });
         });
@@ -107,7 +105,7 @@
         django
             .jQuery(document)
             .on('formset:added', function(event, $row, formsetName) {
-                let url_type = $($row).find('[id$="url_type"]');
+                var url_type = $($row).find('[id$="url_type"]');
                 $(url_type).change(function(){
                     checkTypeField(url_type);
                 });
