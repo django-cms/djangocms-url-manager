@@ -31,7 +31,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.anchor, ''),
         self.assertEqual(instance.mailto, ''),
         self.assertEqual(instance.phone, ''),
-        self.assertEqual(instance.url_id, 1),
+        self.assertEqual(instance.url_id, self.url.pk),
 
     def test_url_override_form_disallow_same_site_as_original_url(self):
         form = UrlOverrideForm({
@@ -272,4 +272,46 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertDictEqual(
             form.errors,
             {'content_object': ['Field is required']}
+        )
+
+    def test_url_override_form_dont_validate_object_already_exists(self):
+        self._create_url(
+            site=self.site2,
+            content_object=self.page2,
+        )
+        form = UrlOverrideForm({
+            # self.url is with self.default_site and self.page
+            'url': self.url.pk,
+            'site': self.site2.id,
+            'url_type': self.page_contenttype_id,
+            'content_object': self.page2.pk,
+        })
+        self.assertTrue(form.is_valid())
+        instance = form.save()
+        self.assertEqual(instance.site_id, self.site2.pk),
+        self.assertEqual(instance.content_type_id, self.page_contenttype_id),
+        self.assertEqual(instance.object_id, self.page2.pk),
+        self.assertEqual(instance.anchor, ''),
+        self.assertEqual(instance.manual_url, ''),
+        self.assertEqual(instance.mailto, ''),
+        self.assertEqual(instance.phone, ''),
+        self.assertEqual(instance.url_id, self.url.pk),
+
+    def test_url_override_form_validate_object_with_this_site_and_object_already_exists(self):
+        self._create_url_override(
+            self.url,
+            self.site2,
+            self.page2,
+        )
+        form = UrlOverrideForm({
+            # self.url is with self.default_site and self.page
+            'url': self.url.pk,
+            'site': self.site2.id,
+            'url_type': self.page_contenttype_id,
+            'content_object': self.page2.pk,
+        })
+        self.assertFalse(form.is_valid())
+        self.assertDictEqual(
+            form.errors,
+            {'__all__': ['Url override with this Site and Url already exists.']}
         )

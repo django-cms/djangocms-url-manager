@@ -8,8 +8,8 @@ class UrlManagerConfig(AppConfig):
     verbose_name = _('django CMS URL Manager')
 
     def ready(self):
-        from djangocms_url_manager.compat import CMS_36
+        from .compat import CMS_36
 
         if CMS_36:
-            from djangocms_url_manager.utils import validate_settings
+            from .utils import validate_settings
             validate_settings(settings, 'URL_MANAGER_SUPPORTED_MODELS')

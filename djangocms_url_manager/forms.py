@@ -6,10 +6,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from cms.utils.urlutils import admin_reverse
 
-from djangocms_url_manager.utils import supported_models
-
 from .constants import SELECT2_CONTENT_TYPE_OBJECT_URL_NAME
 from .models import BASIC_TYPE_CHOICES, Url, UrlOverride
+from .utils import supported_models
 
 
 class Select2Mixin:
@@ -64,10 +63,10 @@ class UrlForm(forms.ModelForm):
         empty_label='',
     )
     content_object = forms.CharField(
-        label=_('Content type object'),
+        label=_('Content object'),
         widget=ContentTypeObjectSelectWidget(
             attrs={
-                'data-placeholder': _('Select content type object'),
+                'data-placeholder': _('Select content object'),
             },
         ),
         required=False,
@@ -134,8 +133,14 @@ class UrlForm(forms.ModelForm):
                 elif hasattr(model, 'site'):
                     content_object_qs = content_object_qs.filter(site=site)
                 content_object = content_object_qs.get(pk=int(content_object))
-                if Url.objects.filter(content_type=content_type, object_id=data['content_object']).exists():
+
+                if (
+                    # dont validate for UrlOverride
+                    not data.get('url')
+                    and Url.objects.filter(content_type=content_type, object_id=data['content_object']).exists()
+                ):
                     self.add_error('content_object', _('Url with this object already exists'))
+
                 data['content_object'] = content_object
             except ObjectDoesNotExist:
                 self.add_error(

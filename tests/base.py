@@ -47,11 +47,6 @@ class BaseUrlTestCase(CMSTestCase):
         self.url = self._create_url(
             content_object=self.page,
         )
-        self.urloverride = self._create_url_override(
-            self.url,
-            self.site2,
-            self.page2,
-        )
         self.poll = Poll.objects.create(name='Test poll')
         self.poll_content = PollContent.objects.create(
             poll=self.poll,

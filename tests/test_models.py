@@ -18,9 +18,14 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
         )
 
     def test__get_url_obj_other_site(self):
+        urloverride = self._create_url_override(
+            self.url,
+            self.site2,
+            self.page2,
+        )
         self.assertEqual(
             self.url._get_url_obj(self.site2),
-            self.urloverride,
+            urloverride,
         )
 
     def test__get_url_obj_other_site_with_no_override(self):
