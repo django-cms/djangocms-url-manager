@@ -46,7 +46,7 @@ def supported_models():
     except AttributeError:
         return [
             apps.get_model(model)
-            for model in getattr(settings, 'URL_MANAGER_SUPPORTED_MODELS', [])
+            for model in set(getattr(settings, 'URL_MANAGER_SUPPORTED_MODELS', []))
         ]
 
 

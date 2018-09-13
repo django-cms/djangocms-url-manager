@@ -1,5 +1,7 @@
+import warnings
+
 from unittest import skipIf
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -66,3 +68,20 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         )
         with self.assertRaises(ImproperlyConfigured):
             extensions.handle_url_manager_setting(cms_config)
+
+    def test_emit_warning_when_duplicated_models(self):
+        """Tests if Warning is emitted when in cms_config
+        url_manager_supported_models are duplicated models
+        """
+        from djangocms_url_manager.cms_config import UrlManagerCMSExtension
+        extensions = UrlManagerCMSExtension()
+        cms_config = Mock(
+            spec=[],
+            djangocms_url_manager_enabled=True,
+            url_manager_supported_models=[PollContent, PollContent]
+        )
+
+        with patch.object(warnings, 'warn') as mock:
+            extensions.handle_url_manager_setting(cms_config)
+        message = 'Model {!r} is duplicated in url_manager_supported_models'.format(PollContent)
+        mock.assert_called_with(message, UserWarning)

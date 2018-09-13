@@ -1,3 +1,5 @@
+import warnings
+
 from cms.app_base import CMSAppConfig, CMSAppExtension
 from cms.models import Page
 
@@ -19,7 +21,14 @@ class UrlManagerCMSExtension(CMSAppExtension):
         and add it to the masterlist
         """
         validate_settings(cms_config, 'url_manager_supported_models')
-        self.url_manager_supported_models.extend(cms_config.url_manager_supported_models)
+        for model in cms_config.url_manager_supported_models:
+            if model in self.url_manager_supported_models:
+                warnings.warn(
+                    'Model {!r} is duplicated in url_manager_supported_models'.format(model),
+                    UserWarning,
+                )
+            else:
+                self.url_manager_supported_models.append(model)
 
     def configure_app(self, cms_config):
         self.handle_url_manager_setting(cms_config)
