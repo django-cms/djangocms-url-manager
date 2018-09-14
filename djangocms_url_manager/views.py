@@ -1,18 +1,12 @@
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic import ListView
 
-from cms.models import Page
-
-from .compat import CMS_36
+from djangocms_url_manager.utils import is_model_supported
 
 
-class PageSelect2View(ListView):
-    if CMS_36:
-        queryset = Page.objects.drafts()
-    else:
-        queryset = Page.objects.all()
+class ContentTypeObjectSelect2View(ListView):
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -35,21 +29,36 @@ class PageSelect2View(ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        term = self.request.GET.get('term')
+        content_id = self.request.GET.get('content_id', None)
         site = self.request.GET.get('site')
+
+        try:
+            content_object = ContentType.objects.get_for_id(content_id)
+        except ContentType.DoesNotExist:
+            raise ValueError(
+                'Content type with id {} does not exists.'.format(content_id)
+            )
+
+        model = content_object.model_class()
+        if not is_model_supported(model):
+            raise ValueError(
+                '{} is not available to use, check content_id param'.format(model)
+            )
+
+        queryset = model.objects.all()
         try:
             pk = int(self.request.GET.get('pk'))
         except (TypeError, ValueError):
             pk = None
-        q = Q()
-        if term:
-            q |= Q(title_set__title__icontains=term)
+
         if site:
-            queryset = queryset.on_site(site)
+            if hasattr(model.objects, 'on_site'):
+                queryset = queryset.on_site(site)
+            elif hasattr(model, 'site'):
+                queryset = queryset.filter(site=site)
         if pk:
-            q |= Q(pk=pk)
-        return queryset.filter(q)
+            queryset = queryset.filter(pk=pk)
+        return queryset
 
     def get_paginate_by(self, queryset):
         return self.request.GET.get('limit', 30)

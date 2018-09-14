@@ -18,9 +18,14 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
         )
 
     def test__get_url_obj_other_site(self):
+        urloverride = self._create_url_override(
+            self.url,
+            self.site2,
+            self.page2,
+        )
         self.assertEqual(
             self.url._get_url_obj(self.site2),
-            self.urloverride,
+            urloverride,
         )
 
     def test__get_url_obj_other_site_with_no_override(self):
@@ -35,7 +40,7 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
 
     def test_get_url_page(self):
         url = self._create_url(
-            page=self.page,
+            content_object=self.page,
         )
         parsed = urlparse(url.get_url(url.site))
         self.assertEqual(parsed.netloc, 'example.com')
@@ -72,7 +77,7 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
 
     def test_get_url_page_combined_with_anchor(self):
         url = self._create_url(
-            page=self.page,
+            content_object=self.page,
             anchor='foo',
         )
         parsed = urlparse(url.get_url(url.site))
@@ -105,7 +110,7 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
 
     def test_get_url_page_shadows_manual_url_phone_and_mailto(self):
         url = self._create_url(
-            page=self.page,
+            content_object=self.page,
             manual_url='https://google.com',
             anchor='foo',
         )

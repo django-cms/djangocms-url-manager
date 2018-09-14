@@ -88,7 +88,6 @@ jobs:
       - persist_to_workspace:
          root: images
          paths: py36.tar
-
   flake8:
     <<: *py35default
   isort:

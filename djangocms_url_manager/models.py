@@ -1,9 +1,11 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from cms.models import CMSPlugin, Page
+from cms.models import CMSPlugin
 from cms.utils.i18n import get_default_language_for_site
 
 from djangocms_attributes_field.fields import AttributesField
@@ -38,6 +40,13 @@ TARGET_CHOICES = (
     ('_top', _('Delegate to top')),
 )
 
+BASIC_TYPE_CHOICES = (
+    ('manual_url', _('Manual URL')),
+    ('anchor', _('Anchor')),
+    ('mailto', _('Email address')),
+    ('phone', _('Phone')),
+)
+
 
 class AbstractUrl(models.Model):
     site = models.ForeignKey(
@@ -50,13 +59,15 @@ class AbstractUrl(models.Model):
         max_length=2040,
         help_text=_('Provide a valid URL to an external website.'),
     )
-    page = models.ForeignKey(
-        Page,
-        verbose_name=_('page'),
-        blank=True,
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.PROTECT,
         null=True,
-        on_delete=models.SET_NULL,
     )
+    object_id = models.PositiveIntegerField(
+        null=True,
+    )
+    content_object = GenericForeignKey('content_type', 'object_id')
     anchor = models.CharField(
         verbose_name=_('anchor'),
         blank=True,
@@ -98,10 +109,10 @@ class Url(AbstractUrl):
     def get_url(self, site):
         obj = self._get_url_obj(site)
         language = get_default_language_for_site(obj.site)
-        if obj.page:
+        if obj.content_object:
             url = '//{}{}'.format(
                 obj.site.domain,
-                obj.page.get_absolute_url(language=language),
+                obj.content_object.get_absolute_url(language=language),
             )
         elif obj.manual_url:
             url = obj.manual_url

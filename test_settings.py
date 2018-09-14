@@ -2,7 +2,17 @@ HELPER_SETTINGS = {
     'TIME_ZONE': 'Europe/Zurich',
     'INSTALLED_APPS': [
         'djangocms_url_manager',
+        'djangocms_url_manager.test_utils.polls',
     ],
+    'MIGRATION_MODULES': {
+        'sites': None,
+        'contenttypes': None,
+        'auth': None,
+        'cms': None,
+        'menus': None,
+        'polls': None,
+        'djangocms_url_manager': None,
+    },
     'CMS_PERMISSION': True,
     # At present, testing requires bootstrap to be disabled.
     # 'ALDRYN_BOILERPLATE_NAME': 'bootstrap3',
@@ -37,6 +47,10 @@ HELPER_SETTINGS = {
         ],
     },
     'LANGUAGE_CODE': 'en',
+    'URL_MANAGER_SUPPORTED_MODELS': [
+        'cms.Page',
+        'polls.PollContent',
+    ]
 }
 
 

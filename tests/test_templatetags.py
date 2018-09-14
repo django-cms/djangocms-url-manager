@@ -21,7 +21,11 @@ class UrlManagerTemplateTagsTestCase(BaseUrlTestCase):
         self.assertEqual(parsed.path, '/en/test/')
 
     def test_render_url_other_site(self):
-
+        self._create_url_override(
+            self.url,
+            self.site2,
+            self.page2,
+        )
         with override_settings(SITE_ID=self.site2.pk):
             output = self.render_template_obj(
                 self.url_template,
