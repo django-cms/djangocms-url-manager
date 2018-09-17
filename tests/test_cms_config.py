@@ -1,13 +1,17 @@
-import warnings
 from unittest import skipIf
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 from django.core.exceptions import ImproperlyConfigured
 
+from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
 
 from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
+from djangocms_url_manager.test_utils.polls.utils import (
+    get_all_poll_content_objects,
+)
+from djangocms_url_manager.utils import supported_models
 
 
 @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
@@ -79,8 +83,39 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
             djangocms_url_manager_enabled=True,
             url_manager_supported_models=[PollContent, PollContent]
         )
-
-        with patch.object(warnings, 'warn') as mock:
+        with self.assertRaises(ImproperlyConfigured):
             extensions.handle_url_manager_setting(cms_config)
-        message = 'Model {!r} is duplicated in url_manager_supported_models'.format(PollContent)
-        mock.assert_called_with(message, UserWarning)
+
+    def test_url_manager_supported_model(self):
+        from djangocms_url_manager.cms_config import UrlManagerCMSExtension
+        extensions = UrlManagerCMSExtension()
+        cms_config = Mock(
+            spec=[],
+            djangocms_url_manager_enabled=True,
+            url_manager_supported_models=[PollContent]
+        )
+        extensions.handle_url_manager_setting(cms_config)
+        self.assertDictEqual(
+            supported_models(),
+            {
+                Page: None,
+                PollContent: get_all_poll_content_objects,
+            }
+        )
+
+    def test_url_manager_supported_tuple_model_without_function(self):
+        from djangocms_url_manager.cms_config import UrlManagerCMSExtension
+        extensions = UrlManagerCMSExtension()
+        cms_config = Mock(
+            spec=[],
+            djangocms_url_manager_enabled=True,
+            url_manager_supported_models=[(PollContent)]
+        )
+        extensions.handle_url_manager_setting(cms_config)
+        self.assertDictEqual(
+            supported_models(),
+            {
+                Page: None,
+                PollContent: get_all_poll_content_objects,
+            }
+        )

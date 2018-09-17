@@ -9,14 +9,15 @@ from cms.utils.urlutils import admin_reverse
 from djangocms_url_manager.compat import get_page_placeholders
 from djangocms_url_manager.constants import (
     SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
+    SELECT2_URLS,
 )
 from djangocms_url_manager.models import Url as UrlModel, UrlOverride
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
-from djangocms_url_manager.utils import supported_models
 
 
 class BaseUrlTestCase(CMSTestCase):
     select2_endpoint = admin_reverse(SELECT2_CONTENT_TYPE_OBJECT_URL_NAME)
+    select2_urls_endpoint = admin_reverse(SELECT2_URLS)
     create_url_endpoint = admin_reverse('djangocms_url_manager_url_add')
 
     def setUp(self):
@@ -26,6 +27,7 @@ class BaseUrlTestCase(CMSTestCase):
             template='page.html',
             language=self.language,
             in_navigation=True,
+            published=True,
         )
         self.placeholder = get_page_placeholders(
             self.page,
@@ -43,9 +45,14 @@ class BaseUrlTestCase(CMSTestCase):
             language=self.language,
             in_navigation=True,
             site=self.site2,
+            published=True,
         )
         self.url = self._create_url(
             content_object=self.page,
+        )
+        self.url2 = self._create_url(
+            manual_url='https://example.com/',
+            site=self.site2,
         )
         self.poll = Poll.objects.create(name='Test poll')
         self.poll_content = PollContent.objects.create(
@@ -60,9 +67,6 @@ class BaseUrlTestCase(CMSTestCase):
         )
         self.page_contenttype_id = ContentType.objects.get_for_model(Page).id
         self.poll_content_contenttype_id = ContentType.objects.get_for_model(PollContent).id
-
-    def tearDown(self):
-        supported_models.cache_clear()
 
     def _create_url(self, site=None, content_object=None, manual_url='',
                     phone='', mailto='', anchor=''):
