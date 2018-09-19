@@ -1,0 +1,6 @@
+{
+    "package-name": "djangocms-url-manager",
+    "installed-apps": [
+        "djangocms_url_manager"
+    ]
+}
