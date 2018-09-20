@@ -49,7 +49,7 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
 
     def test_return_empty_choices_when_page_do_not_have_title_in_select2_view(self):
         with self.login_user_context(self.superuser):
-            with mock.patch('cms.models.Page.__str__', lambda x: ''):
+            with mock.patch('cms.models.Page.__str__', lambda _: ''):
                 response = self.client.get(
                     self.select2_endpoint,
                     data={'content_id': self.page_contenttype_id},
