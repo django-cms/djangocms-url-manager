@@ -11,13 +11,14 @@ class ContentTypeObjectSelect2View(ListView):
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         context = self.get_context_data()
+        import ipdb;ipdb.set_trace()
         data = {
             'results': [
                 {
                     'text': str(obj),
                     'id': obj.pk,
                 }
-                for obj in context['object_list']
+                for obj in context['object_list'] if obj.__str__
             ],
             'more': context['page_obj'].has_next(),
         }
