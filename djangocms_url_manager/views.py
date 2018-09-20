@@ -11,7 +11,6 @@ class ContentTypeObjectSelect2View(ListView):
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         context = self.get_context_data()
-        import ipdb;ipdb.set_trace()
         data = {
             'results': [
                 {
