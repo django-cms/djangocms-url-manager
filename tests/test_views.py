@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.contrib.contenttypes.models import ContentType
 
 from cms.api import create_page
@@ -44,6 +46,16 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
             [p['id'] for p in response.json()['results']],
             [self.poll_content.pk, self.poll_content2.pk],
         )
+
+    def test_return_empty_choices_when_page_do_not_have_title_in_select2_view(self):
+        with self.login_user_context(self.superuser):
+            with mock.patch('cms.models.Page.__str__', lambda _: ''):
+                response = self.client.get(
+                    self.select2_endpoint,
+                    data={'content_id': self.page_contenttype_id},
+                )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()['results'])
 
     def test_raise_error_when_return_unregistered_user_model_in_select2_view(self):
         with self.login_user_context(self.superuser):
