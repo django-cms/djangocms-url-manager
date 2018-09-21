@@ -17,7 +17,7 @@ class ContentTypeObjectSelect2View(ListView):
                     'text': str(obj),
                     'id': obj.pk,
                 }
-                for obj in context['object_list'] if str(obj)
+                for obj in context['object_list']
             ],
             'more': context['page_obj'].has_next(),
         }
