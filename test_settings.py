@@ -1,3 +1,9 @@
+from djangocms_url_manager.test_utils.polls.utils import (
+    get_all_poll_content_objects,
+    get_published_pages_objects,
+)
+
+
 HELPER_SETTINGS = {
     'TIME_ZONE': 'Europe/Zurich',
     'INSTALLED_APPS': [
@@ -48,8 +54,8 @@ HELPER_SETTINGS = {
     },
     'LANGUAGE_CODE': 'en',
     'URL_MANAGER_SUPPORTED_MODELS': [
-        'cms.Page',
-        'polls.PollContent',
+        ('cms.Page', get_published_pages_objects),
+        ('polls.PollContent', get_all_poll_content_objects),
     ]
 }
 

@@ -8,10 +8,18 @@ from django.test import override_settings
 from cms.test_utils.testcases import CMSTestCase
 
 from djangocms_url_manager.compat import CMS_36
+from djangocms_url_manager.test_utils.polls.models import PollContent
+from djangocms_url_manager.test_utils.polls.utils import (
+    get_all_poll_content_objects,
+)
+from djangocms_url_manager.utils import supported_models
 
 
 @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
 class CMSSettingsUnitTestCase(CMSTestCase):
+
+    def tearDown(self):
+        supported_models.cache_clear()
 
     @override_settings()
     def test_missing_url_manager_support_models_attribute(self):
@@ -53,3 +61,18 @@ class CMSSettingsUnitTestCase(CMSTestCase):
         """
         with self.assertRaises(ImproperlyConfigured):
             apps.get_app_config('djangocms_url_manager').ready()
+
+    @override_settings(URL_MANAGER_SUPPORTED_MODELS=['polls.PollContent'])
+    def test_url_manager_supported_model_string(self):
+        apps.get_app_config('djangocms_url_manager').ready()
+        self.assertDictEqual(supported_models(), {PollContent: None})
+
+    @override_settings(URL_MANAGER_SUPPORTED_MODELS=[('polls.PollContent')])
+    def test_url_manager_supported_model_tuple_string_without_function(self):
+        apps.get_app_config('djangocms_url_manager').ready()
+        self.assertDictEqual(supported_models(), {PollContent: None})
+
+    @override_settings(URL_MANAGER_SUPPORTED_MODELS=[('polls.PollContent', get_all_poll_content_objects)])
+    def test_url_manager_supported_model_tuple_string_with_function(self):
+        apps.get_app_config('djangocms_url_manager').ready()
+        self.assertDictEqual(supported_models(), {PollContent: get_all_poll_content_objects})

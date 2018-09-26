@@ -1,12 +1,16 @@
+from unittest import skipIf, skipUnless
+
 from django.contrib.contenttypes.models import ContentType
 
 from cms.api import create_page
-from cms.models import User
+from cms.models import Page, User
+
+from djangocms_url_manager.compat import CMS_36
 
 from .base import BaseUrlTestCase
 
 
-class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
+class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
 
     def test_select2_view_no_content_id(self):
         with self.login_user_context(self.superuser):
@@ -21,7 +25,24 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
         response = self.client.get(self.select2_endpoint)
         self.assertEqual(response.status_code, 403)
 
-    def test_return_page_in_select2_view(self):
+    @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
+    def test_return_page_in_select2_view_for_cms36(self):
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                self.select2_endpoint,
+                data={
+                    'content_id': self.page_contenttype_id,
+                    'site': self.site2.pk,
+                },
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [p['id'] for p in response.json()['results']],
+            [Page.objects.published(self.site2.pk).filter(publisher_is_draft=False).last().pk],
+        )
+
+    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
+    def test_return_page_in_select2_view_for_cms40(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,
@@ -53,7 +74,28 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
                     data={'content_id': ContentType.objects.get_for_model(User).id},
                 )
 
-    def test_select2_view_set_limit(self):
+    @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
+    def test_select2_view_set_limit_for_cms36(self):
+        create_page(
+            title='test 3',
+            template='page.html',
+            language=self.language,
+            in_navigation=True,
+            published=True,
+        )
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                self.select2_endpoint,
+                data={'content_id': self.page_contenttype_id, 'limit': 1},
+            )
+
+        content = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(content['more'])
+        self.assertEqual(len(content['results']), 1)
+
+    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
+    def test_select2_view_set_limit_for_cms40(self):
         create_page(
             title='test 3',
             template='page.html',
@@ -67,7 +109,6 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
             )
 
         content = response.json()
-
         self.assertEqual(response.status_code, 200)
         self.assertTrue(content['more'])
         self.assertEqual(len(content['results']), 2)
@@ -98,7 +139,24 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
             str(self.poll_content),
         )
 
-    def test_select2_view_site(self):
+    @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
+    def test_select2_view_site_for_cms36(self):
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                self.select2_endpoint,
+                data={
+                    'content_id': self.page_contenttype_id,
+                    'site': self.site2.pk,
+                },
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [a['id'] for a in response.json()['results']],
+            [Page.objects.published(self.site2.pk).filter(publisher_is_draft=False).last().pk],
+        )
+
+    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
+    def test_select2_view_site_for_cms40(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,
@@ -113,7 +171,26 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
             [self.page2.pk],
         )
 
-    def test_select2_page_view_pk(self):
+    @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
+    def test_select2_page_view_pk_for_cms36(self):
+        page = Page.objects.published(self.site2.pk).filter(publisher_is_draft=False).last().pk
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                self.select2_endpoint,
+                data={
+                    'content_id': self.page_contenttype_id,
+                    'site': self.site2.pk,
+                    'pk': page,
+                },
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [a['id'] for a in response.json()['results']],
+            [page],
+        )
+
+    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
+    def test_select2_page_view_pk_for_cms40(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,
@@ -144,3 +221,63 @@ class UrlManagerSelect2ViewsTestCase(BaseUrlTestCase):
             [a['id'] for a in response.json()['results']],
             [self.poll_content.pk],
         )
+
+
+class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
+
+    def test_select2_url_view_no_permission(self):
+        response = self.client.get(self.select2_urls_endpoint)
+        self.assertEqual(response.status_code, 403)
+
+    def test_select2_url_view_without_site_id(self):
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                self.select2_urls_endpoint,
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [p['id'] for p in response.json()['results']],
+            [self.url.pk, self.url2.pk],
+        )
+
+    def test_select2_url_view_with_site_id(self):
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                self.select2_urls_endpoint,
+                data={
+                    'site': self.site2.pk,
+                }
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [p['id'] for p in response.json()['results']],
+            [self.url2.pk],
+        )
+
+    def test_select2_url_view_with_object_pk(self):
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                self.select2_urls_endpoint,
+                data={
+                    'pk': self.url2.pk,
+                },
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [a['id'] for a in response.json()['results']],
+            [self.url2.pk],
+        )
+
+    def test_select2_url_view_set_limit(self):
+        self._create_url(anchor='test')
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                self.select2_urls_endpoint,
+                data={
+                    'limit': 2,
+                },
+            )
+        content = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(content['more'])
+        self.assertEqual(len(content['results']), 2)

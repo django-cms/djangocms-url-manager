@@ -6,8 +6,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from cms.utils.urlutils import admin_reverse
 
-from .constants import SELECT2_CONTENT_TYPE_OBJECT_URL_NAME
-from .models import BASIC_TYPE_CHOICES, Url, UrlOverride
+from .constants import SELECT2_CONTENT_TYPE_OBJECT_URL_NAME, SELECT2_URLS
+from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlOverride
 from .utils import supported_models
 
 
@@ -35,6 +35,37 @@ class ContentTypeObjectSelectWidget(Select2Mixin, forms.TextInput):
 
     def get_url(self):
         return admin_reverse(SELECT2_CONTENT_TYPE_OBJECT_URL_NAME)
+
+    def build_attrs(self, *args, **kwargs):
+        attrs = super().build_attrs(*args, **kwargs)
+        attrs.setdefault('data-select2-url', self.get_url())
+        return attrs
+
+
+class UrlSelectWidget(Select2Mixin, forms.Select):
+    pass
+
+
+class HtmlLinkMixin:
+
+    class Media:
+        css = {
+            'all': ('cms/js/select2/select2.css', ),
+        }
+        js = (
+            'cms/js/select2/select2.js',
+            'djangocms_url_manager/js/html_link.js',
+        )
+
+
+class HtmlLinkSiteSelectWidget(HtmlLinkMixin, forms.Select):
+    pass
+
+
+class HtmlLinkUrlSelectWidget(Select2Mixin, forms.TextInput):
+
+    def get_url(self):
+        return admin_reverse(SELECT2_URLS)
 
     def build_attrs(self, *args, **kwargs):
         attrs = super().build_attrs(*args, **kwargs)
@@ -186,4 +217,55 @@ class UrlOverrideForm(UrlForm):
             raise forms.ValidationError({
                 'site': _('Overriden site must be different from the original.'),  # noqa: E501
             })
+        return data
+
+
+class HtmlLinkForm(forms.ModelForm):
+
+    site = forms.ModelChoiceField(
+        label=_('Site'),
+        queryset=Site.objects.all(),
+        widget=HtmlLinkSiteSelectWidget(
+            attrs={
+                'data-placeholder': _('Select site'),
+            },
+        ),
+        required=False,
+    )
+
+    url = forms.CharField(
+        label=_('Url'),
+        widget=HtmlLinkUrlSelectWidget(
+            attrs={
+                'data-placeholder': _('Select URL object from list'),
+            },
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Set url if object exists
+        if self.instance and self.instance.url_id:
+            self.fields['url'].initial = self.instance.url_id
+
+    class Meta:
+        model = LinkPlugin
+        fields = (
+            'site',
+            'url',
+            'label',
+            'template',
+            'target',
+            'attributes',
+        )
+
+    def clean(self):
+        data = super().clean()
+        try:
+            data['url'] = Url.objects.get(pk=int(data['url']))
+        except ValueError:
+            self.add_error('url', _('Invalid value'))
+        except ObjectDoesNotExist:
+            self.add_error('url', _('Url does not exist'))
         return data
