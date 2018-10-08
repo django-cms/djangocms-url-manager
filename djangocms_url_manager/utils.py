@@ -9,6 +9,14 @@ from django.db.models.base import ModelBase
 from djangocms_url_manager.compat import CMS_36
 
 
+def is_versioning_enabled():
+    try:
+        app_config = apps.get_app_config('djangocms_versioning')
+        return app_config.cms_config.djangocms_versioning_enabled
+    except LookupError:
+        return False
+
+
 def parse_settings(config, attr_name):
     url_manager_supported_models = OrderedDict()
     if not hasattr(config, attr_name):

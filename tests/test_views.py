@@ -6,6 +6,7 @@ from cms.api import create_page
 from cms.models import Page, User
 
 from djangocms_url_manager.compat import CMS_36
+from djangocms_url_manager.utils import is_versioning_enabled
 
 from .base import BaseUrlTestCase
 
@@ -54,6 +55,22 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
             [self.page.pk, self.page2.pk],
         )
 
+    @skipUnless(is_versioning_enabled(), "Test only relevant for versioning")
+    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
+    def test_return_page_in_select2_view_with_versioning_and_cms40(self):
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                self.select2_endpoint,
+                data={'content_id': self.page_contenttype_id},
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertListEqual(
+            response.json()['results'],
+            [
+                {'text': self.page.get_title(), 'id': self.page.pk},
+                {'text': self.page2.get_title(), 'id': self.page2.pk}]
+        )
+
     def test_return_poll_content_in_select2_view(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
@@ -76,12 +93,9 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
 
     @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
     def test_select2_view_set_limit_for_cms36(self):
-        create_page(
+        self._create_page(
             title='test 3',
-            template='page.html',
             language=self.language,
-            in_navigation=True,
-            published=True,
         )
         with self.login_user_context(self.superuser):
             response = self.client.get(
@@ -96,11 +110,9 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
 
     @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
     def test_select2_view_set_limit_for_cms40(self):
-        create_page(
+        self._create_page(
             title='test 3',
-            template='page.html',
             language=self.language,
-            in_navigation=True,
         )
         with self.login_user_context(self.superuser):
             response = self.client.get(

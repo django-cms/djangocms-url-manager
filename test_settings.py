@@ -1,15 +1,25 @@
+import os
+
 from djangocms_url_manager.test_utils.polls.utils import (
     get_all_poll_content_objects,
     get_published_pages_objects,
 )
 
 
+ENABLE_VERSIONING = bool(os.environ.get('ENABLE_VERSIONING', False))
+EXTRA_INSTALLED_APPS = []
+if ENABLE_VERSIONING:
+    EXTRA_INSTALLED_APPS.append('djangocms_versioning')
+
+
 HELPER_SETTINGS = {
-    'TIME_ZONE': 'Europe/Zurich',
-    'INSTALLED_APPS': [
+    'VERSIONING_CMS_MODELS_ENABLED': ENABLE_VERSIONING,
+    'TOP_INSTALLED_APPS': [
         'djangocms_url_manager',
-        'djangocms_url_manager.test_utils.polls',
     ],
+    'INSTALLED_APPS': [
+        'djangocms_url_manager.test_utils.polls',
+    ] + EXTRA_INSTALLED_APPS,
     'MIGRATION_MODULES': {
         'sites': None,
         'contenttypes': None,
@@ -18,6 +28,7 @@ HELPER_SETTINGS = {
         'menus': None,
         'polls': None,
         'djangocms_url_manager': None,
+        'djangocms_versioning': None,
     },
     'CMS_PERMISSION': True,
     # At present, testing requires bootstrap to be disabled.
