@@ -19,6 +19,7 @@ HELPER_SETTINGS = {
     ],
     'INSTALLED_APPS': [
         'djangocms_url_manager.test_utils.polls',
+        'djangocms_url_manager.test_utils.text',
     ] + EXTRA_INSTALLED_APPS,
     'MIGRATION_MODULES': {
         'sites': None,
@@ -27,6 +28,7 @@ HELPER_SETTINGS = {
         'cms': None,
         'menus': None,
         'polls': None,
+        'text': None,
         'djangocms_url_manager': None,
         'djangocms_versioning': None,
     },
