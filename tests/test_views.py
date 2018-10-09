@@ -2,7 +2,6 @@ from unittest import skipIf, skipUnless
 
 from django.contrib.contenttypes.models import ContentType
 
-from cms.api import create_page
 from cms.models import Page, User
 
 from djangocms_url_manager.compat import CMS_36
