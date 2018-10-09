@@ -121,7 +121,7 @@ class BaseUrlTestCase(CMSTestCase):
             in_navigation=True,
             limit_visibility_in_menu=None,
             site=site,
-            **kwargs,
+            **kwargs
         )
 
         if is_versioning_enabled() and published:
