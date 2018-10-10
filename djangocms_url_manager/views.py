@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
@@ -49,11 +50,18 @@ class ContentTypeObjectSelect2View(ListView):
                 '{} is not available to use, check content_id param'.format(model)
             )
 
-        queryset = get_supported_model_queryset(model)
-        if queryset:
-            queryset = queryset(site=site)
-        else:
-            queryset = model.objects.all()
+        try:
+            # If versioning is enabled then get versioning queryset for model
+            app_config = apps.get_app_config('djangocms_versioning')
+            versionable_item = app_config.cms_extension.versionables_by_grouper[model]
+            queryset = versionable_item.grouper_choices_queryset()
+        except (LookupError, KeyError):
+            queryset = get_supported_model_queryset(model)
+
+            if queryset:
+                queryset = queryset(site=site)
+            else:
+                queryset = model.objects.all()
 
         try:
             pk = int(self.request.GET.get('pk'))
