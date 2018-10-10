@@ -5,7 +5,6 @@ from django.contrib.contenttypes.models import ContentType
 from cms.models import Page, User
 
 from djangocms_url_manager.compat import CMS_36
-from djangocms_url_manager.utils import is_versioning_enabled
 
 from .base import BaseUrlTestCase
 
@@ -54,8 +53,8 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
             [self.page.pk, self.page2.pk],
         )
 
-    @skipUnless(is_versioning_enabled(), "Test only relevant for versioning")
     @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
+    @skipUnless(BaseUrlTestCase.is_versioning_enabled(), "Test only relevant for versioning")
     def test_return_page_in_select2_view_with_versioning_and_cms40(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(

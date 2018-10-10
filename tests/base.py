@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 
@@ -13,7 +14,6 @@ from djangocms_url_manager.constants import (
 )
 from djangocms_url_manager.models import Url as UrlModel, UrlOverride
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
-from djangocms_url_manager.utils import is_versioning_enabled
 
 
 class BaseUrlTestCase(CMSTestCase):
@@ -89,6 +89,10 @@ class BaseUrlTestCase(CMSTestCase):
             anchor=anchor,
         )
 
+    @classmethod
+    def is_versioning_enabled(cls):
+        return 'djangocms_versioning' in settings.INSTALLED_APPS
+
     def _get_version(self, grouper, version_state, language=None):
         language = language or self.language
 
@@ -107,7 +111,7 @@ class BaseUrlTestCase(CMSTestCase):
         if language is None:
             language = self.language
 
-        if is_versioning_enabled() and not kwargs.get('created_by'):
+        if self.is_versioning_enabled() and not kwargs.get('created_by'):
             kwargs['created_by'] = self.superuser
 
         if CMS_36 and published:
@@ -124,7 +128,7 @@ class BaseUrlTestCase(CMSTestCase):
             **kwargs
         )
 
-        if is_versioning_enabled() and published:
+        if self.is_versioning_enabled() and published:
             self._publish(page, language)
 
         return page
