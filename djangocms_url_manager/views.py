@@ -69,7 +69,7 @@ class ContentTypeObjectSelect2View(ListView):
             pk = None
 
         if site:
-            if hasattr(model.objects, 'on_site'):
+            if hasattr(queryset, 'on_site'):
                 queryset = queryset.on_site(site)
             elif hasattr(model, 'site'):
                 queryset = queryset.filter(site=site)

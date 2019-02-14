@@ -1,10 +1,16 @@
+import importlib
+
 from unittest import skipIf
 from unittest.mock import Mock
 
+from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
+from django.test import TestCase, override_settings
 
+from cms import app_registration
 from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
+from cms.utils.setup import configure_cms_apps
 
 from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
@@ -12,6 +18,8 @@ from djangocms_url_manager.test_utils.polls.utils import (
     get_all_poll_content_objects,
 )
 from djangocms_url_manager.utils import supported_models
+
+from djangocms_navigation import cms_config
 
 
 @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
@@ -119,3 +127,48 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
                 PollContent: get_all_poll_content_objects,
             }
         )
+
+
+class NavigationSettingTestCase(TestCase):
+    def setUp(self):
+        self.app = apps.get_app_config('djangocms_navigation')
+        # Empty the list of registered models so it gets populated
+        # from scratch in tests
+        self.app.cms_extension.navigation_apps_models = {}
+
+    def tearDown(self):
+        # Populate everything again so our setting changes do not effect
+        # any other tests
+        importlib.reload(cms_config)
+        self.app.cms_extension.navigation_apps_models = {}
+        self.app.cms_config = cms_config.NavigationCMSAppConfig(self.app)
+        configure_cms_apps([self.app])
+
+    def test_cms_models_added_to_navigation_by_default(self):
+        importlib.reload(cms_config)  # Reload so setting gets checked again
+        # The app should have a cms config with the overridden setting
+        self.app.cms_config = cms_config.NavigationCMSAppConfig(self.app)
+
+        configure_cms_apps([self.app])
+
+        self.assertIn(Page, self.app.cms_extension.navigation_apps_models)
+
+    @override_settings(DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED=True)
+    def test_cms_models_added_to_navigation_if_enabled(self):
+        importlib.reload(cms_config)  # Reload so setting gets checked again
+        # The app should have a cms config with the overridden setting
+        self.app.cms_config = cms_config.NavigationCMSAppConfig(self.app)
+
+        configure_cms_apps([self.app])
+
+        self.assertIn(Page, self.app.cms_extension.navigation_apps_models)
+
+    @override_settings(DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED=False)
+    def test_cms_models_not_added_to_navigation_if_disabled(self):
+        importlib.reload(cms_config)  # Reload so setting gets checked again
+        # The app should have a cms config with the overridden setting
+        self.app.cms_config = cms_config.NavigationCMSAppConfig(self.app)
+
+        configure_cms_apps([self.app])
+
+        self.assertNotIn(Page, self.app.cms_extension.navigation_apps_models)

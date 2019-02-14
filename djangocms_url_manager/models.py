@@ -130,6 +130,9 @@ class Url(AbstractUrl):
     def __str__(self):
         return self.get_url(self.site)
 
+    def get_absolute_url(self):
+        return self.get_url(self.site)
+
 
 class UrlOverride(AbstractUrl):
     url = models.ForeignKey(Url, on_delete=models.CASCADE)

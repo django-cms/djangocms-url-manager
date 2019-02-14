@@ -178,7 +178,7 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             [a['id'] for a in response.json()['results']],
-            [self.page2.pk],
+            [self.page.pk, self.page2.pk],
         )
 
     @skipUnless(CMS_36, "Test relevant only for CMS<4.0")

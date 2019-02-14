@@ -1,12 +1,21 @@
+from django.conf import settings
+
 from cms.app_base import CMSAppConfig, CMSAppExtension
 from cms.models import Page
 
 from djangocms_url_manager.utils import parse_settings
 
+from .models import Url
 
 class UrlCMSAppConfig(CMSAppConfig):
     djangocms_url_manager_enabled = True
     url_manager_supported_models = [Page]
+    djangocms_navigation_enabled = getattr(
+        settings, "DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED", True
+    )
+    navigation_models = {
+        Url: ["manual_url"]
+    }
 
 
 class UrlManagerCMSExtension(CMSAppExtension):
