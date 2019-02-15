@@ -34,6 +34,7 @@ class ContentTypeObjectSelect2View(ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
+
         content_id = self.request.GET.get('content_id', None)
         site = self.request.GET.get('site')
 
@@ -49,7 +50,6 @@ class ContentTypeObjectSelect2View(ListView):
             raise ValueError(
                 '{} is not available to use, check content_id param'.format(model)
             )
-
         try:
             # If versioning is enabled then get versioning queryset for model
             app_config = apps.get_app_config('djangocms_versioning')
@@ -69,8 +69,8 @@ class ContentTypeObjectSelect2View(ListView):
             pk = None
 
         if site:
-            if hasattr(queryset, 'on_site'):
-                queryset = queryset.on_site(site)
+            if hasattr(model.objects, 'on_site'):  # PageContent
+                queryset = queryset.filter(node__site=site)
             elif hasattr(model, 'site'):
                 queryset = queryset.filter(site=site)
 

@@ -14,7 +14,7 @@ class UrlCMSAppConfig(CMSAppConfig):
         settings, "DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED", True
     )
     navigation_models = {
-        Url: ["manual_url"]
+        Url: ["internal_name"]
     }
 
 

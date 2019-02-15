@@ -106,6 +106,7 @@ class UrlForm(forms.ModelForm):
     class Meta:
         model = Url
         fields = (
+            'internal_name',
             'url_type',
             'site',
             'content_object',

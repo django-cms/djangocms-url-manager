@@ -6,17 +6,20 @@ from djangocms_url_manager.test_utils.polls.utils import (
 )
 
 
-ENABLE_VERSIONING = bool(os.environ.get('ENABLE_VERSIONING', True))
+
 EXTRA_INSTALLED_APPS = []
+ENABLE_VERSIONING = bool(os.environ.get('ENABLE_VERSIONING', False))
 if ENABLE_VERSIONING:
     EXTRA_INSTALLED_APPS.append('djangocms_versioning')
 
+ENABLE_NAVIGATION = bool(os.environ.get('ENABLE_NAVIGATION', False))
+if ENABLE_NAVIGATION:
+    EXTRA_INSTALLED_APPS.append('djangocms_navigation')
 
 HELPER_SETTINGS = {
     'VERSIONING_CMS_MODELS_ENABLED': ENABLE_VERSIONING,
     'TOP_INSTALLED_APPS': [
         'djangocms_url_manager',
-        'djangocms_navigation',
     ],
     'INSTALLED_APPS': [
         'djangocms_url_manager.test_utils.polls',

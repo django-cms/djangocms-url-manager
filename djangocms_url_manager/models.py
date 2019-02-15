@@ -49,6 +49,13 @@ BASIC_TYPE_CHOICES = (
 
 
 class AbstractUrl(models.Model):
+    # internal_name field to use to search URL
+    internal_name = models.CharField(
+        verbose_name=_('internal name'),
+        max_length=255,
+        blank=True,
+        help_text=_('This field used for searching URL objects'),
+    )
     site = models.ForeignKey(
         Site,
         on_delete=models.PROTECT,
