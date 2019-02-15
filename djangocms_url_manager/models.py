@@ -135,7 +135,7 @@ class Url(AbstractUrl):
         return url
 
     def __str__(self):
-        return self.get_url(self.site)
+        return self.get_absolute_url(self.site)
 
     def get_absolute_url(self):
         return self.get_url(self.site)
