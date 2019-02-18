@@ -14,3 +14,9 @@ def get_page_placeholders(page, language=None):
         return page.get_placeholders()
     except TypeError:
         return page.get_placeholders(language)
+
+
+def is_navigation_enabled():
+    from djangocms_url_manager.cms_config import UrlCMSAppConfig
+
+    return UrlCMSAppConfig.djangocms_navigation_enabled

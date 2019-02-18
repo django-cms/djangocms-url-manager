@@ -49,12 +49,7 @@ BASIC_TYPE_CHOICES = (
 
 
 class AbstractUrl(models.Model):
-    internal_name = models.CharField(
-        verbose_name=_('internal name'),
-        max_length=255,
-        blank=True,
-        help_text=_('Provide internal name for URL objects for searching purpose'),
-    )
+
     site = models.ForeignKey(
         Site,
         on_delete=models.PROTECT,
@@ -98,6 +93,14 @@ class AbstractUrl(models.Model):
 
 class Url(AbstractUrl):
 
+    internal_name = models.CharField(
+        verbose_name=_('internal name'),
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text=_('Provide internal name for URL objects for searching purpose'),
+    )
+
     class Meta:
         verbose_name = _('url')
         verbose_name_plural = _('urls')
@@ -134,7 +137,7 @@ class Url(AbstractUrl):
         return url
 
     def __str__(self):
-        return self.get_absolute_url(self.site)
+        return self.get_absolute_url()
 
     def get_absolute_url(self):
         return self.get_url(self.site)
@@ -142,7 +145,12 @@ class Url(AbstractUrl):
 
 class UrlOverride(AbstractUrl):
     url = models.ForeignKey(Url, on_delete=models.CASCADE)
-
+    internal_name = models.CharField(
+        verbose_name=_('internal name'),
+        max_length=255,
+        blank=True,
+        null=True,
+    )
     class Meta:
         verbose_name = _('url override')
         verbose_name_plural = _('url overrides')
@@ -150,6 +158,10 @@ class UrlOverride(AbstractUrl):
 
 
 class LinkPlugin(CMSPlugin):
+    internal_name = models.CharField(
+        verbose_name=_('internal name'),
+        max_length=120,
+    )
     url = models.ForeignKey(
         Url,
         verbose_name=_('url'),
