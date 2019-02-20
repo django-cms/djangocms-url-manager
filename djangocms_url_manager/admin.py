@@ -5,10 +5,7 @@ from .models import Url, UrlOverride
 from .urls import urlpatterns
 
 
-__all__ = [
-    'UrlAdmin',
-    'UrlOverrideInlineAdmin',
-]
+__all__ = ["UrlAdmin", "UrlOverrideInlineAdmin"]
 
 
 class UrlOverrideInlineAdmin(admin.StackedInline):

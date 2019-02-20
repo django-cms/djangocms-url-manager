@@ -19,52 +19,43 @@ from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 class BaseUrlTestCase(CMSTestCase):
     select2_endpoint = admin_reverse(SELECT2_CONTENT_TYPE_OBJECT_URL_NAME)
     select2_urls_endpoint = admin_reverse(SELECT2_URLS)
-    create_url_endpoint = admin_reverse('djangocms_url_manager_url_add')
+    create_url_endpoint = admin_reverse("djangocms_url_manager_url_add")
 
     def setUp(self):
-        self.language = 'en'
+        self.language = "en"
         self.superuser = self.get_superuser()
-        self.page = self._create_page(
-            title='test',
-            language=self.language,
+        self.page = self._create_page(title="test", language=self.language)
+        self.placeholder = get_page_placeholders(self.page, self.language).get(
+            slot="content"
         )
-        self.placeholder = get_page_placeholders(
-            self.page,
-            self.language,
-        ).get(slot='content')
         self.default_site = Site.objects.first()
-        self.site2 = Site.objects.create(
-            name='foo.com',
-            domain='foo.com',
-        )
+        self.site2 = Site.objects.create(name="foo.com", domain="foo.com")
         self.page2 = self._create_page(
-            title='test2',
-            language=self.language,
-            site=self.site2,
+            title="test2", language=self.language, site=self.site2
         )
-        self.url = self._create_url(
-            content_object=self.page,
-        )
-        self.url2 = self._create_url(
-            manual_url='https://example.com/',
-            site=self.site2,
-        )
-        self.poll = Poll.objects.create(name='Test poll')
+        self.url = self._create_url(content_object=self.page)
+        self.url2 = self._create_url(manual_url="https://example.com/", site=self.site2)
+        self.poll = Poll.objects.create(name="Test poll")
         self.poll_content = PollContent.objects.create(
-            poll=self.poll,
-            language=self.language,
-            text='example'
+            poll=self.poll, language=self.language, text="example"
         )
         self.poll_content2 = PollContent.objects.create(
-            poll=self.poll,
-            language=self.language,
-            text='example2',
+            poll=self.poll, language=self.language, text="example2"
         )
         self.page_contenttype_id = ContentType.objects.get_for_model(Page).id
-        self.poll_content_contenttype_id = ContentType.objects.get_for_model(PollContent).id
+        self.poll_content_contenttype_id = ContentType.objects.get_for_model(
+            PollContent
+        ).id
 
-    def _create_url(self, site=None, content_object=None, manual_url='',
-                    phone='', mailto='', anchor=''):
+    def _create_url(
+        self,
+        site=None,
+        content_object=None,
+        manual_url="",
+        phone="",
+        mailto="",
+        anchor="",
+    ):
         if site is None:
             site = self.default_site
 
@@ -77,8 +68,16 @@ class BaseUrlTestCase(CMSTestCase):
             anchor=anchor,
         )
 
-    def _create_url_override(self, url, site, content_object=None, manual_url='',
-                             phone='', mailto='', anchor=''):
+    def _create_url_override(
+        self,
+        url,
+        site,
+        content_object=None,
+        manual_url="",
+        phone="",
+        mailto="",
+        anchor="",
+    ):
         return UrlOverride.objects.create(
             url=url,
             site=site,
@@ -91,19 +90,26 @@ class BaseUrlTestCase(CMSTestCase):
 
     @classmethod
     def is_versioning_enabled(cls):
-        return 'djangocms_versioning' in settings.INSTALLED_APPS
+        return "djangocms_versioning" in settings.INSTALLED_APPS
 
     def _get_version(self, grouper, version_state, language=None):
         language = language or self.language
 
         from djangocms_versioning.models import Version
-        versions = Version.objects.filter_by_grouper(grouper).filter(state=version_state)
+
+        versions = Version.objects.filter_by_grouper(grouper).filter(
+            state=version_state
+        )
         for version in versions:
-            if hasattr(version.content, 'language') and version.content.language == language:
+            if (
+                hasattr(version.content, "language")
+                and version.content.language == language
+            ):
                 return version
 
     def _publish(self, grouper, language=None):
         from djangocms_versioning.constants import DRAFT
+
         version = self._get_version(grouper, DRAFT, language)
         version.publish(self.superuser)
 
@@ -111,17 +117,17 @@ class BaseUrlTestCase(CMSTestCase):
         if language is None:
             language = self.language
 
-        if self.is_versioning_enabled() and not kwargs.get('created_by'):
-            kwargs['created_by'] = self.superuser
+        if self.is_versioning_enabled() and not kwargs.get("created_by"):
+            kwargs["created_by"] = self.superuser
 
         if CMS_36 and published:
-            kwargs['published'] = True
+            kwargs["published"] = True
 
         page = create_page(
             title=title,
             language=language,
-            template='page.html',
-            menu_title='',
+            template="page.html",
+            menu_title="",
             in_navigation=True,
             limit_visibility_in_menu=None,
             site=site,
