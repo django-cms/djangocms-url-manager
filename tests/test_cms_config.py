@@ -124,6 +124,7 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         )
 
 
+
 @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
 class NavigationSettingTestCase(TestCase):
     def tearDownClass():
