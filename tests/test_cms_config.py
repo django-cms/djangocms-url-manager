@@ -1,15 +1,13 @@
 from importlib import reload
-from django.conf import settings
 from unittest import skipIf
 from unittest.mock import Mock
 
-
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, override_settings
 
 from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
-
 
 from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
