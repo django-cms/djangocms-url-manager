@@ -48,7 +48,9 @@ class AbstractUrl(models.Model):
         max_length=2040,
         help_text=_("Provide a valid URL to an external website."),
     )
-    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT, null=True)
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.PROTECT, null=True
+    )
     object_id = models.PositiveIntegerField(null=True)
     content_object = GenericForeignKey("content_type", "object_id")
     anchor = models.CharField(
@@ -60,8 +62,12 @@ class AbstractUrl(models.Model):
             'Do <em>not</em> include a preceding "#" symbol.'
         ),
     )
-    mailto = models.EmailField(verbose_name=_("email address"), blank=True, max_length=255)
-    phone = models.CharField(verbose_name=_("phone"), blank=True, max_length=255)
+    mailto = models.EmailField(
+        verbose_name=_("email address"), blank=True, max_length=255
+    )
+    phone = models.CharField(
+        verbose_name=_("phone"), blank=True, max_length=255
+    )
 
     class Meta:
         abstract = True
@@ -74,7 +80,9 @@ class Url(AbstractUrl):
         max_length=255,
         blank=True,
         null=True,
-        help_text=_("Provide internal name for URL objects for searching purpose"),
+        help_text=_(
+            "Provide internal name for URL objects for searching purpose"
+        ),
     )
 
     class Meta:
@@ -95,7 +103,10 @@ class Url(AbstractUrl):
         obj = self._get_url_obj(site)
         language = get_default_language_for_site(obj.site)
         if obj.content_object:
-            url = "//{}{}".format(obj.site.domain, obj.content_object.get_absolute_url(language=language))
+            url = "//{}{}".format(
+                obj.site.domain,
+                obj.content_object.get_absolute_url(language=language),
+            )
         elif obj.manual_url:
             url = obj.manual_url
         elif obj.phone:
@@ -118,7 +129,9 @@ class Url(AbstractUrl):
 
 class UrlOverride(AbstractUrl):
     url = models.ForeignKey(Url, on_delete=models.CASCADE)
-    internal_name = models.CharField(verbose_name=_("internal name"), max_length=255, blank=True, null=True)
+    internal_name = models.CharField(
+        verbose_name=_("internal name"), max_length=255, blank=True, null=True
+    )
 
     class Meta:
         verbose_name = _("url override")
@@ -127,14 +140,33 @@ class UrlOverride(AbstractUrl):
 
 
 class LinkPlugin(CMSPlugin):
-    internal_name = models.CharField(verbose_name=_("internal name"), max_length=120)
-    url = models.ForeignKey(Url, verbose_name=_("url"), related_name="cms_plugins", on_delete=models.CASCADE)
+    internal_name = models.CharField(
+        verbose_name=_("internal name"), max_length=120
+    )
+    url = models.ForeignKey(
+        Url,
+        verbose_name=_("url"),
+        related_name="cms_plugins",
+        on_delete=models.CASCADE,
+    )
     label = models.CharField(verbose_name=_("label"), max_length=120)
     template = models.CharField(
-        verbose_name=_("Template"), choices=get_templates(), default=TEMPLATE_DEFAULT, max_length=255
+        verbose_name=_("Template"),
+        choices=get_templates(),
+        default=TEMPLATE_DEFAULT,
+        max_length=255,
     )
-    target = models.CharField(verbose_name=_("Target"), choices=TARGET_CHOICES, blank=True, max_length=255)
-    attributes = AttributesField(verbose_name=_("Attributes"), blank=True, excluded_keys=["href", "target"])
+    target = models.CharField(
+        verbose_name=_("Target"),
+        choices=TARGET_CHOICES,
+        blank=True,
+        max_length=255,
+    )
+    attributes = AttributesField(
+        verbose_name=_("Attributes"),
+        blank=True,
+        excluded_keys=["href", "target"],
+    )
 
     class Meta:
         verbose_name = _("url plugin model")
