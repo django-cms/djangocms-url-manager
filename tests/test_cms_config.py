@@ -15,7 +15,6 @@ from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 from djangocms_url_manager.test_utils.polls.utils import get_all_poll_content_objects
 from djangocms_url_manager.utils import supported_models
-from djangocms_url_manager import cms_config
 
 
 @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
@@ -124,22 +123,32 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         )
 
 
+@skipIf(CMS_36, "Test relevant only for CMS>=4.0")
 class NavigationSettingTestCase(TestCase):
+
     def tearDownClass():
+        from djangocms_url_manager import cms_config
+
         reload(cms_config)
 
     @override_settings(DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED=False)
     def test_references_setting_affects_cms_config_false(self):
+        from djangocms_url_manager import cms_config
+
         reload(cms_config)
         self.assertFalse(cms_config.UrlCMSAppConfig.djangocms_navigation_enabled)
 
     @override_settings(DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED=True)
     def test_references_setting_affects_cms_config_true(self):
+        from djangocms_url_manager import cms_config
+
         reload(cms_config)
         self.assertTrue(cms_config.UrlCMSAppConfig.djangocms_navigation_enabled)
 
     @override_settings()
     def test_references_setting_affects_cms_config_default(self):
+        from djangocms_url_manager import cms_config
+
         del settings.DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED
         reload(cms_config)
         self.assertFalse(cms_config.UrlCMSAppConfig.djangocms_navigation_enabled)
