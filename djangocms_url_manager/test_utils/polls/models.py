@@ -18,4 +18,4 @@ class PollContent(models.Model):
         return self.text
 
     def get_absolute_url(self):
-        return reverse('admin:polls_pollcontent_changelist')
+        return reverse("admin:polls_pollcontent_changelist")

@@ -8,17 +8,15 @@ from djangocms_url_manager.forms import HtmlLinkForm
 from .models import LinkPlugin
 
 
-__all__ = [
-    'HtmlLink',
-]
+__all__ = ["HtmlLink"]
 
 
 @plugin_pool.register_plugin
 class HtmlLink(CMSPluginBase):
-    name = _('Link')
+    name = _("Link")
     model = LinkPlugin
     form = HtmlLinkForm
     allow_children = True
 
     def get_render_template(self, context, instance, placeholder):
-        return 'djangocms_url_manager/{}/url.html'.format(instance.template)
+        return "djangocms_url_manager/{}/url.html".format(instance.template)

@@ -190,7 +190,7 @@ class UrlForm(forms.ModelForm):
 class UrlOverrideForm(UrlForm):
     class Meta:
         model = UrlOverride
-        fields = ('url', ) + UrlForm.Meta.fields
+        fields = ("url",) + UrlForm.Meta.fields
 
     def clean(self):
         data = super().clean()
@@ -233,7 +233,15 @@ class HtmlLinkForm(forms.ModelForm):
 
     class Meta:
         model = LinkPlugin
-        fields = ("internal_name", "site", "url", "label", "template", "target", "attributes")
+        fields = (
+            "internal_name",
+            "site",
+            "url",
+            "label",
+            "template",
+            "target",
+            "attributes",
+        )
 
     def clean(self):
         data = super().clean()
