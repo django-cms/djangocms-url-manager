@@ -1,9 +1,6 @@
 import os
 
-from djangocms_url_manager.test_utils.polls.utils import (
-    get_all_poll_content_objects,
-    get_published_pages_objects,
-)
+from djangocms_url_manager.test_utils.polls.utils import get_all_poll_content_objects, get_published_pages_objects
 
 
 EXTRA_INSTALLED_APPS = []
@@ -18,10 +15,7 @@ if ENABLE_NAVIGATION:
 HELPER_SETTINGS = {
     "VERSIONING_CMS_MODELS_ENABLED": ENABLE_VERSIONING,
     "TOP_INSTALLED_APPS": ["djangocms_url_manager"],
-    "INSTALLED_APPS": [
-        "djangocms_url_manager.test_utils.polls",
-        "djangocms_url_manager.test_utils.text",
-    ]
+    "INSTALLED_APPS": ["djangocms_url_manager.test_utils.polls", "djangocms_url_manager.test_utils.text"]
     + EXTRA_INSTALLED_APPS,
     "MIGRATION_MODULES": {
         "sites": None,
@@ -38,30 +32,13 @@ HELPER_SETTINGS = {
     "CMS_PERMISSION": True,
     # At present, testing requires bootstrap to be disabled.
     # 'ALDRYN_BOILERPLATE_NAME': 'bootstrap3',
-    "LANGUAGES": (
-        ("en", "English"),
-        ("de", "German"),
-        ("fr", "French"),
-        ("it", "Italiano"),
-    ),
+    "LANGUAGES": (("en", "English"), ("de", "German"), ("fr", "French"), ("it", "Italiano")),
     "CMS_LANGUAGES": {
         1: [
             {"code": "en", "name": "English", "fallbacks": ["de", "fr"]},
-            {
-                "code": "de",
-                "name": "Deutsche",
-                "fallbacks": ["en"],  # FOR TESTING DO NOT ADD 'fr' HERE
-            },
-            {
-                "code": "fr",
-                "name": "Française",
-                "fallbacks": ["en"],  # FOR TESTING DO NOT ADD 'de' HERE
-            },
-            {
-                "code": "it",
-                "name": "Italiano",
-                "fallbacks": ["fr"],  # FOR TESTING, LEAVE AS ONLY 'fr'
-            },
+            {"code": "de", "name": "Deutsche", "fallbacks": ["en"]},  # FOR TESTING DO NOT ADD 'fr' HERE
+            {"code": "fr", "name": "Française", "fallbacks": ["en"]},  # FOR TESTING DO NOT ADD 'de' HERE
+            {"code": "it", "name": "Italiano", "fallbacks": ["fr"]},  # FOR TESTING, LEAVE AS ONLY 'fr'
         ]
     },
     "LANGUAGE_CODE": "en",

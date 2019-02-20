@@ -37,45 +37,29 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         from djangocms_url_manager.cms_config import UrlManagerCMSExtension
 
         extensions = UrlManagerCMSExtension()
-        cms_config = Mock(
-            spec=[],
-            djangocms_url_manager_enabled=True,
-            url_manager_supported_models=PollContent,
-        )
+        cms_config = Mock(spec=[], djangocms_url_manager_enabled=True, url_manager_supported_models=PollContent)
         with self.assertRaises(ImproperlyConfigured):
             extensions.handle_url_manager_setting(cms_config)
 
-    def test_raises_exception_if_url_manager_supported_models_item_is_not_model_class(
-        self
-    ):
+    def test_raises_exception_if_url_manager_supported_models_item_is_not_model_class(self):
         """Tests ImproperlyConfigured exception is raised if elements
         in the url_manager_supported_models list are not valid django models class.
         """
         from djangocms_url_manager.cms_config import UrlManagerCMSExtension
 
         extensions = UrlManagerCMSExtension()
-        cms_config = Mock(
-            spec=[],
-            djangocms_url_manager_enabled=True,
-            url_manager_supported_models=["aaa", {}],
-        )
+        cms_config = Mock(spec=[], djangocms_url_manager_enabled=True, url_manager_supported_models=["aaa", {}])
         with self.assertRaises(ImproperlyConfigured):
             extensions.handle_url_manager_setting(cms_config)
 
-    def test_raises_exception_if_url_manager_supported_models_model_does_not_have_url_method(
-        self
-    ):
+    def test_raises_exception_if_url_manager_supported_models_model_does_not_have_url_method(self):
         """Tests ImproperlyConfigured exception is raised if a
         model does not have get_absolute_url implemented
         """
         from djangocms_url_manager.cms_config import UrlManagerCMSExtension
 
         extensions = UrlManagerCMSExtension()
-        cms_config = Mock(
-            spec=[],
-            djangocms_url_manager_enabled=True,
-            url_manager_supported_models=[Poll],
-        )
+        cms_config = Mock(spec=[], djangocms_url_manager_enabled=True, url_manager_supported_models=[Poll])
         with self.assertRaises(ImproperlyConfigured):
             extensions.handle_url_manager_setting(cms_config)
 
@@ -87,9 +71,7 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
 
         extensions = UrlManagerCMSExtension()
         cms_config = Mock(
-            spec=[],
-            djangocms_url_manager_enabled=True,
-            url_manager_supported_models=[PollContent, PollContent],
+            spec=[], djangocms_url_manager_enabled=True, url_manager_supported_models=[PollContent, PollContent]
         )
         with self.assertRaises(ImproperlyConfigured):
             extensions.handle_url_manager_setting(cms_config)
@@ -98,34 +80,21 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         from djangocms_url_manager.cms_config import UrlManagerCMSExtension
 
         extensions = UrlManagerCMSExtension()
-        cms_config = Mock(
-            spec=[],
-            djangocms_url_manager_enabled=True,
-            url_manager_supported_models=[PollContent],
-        )
+        cms_config = Mock(spec=[], djangocms_url_manager_enabled=True, url_manager_supported_models=[PollContent])
         extensions.handle_url_manager_setting(cms_config)
-        self.assertDictEqual(
-            supported_models(), {Page: None, PollContent: get_all_poll_content_objects}
-        )
+        self.assertDictEqual(supported_models(), {Page: None, PollContent: get_all_poll_content_objects})
 
     def test_url_manager_supported_tuple_model_without_function(self):
         from djangocms_url_manager.cms_config import UrlManagerCMSExtension
 
         extensions = UrlManagerCMSExtension()
-        cms_config = Mock(
-            spec=[],
-            djangocms_url_manager_enabled=True,
-            url_manager_supported_models=[(PollContent)],
-        )
+        cms_config = Mock(spec=[], djangocms_url_manager_enabled=True, url_manager_supported_models=[(PollContent)])
         extensions.handle_url_manager_setting(cms_config)
-        self.assertDictEqual(
-            supported_models(), {Page: None, PollContent: get_all_poll_content_objects}
-        )
+        self.assertDictEqual(supported_models(), {Page: None, PollContent: get_all_poll_content_objects})
 
 
 @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
 class NavigationSettingTestCase(TestCase):
-
     def tearDownClass():
         from djangocms_url_manager import cms_config
 

@@ -11,10 +11,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ("sites", "0002_alter_domain_unique"),
-        ("contenttypes", "0002_remove_content_type_name"),
-    ]
+    dependencies = [("sites", "0002_alter_domain_unique"), ("contenttypes", "0002_remove_content_type_name")]
 
     operations = [
         migrations.CreateModel(
@@ -36,21 +33,10 @@ class Migration(migrations.Migration):
                 (
                     "template",
                     models.CharField(
-                        choices=get_templates(),
-                        default=TEMPLATE_DEFAULT,
-                        max_length=255,
-                        verbose_name="Template",
+                        choices=get_templates(), default=TEMPLATE_DEFAULT, max_length=255, verbose_name="Template"
                     ),
                 ),
-                (
-                    "target",
-                    models.CharField(
-                        blank=True,
-                        choices=TARGET_CHOICES,
-                        max_length=255,
-                        verbose_name="Target",
-                    ),
-                ),
+                ("target", models.CharField(blank=True, choices=TARGET_CHOICES, max_length=255, verbose_name="Target")),
                 (
                     "attributes",
                     djangocms_attributes_field.fields.AttributesField(
@@ -58,24 +44,13 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={
-                "verbose_name": "url plugin model",
-                "verbose_name_plural": "url plugin models",
-            },
+            options={"verbose_name": "url plugin model", "verbose_name_plural": "url plugin models"},
             bases=("cms.cmsplugin",),
         ),
         migrations.CreateModel(
             name="Url",
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
                 (
                     "manual_url",
                     models.URLField(
@@ -95,45 +70,22 @@ class Migration(migrations.Migration):
                         verbose_name="anchor",
                     ),
                 ),
-                (
-                    "mailto",
-                    models.EmailField(
-                        blank=True, max_length=255, verbose_name="email address"
-                    ),
-                ),
-                (
-                    "phone",
-                    models.CharField(blank=True, max_length=255, verbose_name="phone"),
-                ),
+                ("mailto", models.EmailField(blank=True, max_length=255, verbose_name="email address")),
+                ("phone", models.CharField(blank=True, max_length=255, verbose_name="phone")),
                 (
                     "content_type",
                     models.ForeignKey(
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="contenttypes.ContentType",
+                        null=True, on_delete=django.db.models.deletion.CASCADE, to="contenttypes.ContentType"
                     ),
                 ),
-                (
-                    "site",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, to="sites.Site"
-                    ),
-                ),
+                ("site", models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to="sites.Site")),
             ],
             options={"verbose_name": "url", "verbose_name_plural": "urls"},
         ),
         migrations.CreateModel(
             name="UrlOverride",
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
                 (
                     "manual_url",
                     models.URLField(
@@ -153,42 +105,18 @@ class Migration(migrations.Migration):
                         verbose_name="anchor",
                     ),
                 ),
-                (
-                    "mailto",
-                    models.EmailField(
-                        blank=True, max_length=255, verbose_name="email address"
-                    ),
-                ),
-                (
-                    "phone",
-                    models.CharField(blank=True, max_length=255, verbose_name="phone"),
-                ),
+                ("mailto", models.EmailField(blank=True, max_length=255, verbose_name="email address")),
+                ("phone", models.CharField(blank=True, max_length=255, verbose_name="phone")),
                 (
                     "content_type",
                     models.ForeignKey(
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="contenttypes.ContentType",
+                        null=True, on_delete=django.db.models.deletion.CASCADE, to="contenttypes.ContentType"
                     ),
                 ),
-                (
-                    "site",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, to="sites.Site"
-                    ),
-                ),
-                (
-                    "url",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="djangocms_url_manager.Url",
-                    ),
-                ),
+                ("site", models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to="sites.Site")),
+                ("url", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="djangocms_url_manager.Url")),
             ],
-            options={
-                "verbose_name": "url override",
-                "verbose_name_plural": "url overrides",
-            },
+            options={"verbose_name": "url override", "verbose_name_plural": "url overrides"},
         ),
         migrations.AddField(
             model_name="linkplugin",
@@ -200,7 +128,5 @@ class Migration(migrations.Migration):
                 verbose_name="url",
             ),
         ),
-        migrations.AlterUniqueTogether(
-            name="urloverride", unique_together={("site", "url")}
-        ),
+        migrations.AlterUniqueTogether(name="urloverride", unique_together={("site", "url")}),
     ]

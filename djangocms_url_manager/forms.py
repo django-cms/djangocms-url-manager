@@ -62,8 +62,7 @@ class HtmlLinkUrlSelectWidget(Select2Mixin, forms.TextInput):
 class UrlForm(forms.ModelForm):
 
     url_type = forms.ChoiceField(
-        label=_("Type"),
-        widget=UrlTypeSelectWidget(attrs={"data-placeholder": _("Select type")}),
+        label=_("Type"), widget=UrlTypeSelectWidget(attrs={"data-placeholder": _("Select type")})
     )
     site = forms.ModelChoiceField(
         label=_("Site"),
@@ -73,24 +72,13 @@ class UrlForm(forms.ModelForm):
     )
     content_object = forms.CharField(
         label=_("Content object"),
-        widget=ContentTypeObjectSelectWidget(
-            attrs={"data-placeholder": _("Select content object")}
-        ),
+        widget=ContentTypeObjectSelectWidget(attrs={"data-placeholder": _("Select content object")}),
         required=False,
     )
 
     class Meta:
         model = Url
-        fields = (
-            "internal_name",
-            "url_type",
-            "site",
-            "content_object",
-            "manual_url",
-            "anchor",
-            "mailto",
-            "phone",
-        )
+        fields = ("internal_name", "url_type", "site", "content_object", "manual_url", "anchor", "mailto", "phone")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -98,12 +86,7 @@ class UrlForm(forms.ModelForm):
         # Set choices based on setup models for type field
         choices = []
         for model in supported_models():
-            choices.append(
-                (
-                    ContentType.objects.get_for_model(model).id,
-                    model._meta.verbose_name.capitalize(),
-                )
-            )
+            choices.append((ContentType.objects.get_for_model(model).id, model._meta.verbose_name.capitalize()))
         # Add basic options for type field.
         choices += BASIC_TYPE_CHOICES
         self.fields["url_type"].choices = choices
@@ -147,13 +130,9 @@ class UrlForm(forms.ModelForm):
                 if (
                     # dont validate for UrlOverride
                     not data.get("url")
-                    and Url.objects.filter(
-                        content_type=content_type, object_id=data["content_object"]
-                    ).exists()
+                    and Url.objects.filter(content_type=content_type, object_id=data["content_object"]).exists()
                 ):
-                    self.add_error(
-                        "content_object", _("Url with this object already exists")
-                    )
+                    self.add_error("content_object", _("Url with this object already exists"))
 
                 data["content_object"] = content_object
             except ObjectDoesNotExist:
@@ -199,11 +178,7 @@ class UrlOverrideForm(UrlForm):
 
         if url and url.site == site:
             raise forms.ValidationError(
-                {
-                    "site": _(
-                        "Overriden site must be different from the original."
-                    )  # noqa: E501
-                }
+                {"site": _("Overriden site must be different from the original.")}  # noqa: E501
             )
         return data
 
@@ -218,10 +193,7 @@ class HtmlLinkForm(forms.ModelForm):
     )
 
     url = forms.CharField(
-        label=_("Url"),
-        widget=HtmlLinkUrlSelectWidget(
-            attrs={"data-placeholder": _("Select URL object from list")}
-        ),
+        label=_("Url"), widget=HtmlLinkUrlSelectWidget(attrs={"data-placeholder": _("Select URL object from list")})
     )
 
     def __init__(self, *args, **kwargs):
@@ -233,15 +205,7 @@ class HtmlLinkForm(forms.ModelForm):
 
     class Meta:
         model = LinkPlugin
-        fields = (
-            "internal_name",
-            "site",
-            "url",
-            "label",
-            "template",
-            "target",
-            "attributes",
-        )
+        fields = ("internal_name", "site", "url", "label", "template", "target", "attributes")
 
     def clean(self):
         data = super().clean()

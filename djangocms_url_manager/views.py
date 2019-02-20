@@ -13,9 +13,7 @@ class ContentTypeObjectSelect2View(ListView):
         self.object_list = self.get_queryset()
         context = self.get_context_data()
         data = {
-            "results": [
-                {"text": str(obj), "id": obj.pk} for obj in context["object_list"]
-            ],
+            "results": [{"text": str(obj), "id": obj.pk} for obj in context["object_list"]],
             "more": context["page_obj"].has_next(),
         }
         return JsonResponse(data)
@@ -33,15 +31,11 @@ class ContentTypeObjectSelect2View(ListView):
         try:
             content_object = ContentType.objects.get_for_id(content_id)
         except ContentType.DoesNotExist:
-            raise ValueError(
-                "Content type with id {} does not exists.".format(content_id)
-            )
+            raise ValueError("Content type with id {} does not exists.".format(content_id))
 
         model = content_object.model_class()
         if not is_model_supported(model):
-            raise ValueError(
-                "{} is not available to use, check content_id param".format(model)
-            )
+            raise ValueError("{} is not available to use, check content_id param".format(model))
         try:
             # If versioning is enabled then get versioning queryset for model
             app_config = apps.get_app_config("djangocms_versioning")
@@ -79,9 +73,7 @@ class UrlSelect2View(ListView):
         self.object_list = self.get_queryset()
         context = self.get_context_data()
         data = {
-            "results": [
-                {"text": str(obj), "id": obj.pk} for obj in context["object_list"]
-            ],
+            "results": [{"text": str(obj), "id": obj.pk} for obj in context["object_list"]],
             "more": context["page_obj"].has_next(),
         }
         return JsonResponse(data)

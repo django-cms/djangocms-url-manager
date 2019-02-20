@@ -14,6 +14,4 @@ class UrlManagerConfig(AppConfig):
         if CMS_36:
             from .utils import parse_settings
 
-            self.url_manager_supported_models = parse_settings(
-                settings, "URL_MANAGER_SUPPORTED_MODELS"
-            )
+            self.url_manager_supported_models = parse_settings(settings, "URL_MANAGER_SUPPORTED_MODELS")

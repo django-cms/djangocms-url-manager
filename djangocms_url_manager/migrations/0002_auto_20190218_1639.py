@@ -14,9 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="linkplugin",
             name="internal_name",
-            field=models.CharField(
-                default=None, max_length=120, verbose_name="internal name"
-            ),
+            field=models.CharField(default=None, max_length=120, verbose_name="internal name"),
             preserve_default=False,
         ),
         migrations.AddField(
@@ -33,26 +31,20 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="urloverride",
             name="internal_name",
-            field=models.CharField(
-                blank=True, max_length=255, null=True, verbose_name="internal name"
-            ),
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name="internal name"),
         ),
         migrations.AlterField(
             model_name="url",
             name="content_type",
             field=models.ForeignKey(
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                to="contenttypes.ContentType",
+                null=True, on_delete=django.db.models.deletion.PROTECT, to="contenttypes.ContentType"
             ),
         ),
         migrations.AlterField(
             model_name="urloverride",
             name="content_type",
             field=models.ForeignKey(
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                to="contenttypes.ContentType",
+                null=True, on_delete=django.db.models.deletion.PROTECT, to="contenttypes.ContentType"
             ),
         ),
     ]

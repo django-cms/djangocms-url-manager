@@ -13,9 +13,7 @@ def parse_settings(config, attr_name):
     url_manager_supported_models = OrderedDict()
     if not hasattr(config, attr_name):
         raise ImproperlyConfigured(
-            "{} must be defined in your {}".format(
-                attr_name, "settings" if CMS_36 else "cms_config"
-            )
+            "{} must be defined in your {}".format(attr_name, "settings" if CMS_36 else "cms_config")
         )
     models = getattr(config, attr_name)
     if not isinstance(models, Iterable):
@@ -32,27 +30,17 @@ def parse_settings(config, attr_name):
             if isinstance(model, str):
                 model = apps.get_model(model)
         except LookupError:
-            raise ImproperlyConfigured(
-                '"{}" app for this model is not in INSTALLED_APPS'.format(model)
-            )
+            raise ImproperlyConfigured('"{}" app for this model is not in INSTALLED_APPS'.format(model))
         except ValueError:
             raise ImproperlyConfigured('"{}" is not valid path to model'.format(model))
 
         if not isinstance(model, ModelBase):
-            raise ImproperlyConfigured(
-                "{!r} is not a subclass of django.db.models.base.ModelBase".format(
-                    model
-                )
-            )
+            raise ImproperlyConfigured("{!r} is not a subclass of django.db.models.base.ModelBase".format(model))
         if not hasattr(model, "get_absolute_url"):
-            raise ImproperlyConfigured(
-                "{} needs to implement get_absolute_url method".format(model.__name__)
-            )
+            raise ImproperlyConfigured("{} needs to implement get_absolute_url method".format(model.__name__))
         if model in url_manager_supported_models.keys():
             raise ImproperlyConfigured(
-                "Model {!r} is duplicated in url_manager_supported_models".format(
-                    model.__name__
-                )
+                "Model {!r} is duplicated in url_manager_supported_models".format(model.__name__)
             )
 
         url_manager_supported_models[model] = func

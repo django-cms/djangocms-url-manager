@@ -103,21 +103,15 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
         self.assertEqual(url.get_url(url.site), "tel:555555555")
 
     def test_get_url_phone_shadows_mailto(self):
-        url = self._create_url(
-            phone="555555555", mailto="test@example.com", anchor="foo"
-        )
+        url = self._create_url(phone="555555555", mailto="test@example.com", anchor="foo")
         self.assertEqual(url.get_url(url.site), "tel:555555555")
 
     def test_get_url_manual_url_shadows_phone_and_mailto(self):
-        url = self._create_url(
-            manual_url="https://google.com", phone="555555555", anchor="foo"
-        )
+        url = self._create_url(manual_url="https://google.com", phone="555555555", anchor="foo")
         self.assertEqual(url.get_url(url.site), "https://google.com")
 
     def test_get_url_page_shadows_manual_url_phone_and_mailto(self):
-        url = self._create_url(
-            content_object=self.page, manual_url="https://google.com", anchor="foo"
-        )
+        url = self._create_url(content_object=self.page, manual_url="https://google.com", anchor="foo")
         parsed = urlparse(url.get_url(url.site))
         self.assertEqual(parsed.netloc, "example.com")
         self.assertEqual(parsed.path, "/en/test/")
@@ -127,14 +121,6 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
         self.assertEqual(str(self.url), "//example.com/en/test/")
 
     def test_urlplugin_str(self):
-        placeholder = get_page_placeholders(self.page, self.language).get(
-            slot="content"
-        )
-        plugin = add_plugin(
-            placeholder,
-            "HtmlLink",
-            language=self.language,
-            url=self.url,
-            label="Test URL plugin",
-        )
+        placeholder = get_page_placeholders(self.page, self.language).get(slot="content")
+        plugin = add_plugin(placeholder, "HtmlLink", language=self.language, url=self.url, label="Test URL plugin")
         self.assertEqual(str(plugin), plugin.label)
