@@ -149,4 +149,4 @@ class NavigationSettingTestCase(TestCase):
 
         del settings.DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED
         reload(cms_config)
-        self.assertTrue(cms_config.UrlCMSAppConfig.djangocms_navigation_enabled)
+        self.assertFalse(cms_config.UrlCMSAppConfig.djangocms_navigation_enabled)

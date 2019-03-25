@@ -12,7 +12,7 @@ class UrlCMSAppConfig(CMSAppConfig):
     djangocms_url_manager_enabled = True
     url_manager_supported_models = [Page]
     djangocms_navigation_enabled = getattr(
-        settings, "DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED", True
+        settings, "DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED", False
     )
     navigation_models = {Url: ["internal_name"]}
 
