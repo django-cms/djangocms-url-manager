@@ -135,17 +135,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.content_type_id, None)
         self.assertEqual(instance.object_id, None)
 
-    def test_url_form_create_url_with_invalid_relative_path(self):
-        form = UrlForm(
-            {
-                "site": self.default_site.id,
-                "url_type": "relative_path",
-                "relative_path": "//#%$\/^&~\\\"!`",
-            }
-        )
-        self.assertFalse(form.is_valid())
-        self.assertDictEqual(form.errors, {"relative_path": ["Enter a valid URL."]})
-
     def test_url_form_create_url_with_empty_relative_path(self):
         form = UrlForm(
             {"site": self.default_site.id, "url_type": "relative_path", "relative_path": ""}

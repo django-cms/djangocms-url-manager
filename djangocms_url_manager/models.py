@@ -1,10 +1,7 @@
-import re
-
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -59,13 +56,6 @@ class AbstractUrl(models.Model):
         blank=True,
         max_length=2040,
         help_text=_("Provide a relative path to a web page or resource"),
-        validators=[
-            RegexValidator(
-                regex=re.compile(r'(?:[/?#][^\s]*)?\Z', re.IGNORECASE),
-                message=_("Enter a valid relative path, for example: /some/path/to/resource"),
-                code='invalid_relative_path'
-            )
-        ]
     )
     anchor = models.CharField(
         verbose_name=_("anchor"),
