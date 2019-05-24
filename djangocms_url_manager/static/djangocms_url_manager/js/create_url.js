@@ -64,7 +64,7 @@
         }
         function hideFields($element) {
             $element.closest('fieldset').find(
-              '.field-content_object, .field-manual_url, .field-anchor, .field-mailto, .field-phone'
+              '.field-content_object, .field-manual_url, .field-relative_path, .field-anchor, .field-mailto, .field-phone'
             ).hide();
         }
         function checkTypeField($element) {
@@ -76,6 +76,9 @@
                 switch($element.val()) {
                     case "manual_url":
                         $element.closest('fieldset').find('.field-manual_url').show();
+                        break;
+                    case "relative_path":
+                        $element.closest('fieldset').find('.field-relative_path').show();
                         break;
                     case "anchor":
                         $element.closest('fieldset').find('.field-anchor').show();

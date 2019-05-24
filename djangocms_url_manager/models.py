@@ -1,7 +1,10 @@
+import re
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -33,6 +36,7 @@ TARGET_CHOICES = (
 
 BASIC_TYPE_CHOICES = (
     ("manual_url", _("Manual URL")),
+    ("relative_path", _("Relative Path")),
     ("anchor", _("Anchor")),
     ("mailto", _("Email address")),
     ("phone", _("Phone")),
@@ -40,17 +44,29 @@ BASIC_TYPE_CHOICES = (
 
 
 class AbstractUrl(models.Model):
-
     site = models.ForeignKey(Site, on_delete=models.PROTECT)
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT, null=True)
+    object_id = models.PositiveIntegerField(null=True)
+    content_object = GenericForeignKey("content_type", "object_id")
     manual_url = models.URLField(
         verbose_name=_("manual URL"),
         blank=True,
         max_length=2040,
         help_text=_("Provide a valid URL to an external website."),
     )
-    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT, null=True)
-    object_id = models.PositiveIntegerField(null=True)
-    content_object = GenericForeignKey("content_type", "object_id")
+    relative_path = models.CharField(
+        verbose_name=_("relative path"),
+        blank=True,
+        max_length=2040,
+        help_text=_("Provide a relative path to a web page or resource"),
+        validators=[
+            RegexValidator(
+                regex=re.compile(r'(?:[/?#][^\s]*)?\Z', re.IGNORECASE),
+                message=_("Enter a valid relative path, for example: /some/path/to/resource"),
+                code='invalid_relative_path'
+            )
+        ]
+    )
     anchor = models.CharField(
         verbose_name=_("anchor"),
         blank=True,
@@ -102,6 +118,8 @@ class Url(AbstractUrl):
             )
         elif obj.manual_url:
             url = obj.manual_url
+        elif obj.relative_path:
+            url = obj.relative_path
         elif obj.phone:
             url = "tel:{}".format(obj.phone.replace(" ", ""))
         elif obj.mailto:

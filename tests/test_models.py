@@ -31,6 +31,10 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
         url = self._create_url(manual_url="https://google.com")
         self.assertEqual(url.get_url(url.site), "https://google.com")
 
+    def test_get_url_relative_path(self):
+        url = self._create_url(manual_url="/some/random/path")
+        self.assertEqual(url.get_url(url.site), "/some/random/path")
+
     def test_get_absolute_url_page(self):
         url = self._create_url(content_object=self.page)
         parsed = urlparse(url.get_absolute_url())
@@ -113,6 +117,12 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
             manual_url="https://google.com", phone="555555555", anchor="foo"
         )
         self.assertEqual(url.get_url(url.site), "https://google.com")
+
+    def test_get_url_relative_path_shadows_phone_and_mailto(self):
+        url = self._create_url(
+            relative_path="/some/random/path", phone="555555555", anchor="foo"
+        )
+        self.assertEqual(url.get_url(url.site), "/some/random/path")
 
     def test_get_url_page_shadows_manual_url_phone_and_mailto(self):
         url = self._create_url(

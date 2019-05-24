@@ -87,6 +87,7 @@ class UrlForm(forms.ModelForm):
             "site",
             "content_object",
             "manual_url",
+            "relative_path",
             "anchor",
             "mailto",
             "phone",
