@@ -33,7 +33,7 @@ TARGET_CHOICES = (
 
 BASIC_TYPE_CHOICES = (
     ("manual_url", _("Manual URL")),
-    ("relative_path", _("Relative Path")),
+    ("relative_path", _("Relative path")),
     ("anchor", _("Anchor")),
     ("mailto", _("Email address")),
     ("phone", _("Phone")),

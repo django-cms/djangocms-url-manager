@@ -62,7 +62,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
                 (self.page_contenttype_id, "Page"),
                 (self.poll_content_contenttype_id, "Poll content"),
                 ("manual_url", "Manual URL"),
-                ("relative_path", "Relative Path"),
+                ("relative_path", "Relative path"),
                 ("anchor", "Anchor"),
                 ("mailto", "Email address"),
                 ("phone", "Phone"),
