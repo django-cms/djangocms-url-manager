@@ -24,6 +24,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         instance = form.save()
         self.assertEqual(instance.site_id, site3.pk),
         self.assertEqual(instance.manual_url, "http://google.com/"),
+        self.assertEqual(instance.relative_path, ""),
         self.assertEqual(instance.content_type_id, None),
         self.assertEqual(instance.object_id, None),
         self.assertEqual(instance.anchor, ""),
@@ -61,6 +62,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
                 (self.page_contenttype_id, "Page"),
                 (self.poll_content_contenttype_id, "Poll content"),
                 ("manual_url", "Manual URL"),
+                ("relative_path", "Relative path"),
                 ("anchor", "Anchor"),
                 ("mailto", "Email address"),
                 ("phone", "Phone"),
@@ -73,6 +75,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
                 "site": self.default_site.id,
                 "url_type": "manual_url",
                 "manual_url": "https://google.com/",
+                "relative_path": "/some/random/path",
                 "anchor": "test",
                 "mailto": "test@gmail.com",
                 "phone": "112",
@@ -83,6 +86,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         instance = form.save()
         self.assertEqual(instance.site_id, self.default_site.id)
         self.assertEqual(instance.manual_url, "https://google.com/")
+        self.assertEqual(instance.relative_path, "")
         self.assertEqual(instance.anchor, "")
         self.assertEqual(instance.mailto, "")
         self.assertEqual(instance.phone, "")
@@ -106,6 +110,37 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         )
         self.assertFalse(form.is_valid())
         self.assertDictEqual(form.errors, {"manual_url": ["Field is required"]})
+
+    def test_url_form_create_url_with_valid_relative_path(self):
+        form = UrlForm(
+            {
+                "site": self.default_site.id,
+                "url_type": "relative_path",
+                "manual_url": "https://google.com/",
+                "relative_path": "/some/random/path",
+                "anchor": "test",
+                "mailto": "test@gmail.com",
+                "phone": "112",
+                "content_object": self.page.id,
+            }
+        )
+        self.assertTrue(form.is_valid())
+        instance = form.save()
+        self.assertEqual(instance.site_id, self.default_site.id)
+        self.assertEqual(instance.manual_url, "")
+        self.assertEqual(instance.relative_path, "/some/random/path")
+        self.assertEqual(instance.anchor, "")
+        self.assertEqual(instance.mailto, "")
+        self.assertEqual(instance.phone, "")
+        self.assertEqual(instance.content_type_id, None)
+        self.assertEqual(instance.object_id, None)
+
+    def test_url_form_create_url_with_empty_relative_path(self):
+        form = UrlForm(
+            {"site": self.default_site.id, "url_type": "relative_path", "relative_path": ""}
+        )
+        self.assertFalse(form.is_valid())
+        self.assertDictEqual(form.errors, {"relative_path": ["Field is required"]})
 
     def test_url_form_create_url_with_valid_anchor(self):
         form = UrlForm(
@@ -192,6 +227,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.content_type_id, self.page_contenttype_id)
         self.assertEqual(instance.object_id, self.page2.id)
         self.assertEqual(instance.manual_url, "")
+        self.assertEqual(instance.relative_path, "")
         self.assertEqual(instance.anchor, "")
         self.assertEqual(instance.mailto, "")
         self.assertEqual(instance.phone, "")
@@ -259,6 +295,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.object_id, self.page2.pk),
         self.assertEqual(instance.anchor, ""),
         self.assertEqual(instance.manual_url, ""),
+        self.assertEqual(instance.relative_path, ""),
         self.assertEqual(instance.mailto, ""),
         self.assertEqual(instance.phone, ""),
         self.assertEqual(instance.url_id, self.url.pk),

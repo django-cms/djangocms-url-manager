@@ -33,6 +33,7 @@ TARGET_CHOICES = (
 
 BASIC_TYPE_CHOICES = (
     ("manual_url", _("Manual URL")),
+    ("relative_path", _("Relative path")),
     ("anchor", _("Anchor")),
     ("mailto", _("Email address")),
     ("phone", _("Phone")),
@@ -40,17 +41,22 @@ BASIC_TYPE_CHOICES = (
 
 
 class AbstractUrl(models.Model):
-
     site = models.ForeignKey(Site, on_delete=models.PROTECT)
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT, null=True)
+    object_id = models.PositiveIntegerField(null=True)
+    content_object = GenericForeignKey("content_type", "object_id")
     manual_url = models.URLField(
         verbose_name=_("manual URL"),
         blank=True,
         max_length=2040,
         help_text=_("Provide a valid URL to an external website."),
     )
-    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT, null=True)
-    object_id = models.PositiveIntegerField(null=True)
-    content_object = GenericForeignKey("content_type", "object_id")
+    relative_path = models.CharField(
+        verbose_name=_("relative path"),
+        blank=True,
+        max_length=2040,
+        help_text=_("Provide a relative path to a web page or resource"),
+    )
     anchor = models.CharField(
         verbose_name=_("anchor"),
         blank=True,
@@ -102,6 +108,8 @@ class Url(AbstractUrl):
             )
         elif obj.manual_url:
             url = obj.manual_url
+        elif obj.relative_path:
+            url = obj.relative_path
         elif obj.phone:
             url = "tel:{}".format(obj.phone.replace(" ", ""))
         elif obj.mailto:
