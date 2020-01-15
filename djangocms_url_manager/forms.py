@@ -63,7 +63,8 @@ class UrlForm(forms.ModelForm):
 
     url_type = forms.ChoiceField(
         label=_("Type"),
-        widget=UrlTypeSelectWidget(attrs={"data-placeholder": _("Select type")}),
+        widget=UrlTypeSelectWidget(attrs={"data-placeholder": _("Select type")},),
+        initial="relative_path"
     )
     site = forms.ModelChoiceField(
         label=_("Site"),
@@ -74,7 +75,7 @@ class UrlForm(forms.ModelForm):
     content_object = forms.CharField(
         label=_("Content object"),
         widget=ContentTypeObjectSelectWidget(
-            attrs={"data-placeholder": _("Select content object")}
+            attrs={"data-placeholder": _("Select content object")},
         ),
         required=False,
     )
@@ -118,6 +119,7 @@ class UrlForm(forms.ModelForm):
                 for type_name in dict(BASIC_TYPE_CHOICES).keys():
                     if getattr(self.instance, type_name):
                         self.fields["url_type"].initial = type_name
+
                         break
 
     def clean(self):
