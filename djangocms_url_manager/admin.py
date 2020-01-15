@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.sites.shortcuts import get_current_site
 
 from .forms import UrlForm, UrlOverrideForm
 from .models import Url, UrlOverride
