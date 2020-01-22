@@ -318,3 +318,29 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
             form.errors,
             {"__all__": ["Url override with this Site and Url already exists."]},
         )
+
+    def test_plugin_returns_correct_url_for_type_on_update(self):
+        form = UrlForm(
+            {
+                "site": self.site2.pk,
+                "url_type": self.page_contenttype_id,
+                "content_object": self.page2.pk,
+            }
+        )
+        self.assertTrue(form.is_valid())
+
+        instance = form.save()
+        self.assertEqual(instance.get_url(instance.site), "//foo.com/en/test2/")
+
+        form = UrlForm(
+            {
+                "url": self.url.pk,
+                "site": self.site2.pk,
+                "url_type": "manual_url",
+                "manual_url": "https://www.github.com"
+            }
+        )
+        self.assertTrue(form.is_valid())
+
+        instance = form.save()
+        self.assertEqual(instance.get_url(instance.site), "https://www.github.com")

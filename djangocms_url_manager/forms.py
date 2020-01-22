@@ -181,6 +181,7 @@ class UrlForm(forms.ModelForm):
         return anchor
 
     def save(self, **kwargs):
+        self.instance.content_object = None
         url_type = self.cleaned_data.get("url_type")
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
         if not is_basic_type:
