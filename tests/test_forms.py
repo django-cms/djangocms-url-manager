@@ -14,6 +14,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         site3 = Site.objects.create(name="bar.com", domain="bar.com")
         form = UrlOverrideForm(
             {
+                "internal_name": "Test Name",
                 "url": self.url.pk,
                 "site": site3.pk,
                 "url_type": "manual_url",
@@ -33,7 +34,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.url_id, self.url.pk),
 
     def test_url_override_form_disallow_same_site_as_original_url(self):
-        form = UrlOverrideForm({"url": self.url.pk, "site": self.url.site_id})
+        form = UrlOverrideForm({"internal_name": "Test Name", "url": self.url.pk, "site": self.url.site_id})
         self.assertFalse(form.is_valid())
         self.assertDictEqual(
             form.errors,
@@ -72,6 +73,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
     def test_url_form_create_url_with_valid_manual_url(self):
         form = UrlForm(
             {
+                "internal_name": "Test Name",
                 "site": self.default_site.id,
                 "url_type": "manual_url",
                 "manual_url": "https://google.com/",
@@ -96,6 +98,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
     def test_url_form_create_url_with_invalid_manual_url(self):
         form = UrlForm(
             {
+                "internal_name": "Test Name",
                 "site": self.default_site.id,
                 "url_type": "manual_url",
                 "manual_url": "google",
@@ -106,7 +109,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     def test_url_form_create_url_with_empty_manual_url(self):
         form = UrlForm(
-            {"site": self.default_site.id, "url_type": "manual_url", "manual_url": ""}
+            {"internal_name": "Test Name", "site": self.default_site.id, "url_type": "manual_url", "manual_url": ""}
         )
         self.assertFalse(form.is_valid())
         self.assertDictEqual(form.errors, {"manual_url": ["Field is required"]})
@@ -114,6 +117,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
     def test_url_form_create_url_with_valid_relative_path(self):
         form = UrlForm(
             {
+                "internal_name": "Test Name",
                 "site": self.default_site.id,
                 "url_type": "relative_path",
                 "manual_url": "https://google.com/",
@@ -137,14 +141,19 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     def test_url_form_create_url_with_empty_relative_path(self):
         form = UrlForm(
-            {"site": self.default_site.id, "url_type": "relative_path", "relative_path": ""}
+            {
+                "internal_name": "Test Name",
+                "site": self.default_site.id,
+                "url_type": "relative_path",
+                "relative_path": ""
+            }
         )
         self.assertFalse(form.is_valid())
         self.assertDictEqual(form.errors, {"relative_path": ["Field is required"]})
 
     def test_url_form_create_url_with_valid_anchor(self):
         form = UrlForm(
-            {"site": self.default_site.id, "url_type": "anchor", "anchor": "test"}
+            {"internal_name": "Test Name", "site": self.default_site.id, "url_type": "anchor", "anchor": "test"}
         )
         self.assertTrue(form.is_valid())
         instance = form.save()
@@ -152,7 +161,11 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     def test_url_form_create_url_with_invalid_anchor(self):
         form = UrlForm(
-            {"site": self.default_site.id, "url_type": "anchor", "anchor": "#example"}
+            {
+                "internal_name": "Test Name",
+                "site": self.default_site.id,
+                "url_type": "anchor", "anchor": "#example"
+            }
         )
         self.assertFalse(form.is_valid())
         self.assertDictEqual(
@@ -161,7 +174,12 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     def test_url_form_create_url_with_empty_anchor(self):
         form = UrlForm(
-            {"site": self.default_site.id, "url_type": "anchor", "anchor": ""}
+            {
+                "internal_name": "Test Name",
+                "site": self.default_site.id,
+                "url_type": "anchor",
+                "anchor": ""
+            }
         )
         self.assertFalse(form.is_valid())
         self.assertDictEqual(form.errors, {"anchor": ["Field is required"]})
@@ -169,6 +187,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
     def test_url_form_create_url_with_valid_mailto(self):
         form = UrlForm(
             {
+                "internal_name": "Test Name",
                 "site": self.default_site.id,
                 "url_type": "mailto",
                 "mailto": "norman.burdett@gmail.com",
@@ -180,14 +199,19 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     def test_url_form_create_url_with_invalid_mailto(self):
         form = UrlForm(
-            {"site": self.default_site.id, "url_type": "mailto", "mailto": "norman"}
+            {
+                "internal_name": "Test Name",
+                "site": self.default_site.id,
+                "url_type": "mailto",
+                "mailto": "norman"
+            }
         )
         self.assertFalse(form.is_valid())
         self.assertDictEqual(form.errors, {"mailto": ["Enter a valid email address."]})
 
     def test_url_form_create_url_with_empty_mailto(self):
         form = UrlForm(
-            {"site": self.default_site.id, "url_type": "mailto", "mailto": ""}
+            {"internal_name": "Test Name", "site": self.default_site.id, "url_type": "mailto", "mailto": ""}
         )
         self.assertFalse(form.is_valid())
         self.assertDictEqual(form.errors, {"mailto": ["Field is required"]})
@@ -195,6 +219,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
     def test_url_form_create_url_with_valid_phone(self):
         form = UrlForm(
             {
+                "internal_name": "Test Name",
                 "site": self.default_site.id,
                 "url_type": "phone",
                 "phone": "+44 20 7946 0916",
@@ -205,13 +230,14 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.phone, "+44 20 7946 0916")
 
     def test_url_form_create_url_with_empty_phone(self):
-        form = UrlForm({"site": self.default_site.id, "url_type": "phone", "phone": ""})
+        form = UrlForm({"internal_name": "Test Name", "site": self.default_site.id, "url_type": "phone", "phone": ""})
         self.assertFalse(form.is_valid())
         self.assertDictEqual(form.errors, {"phone": ["Field is required"]})
 
     def test_url_form_create_url_with_valid_page_content_and_content_object(self):
         form = UrlForm(
             {
+                "internal_name": "Test Name",
                 "site": self.site2.id,
                 "url_type": self.page_contenttype_id,
                 "content_object": self.page2.pk,
@@ -235,6 +261,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
     def test_create_url_for_content_object_that_already_have_url(self):
         form = UrlForm(
             {
+                "internal_name": "Test Name",
                 "site": self.default_site.id,
                 "url_type": self.page_contenttype_id,
                 "content_object": self.page.pk,
@@ -251,7 +278,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     def test_url_form_create_url_with_invalid_content_type_and_content_object(self):
         form = UrlForm(
-            {"site": self.default_site.id, "url_type": 99, "content_object": 99}
+            {"internal_name": "Test Name", "site": self.default_site.id, "url_type": 99, "content_object": 99}
         )
         self.assertDictEqual(
             form.errors,
@@ -270,17 +297,19 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
     def test_url_form_create_url_with_empty_content_object(self):
         form = UrlForm(
             {
+                "internal_name": "Test Name",
                 "site": self.default_site.id,
                 "url_type": self.page_contenttype_id,
                 "content_object": None,
             }
         )
-        self.assertDictEqual(form.errors, {"content_object": ["Field is required"]})
+        self.assertDictEqual(form.errors, {"content_object": ["Field is required"],})
 
     def test_url_override_form_dont_validate_object_already_exists(self):
         self._create_url(site=self.site2, content_object=self.page2)
         form = UrlOverrideForm(
             {
+                "internal_name": "Test Name",
                 # self.url is with self.default_site and self.page
                 "url": self.url.pk,
                 "site": self.site2.id,
@@ -306,6 +335,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self._create_url_override(self.url, self.site2, self.page2)
         form = UrlOverrideForm(
             {
+                "internal_name": "Test Name",
                 # self.url is with self.default_site and self.page
                 "url": self.url.pk,
                 "site": self.site2.id,
@@ -316,5 +346,5 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertFalse(form.is_valid())
         self.assertDictEqual(
             form.errors,
-            {"__all__": ["Url override with this Site and Url already exists."]},
+            {"__all__": ["Url override with this Site and Url already exists."], },
         )
