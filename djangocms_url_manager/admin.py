@@ -20,7 +20,7 @@ class UrlAdmin(admin.ModelAdmin):
     inlines = [UrlOverrideInlineAdmin]
     list_display = ("internal_name", "get_model_url", "date_modified", )
     search_fields = ("manual_url", "internal_name",)
-    list_filter = ("site__name", "content_type",)
+    list_filter = ("site__name",)
     ordering = ("internal_name", "date_modified", )
 
     def get_urls(self):
