@@ -18,6 +18,15 @@ class UrlOverrideInlineAdmin(admin.StackedInline):
 class UrlAdmin(admin.ModelAdmin):
     form = UrlForm
     inlines = [UrlOverrideInlineAdmin]
+    list_display = ("internal_name", "get_model_url", "date_modified", )
+    search_fields = ("manual_url", "internal_name",)
+    list_filter = ("site__name",)
+    ordering = ("internal_name", "date_modified", )
 
     def get_urls(self):
         return urlpatterns + super().get_urls()
+
+    def get_model_url(self, obj):
+        return obj.get_url(obj.site)
+
+    get_model_url.short_description = "URL"
