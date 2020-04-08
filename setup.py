@@ -4,9 +4,14 @@ import djangocms_url_manager
 
 
 INSTALL_REQUIREMENTS = [
-    "Django>=1.11,<2.2",
-    "django-cms>=3.5,<4.1",
+    "Django>=1.11,<3.0",
+    "django-cms",
     "djangocms-attributes-field>=0.1.1",
+]
+
+TEST_REQUIREMENTS = [
+    "djangocms_helper",
+    "djangocms-versioning",
 ]
 
 
@@ -25,9 +30,14 @@ setup(
         "Topic :: Software Development",
     ],
     install_requires=INSTALL_REQUIREMENTS,
+    tests_require=TEST_REQUIREMENTS,
     author="Divio AG",
     author_email="info@divio.ch",
     url="http://github.com/divio/djangocms-url-manager",
     license="BSD",
     test_suite="test_settings.run",
+    dependency_links=[
+        "http://github.com/divio/django-cms/tarball/release/4.0.x#egg=django-cms-4.0.0",
+        "http://github.com/divio/djangocms-versioning/tarball/master#egg=djangocms-versioning-0.0.23",
+    ]
 )

@@ -80,9 +80,10 @@ class Url(AbstractUrl):
     internal_name = models.CharField(
         verbose_name=_("internal name"),
         max_length=255,
-        blank=True,
-        null=True,
         help_text=_("Provide internal name for URL objects for searching purpose"),
+    )
+    date_modified = models.DateTimeField(
+        verbose_name=_("Date Modified"), auto_now=True
     )
 
     class Meta:
@@ -131,7 +132,7 @@ class Url(AbstractUrl):
 class UrlOverride(AbstractUrl):
     url = models.ForeignKey(Url, on_delete=models.CASCADE)
     internal_name = models.CharField(
-        verbose_name=_("internal name"), max_length=255, blank=True, null=True
+        verbose_name=_("internal name"), max_length=255,
     )
 
     class Meta:
