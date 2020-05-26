@@ -10,31 +10,6 @@ from .base import BaseUrlTestCase
 
 
 class UrlManagerModelsTestCase(BaseUrlTestCase):
-    def test__get_url_obj(self):
-        self.assertEqual(self.url._get_url_obj(self.url.site), self.url)
-
-    def test__get_url_obj_other_site(self):
-        urloverride = self._create_url_override(self.url, self.site2, self.page2)
-        self.assertEqual(self.url._get_url_obj(self.site2), urloverride)
-
-    def test__get_url_obj_other_site_with_no_override(self):
-        site3 = Site.objects.create(name="bar.com", domain="bar.com")
-        self.assertEqual(self.url._get_url_obj(site3), self.url)
-
-    def test_get_url_page(self):
-        url = self._create_url(content_object=self.page)
-        parsed = urlparse(url.get_url(url.site))
-        self.assertEqual(parsed.netloc, "example.com")
-        self.assertEqual(parsed.path, "/en/test/")
-
-    def test_get_url_manual_url(self):
-        url = self._create_url(manual_url="https://google.com")
-        self.assertEqual(url.get_url(url.site), "https://google.com")
-
-    def test_get_url_relative_path(self):
-        url = self._create_url(manual_url="/some/random/path")
-        self.assertEqual(url.get_url(url.site), "/some/random/path")
-
     def test_get_absolute_url_page(self):
         url = self._create_url(content_object=self.page)
         parsed = urlparse(url.get_absolute_url())
@@ -79,6 +54,55 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
         url = self._create_url(anchor="foo")
         self.assertEqual(str(url), "#foo")
 
+
+
+    def test_url_str(self):
+        self.assertEqual(str(self.url), "//example.com/en/test/")
+
+    def test_urlplugin_str(self):
+        placeholder = get_page_placeholders(self.page, self.language).get(
+            slot="content"
+        )
+        plugin = add_plugin(
+            placeholder,
+            "HtmlLink",
+            language=self.language,
+            url=self.url,
+            label="Test URL plugin",
+        )
+        self.assertEqual(str(plugin), plugin.label)
+
+
+class GetUrlTestCase(BaseUrlTestCase):
+    def _compare_page_get_url_result(self, url):
+        parsed = urlparse(url.get_url(url.site))
+        self.assertEqual(parsed.netloc, "example.com")
+        self.assertEqual(parsed.path, "/en/test/")
+
+    def test__get_url_obj(self):
+        self.assertEqual(self.url._get_url_obj(self.url.site), self.url)
+
+    def test__get_url_obj_other_site(self):
+        urloverride = self._create_url_override(self.url, self.site2, self.page2)
+        self.assertEqual(self.url._get_url_obj(self.site2), urloverride)
+
+    def test__get_url_obj_other_site_with_no_override(self):
+        site3 = Site.objects.create(name="bar.com", domain="bar.com")
+        self.assertEqual(self.url._get_url_obj(site3), self.url)
+
+    def test_get_url_page(self):
+        url = self._create_url(content_object=self.page)
+        parsed = urlparse(url.get_url(url.site))
+        self.assertEqual(parsed.netloc, "example.com")
+        self.assertEqual(parsed.path, "/en/test/")
+
+    def test_get_url_manual_url(self):
+        url = self._create_url(manual_url="https://google.com")
+        self.assertEqual(url.get_url(url.site), "https://google.com")
+
+    def test_get_url_relative_path(self):
+        url = self._create_url(manual_url="/some/random/path")
+        self.assertEqual(url.get_url(url.site), "/some/random/path")
     def test_get_url_phone(self):
         url = self._create_url(phone="555555555")
         self.assertEqual(url.get_url(url.site), "tel:555555555")
@@ -133,18 +157,20 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
         self.assertEqual(parsed.path, "/en/test/")
         self.assertEqual(parsed.fragment, "foo")
 
-    def test_url_str(self):
-        self.assertEqual(str(self.url), "//example.com/en/test/")
+    def test_get_url_change_to_page(self):
+        manual_url = "https://example.com/"
+        url = self._create_url(manual_url=manual_url)
+        self.assertEqual(url.get_url(url.site), manual_url)
+        url.content_object = self.page
+        url.save()
+        parsed = urlparse(url.get_url(url.site))
+        self.assertEqual(parsed.netloc, "example.com")
+        self.assertEqual(parsed.path, "/en/test/")
 
-    def test_urlplugin_str(self):
-        placeholder = get_page_placeholders(self.page, self.language).get(
-            slot="content"
-        )
-        plugin = add_plugin(
-            placeholder,
-            "HtmlLink",
-            language=self.language,
-            url=self.url,
-            label="Test URL plugin",
-        )
-        self.assertEqual(str(plugin), plugin.label)
+    def test_get_url_change_from_page(self):
+        url = self._create_url(content_object=self.page)
+        self._compare_page_get_url_result(url)
+        url.manual_url = "https://example.com"
+        url.save()
+        self.assertEqual(url.get_url(url.site), "https://example.com")
+
