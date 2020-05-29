@@ -1,3 +1,4 @@
+from unittest import skip
 from urllib.parse import urlparse
 
 from django.contrib.sites.models import Site
@@ -157,6 +158,7 @@ class GetUrlTestCase(BaseUrlTestCase):
         self.assertEqual(parsed.path, "/en/test/")
         self.assertEqual(parsed.fragment, "foo")
 
+    @skip("Move to url")
     def test_get_url_change_to_page(self):
         manual_url = "https://example.com/"
         url = self._create_url(manual_url=manual_url)
@@ -166,11 +168,4 @@ class GetUrlTestCase(BaseUrlTestCase):
         parsed = urlparse(url.get_url(url.site))
         self.assertEqual(parsed.netloc, "example.com")
         self.assertEqual(parsed.path, "/en/test/")
-
-    def test_get_url_change_from_page(self):
-        url = self._create_url(content_object=self.page)
-        self._compare_page_get_url_result(url)
-        url.manual_url = "https://example.com"
-        url.save()
-        self.assertEqual(url.get_url(url.site), "https://example.com")
 

@@ -127,14 +127,22 @@ class UrlForm(forms.ModelForm):
         url_type = data.get("url_type")
         content_object = data.get("content_object")
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
+        field_exclude_list = ["url_type", "site"]
 
         for type_name in dict(BASIC_TYPE_CHOICES).keys():
             if type_name != url_type:
                 data[type_name] = ""
 
         if is_basic_type:
+            if data.get("content_object"):
+                data["content_object"] = None
             if url_type not in self.errors and not data[url_type]:
                 self.add_error(url_type, _("Field is required"))
+            else:
+                for field in data:
+                    if field not in field_exclude_list and field == content_object:
+                        data["content_object"] = None
+
         elif content_object:
             site = data.get("site")
             try:
@@ -145,7 +153,7 @@ class UrlForm(forms.ModelForm):
                     content_object_qs = content_object_qs.on_site(site)
                 elif hasattr(model, "site"):
                     content_object_qs = content_object_qs.filter(site=site)
-                content_object = content_object_qs.get(pk=int(content_object))
+                content_object = content_object_qs.get(pk=content_object)
 
                 if (
                     # dont validate for UrlOverride
@@ -183,7 +191,6 @@ class UrlForm(forms.ModelForm):
         return anchor
 
     def save(self, **kwargs):
-        self.instance.content_object = None
         url_type = self.cleaned_data.get("url_type")
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
         if not is_basic_type:
@@ -205,7 +212,7 @@ class UrlOverrideForm(UrlForm):
             raise forms.ValidationError(
                 {
                     "site": _(
-                        "Overriden site must be different from the original."
+                        "Overridden site must be different from the original."
                     )  # noqa: E501
                 }
             )

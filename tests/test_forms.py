@@ -41,7 +41,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
             {
                 "url_type": ["This field is required."],
                 "content_object": ["Field is required"],
-                "site": ["Overriden site must be different from the original."],
+                "site": ["Overridden site must be different from the original."],
             },
         )
 
@@ -176,7 +176,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlForm(
             {
                 "internal_name": "Test Name",
-                "site": self.default_site.id,
+                "site": self.default_site.pk,
                 "url_type": "anchor",
                 "anchor": ""
             }
@@ -188,7 +188,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlForm(
             {
                 "internal_name": "Test Name",
-                "site": self.default_site.id,
+                "site": self.default_site.pk,
                 "url_type": "mailto",
                 "mailto": "norman.burdett@gmail.com",
             }
@@ -201,7 +201,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlForm(
             {
                 "internal_name": "Test Name",
-                "site": self.default_site.id,
+                "site": self.default_site.pk,
                 "url_type": "mailto",
                 "mailto": "norman"
             }
@@ -220,7 +220,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlForm(
             {
                 "internal_name": "Test Name",
-                "site": self.default_site.id,
+                "site": self.default_site.pk,
                 "url_type": "phone",
                 "phone": "+44 20 7946 0916",
             }
@@ -238,7 +238,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlForm(
             {
                 "internal_name": "Test Name",
-                "site": self.site2.id,
+                "site": self.site2.pk,
                 "url_type": self.page_contenttype_id,
                 "content_object": self.page2.pk,
                 "manual_url": "http://google.com/",
@@ -249,9 +249,9 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         )
         self.assertTrue(form.is_valid())
         instance = form.save()
-        self.assertEqual(instance.site_id, self.site2.id)
+        self.assertEqual(instance.site_id, self.site2.pk)
         self.assertEqual(instance.content_type_id, self.page_contenttype_id)
-        self.assertEqual(instance.object_id, self.page2.id)
+        self.assertEqual(instance.object_id, self.page2.pk)
         self.assertEqual(instance.manual_url, "")
         self.assertEqual(instance.relative_path, "")
         self.assertEqual(instance.anchor, "")
@@ -262,7 +262,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlForm(
             {
                 "internal_name": "Test Name",
-                "site": self.default_site.id,
+                "site": self.default_site.pk,
                 "url_type": self.page_contenttype_id,
                 "content_object": self.page.pk,
                 "manual_url": "http://google.com/",
@@ -298,7 +298,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlForm(
             {
                 "internal_name": "Test Name",
-                "site": self.default_site.id,
+                "site": self.default_site.pk,
                 "url_type": self.page_contenttype_id,
                 "content_object": None,
             }
@@ -310,9 +310,9 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlOverrideForm(
             {
                 "internal_name": "Test Name",
+                "site": self.site2.pk,
                 # self.url is with self.default_site and self.page
                 "url": self.url.pk,
-                "site": self.site2.id,
                 "url_type": self.page_contenttype_id,
                 "content_object": self.page2.pk,
             }
@@ -353,11 +353,12 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlForm(
             {
                 "internal_name": "Test Name",
-                "site": self.site2.pk,
+                "site": self.site2.id,
                 "url_type": self.page_contenttype_id,
                 "content_object": self.page2.pk,
             }
         )
+
         self.assertTrue(form.is_valid())
 
         instance = form.save()
@@ -366,8 +367,8 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         form = UrlForm(
             {
                 "internal_name": "Test Name",
-                "url": self.url.pk,
-                "site": self.site2.pk,
+                "url": self.url.id,
+                "site": self.site2.id,
                 "url_type": "manual_url",
                 "manual_url": "https://www.github.com"
             }

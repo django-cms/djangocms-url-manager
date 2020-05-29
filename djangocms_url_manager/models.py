@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -128,6 +129,17 @@ class Url(AbstractUrl):
     def get_absolute_url(self):
         return self.get_url(self.site)
 
+"""
+    def clean(self, *args, **kwargs):
+        cleaned_data = super().clean()
+        # The fields in url manager should be exclusive, enforce this as an exclusive or
+        if cleaned_data and not bool(cleaned_data.get("manual_url")) != bool(cleaned_data.get("content_obj"))\
+            != bool(cleaned_data.get("phone")) != bool(cleaned_data.get("mailto"))\
+               != bool(cleaned_data.get("relative_path")):
+            raise ValidationError(
+                '''These fields are exclusive, ensure only one is selected'''
+            )
+"""
 
 class UrlOverride(AbstractUrl):
     url = models.ForeignKey(Url, on_delete=models.CASCADE)
