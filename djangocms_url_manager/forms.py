@@ -136,10 +136,6 @@ class UrlForm(forms.ModelForm):
         if is_basic_type:
             if url_type not in self.errors and not data[url_type]:
                 self.add_error(url_type, _("Field is required"))
-            else:
-                for field in data:
-                    if field not in field_exclude_list and field == content_object:
-                        data["content_object"] = None
 
         elif content_object:
             site = data.get("site")
