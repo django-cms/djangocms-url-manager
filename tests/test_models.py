@@ -168,4 +168,3 @@ class GetUrlTestCase(BaseUrlTestCase):
         parsed = urlparse(url.get_url(url.site))
         self.assertEqual(parsed.netloc, "example.com")
         self.assertEqual(parsed.path, "/en/test/")
-

@@ -1,4 +1,5 @@
 import logging
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -11,6 +12,7 @@ from cms.models import CMSPlugin
 from cms.utils.i18n import get_default_language_for_site
 
 from djangocms_attributes_field.fields import AttributesField
+
 
 logger = logging.getLogger(__name__)
 
