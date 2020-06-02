@@ -134,8 +134,6 @@ class UrlForm(forms.ModelForm):
                 data[type_name] = ""
 
         if is_basic_type:
-            if data.get("content_object"):
-                data["content_object"] = None
             if url_type not in self.errors and not data[url_type]:
                 self.add_error(url_type, _("Field is required"))
             else:
@@ -195,6 +193,8 @@ class UrlForm(forms.ModelForm):
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
         if not is_basic_type:
             self.instance.content_object = self.cleaned_data["content_object"]
+        else:
+            self.instance.content_object = None
         return super().save(**kwargs)
 
 

@@ -102,6 +102,13 @@ class Url(AbstractUrl):
         return obj
 
     def get_url(self, site):
+        """
+            The implementation of this seems to have been based on the assumption that the model was...
+            populated using the forms.py save and clean logic.
+
+            All fields in basic_types and supported_models should be exclusive or's, otherwise the value will be
+            returned based on the order of the below method rather than the intended value.
+        """
         obj = self._get_url_obj(site)
         language = get_default_language_for_site(obj.site)
         if obj.content_object:
@@ -129,17 +136,6 @@ class Url(AbstractUrl):
     def get_absolute_url(self):
         return self.get_url(self.site)
 
-"""
-    def clean(self, *args, **kwargs):
-        cleaned_data = super().clean()
-        # The fields in url manager should be exclusive, enforce this as an exclusive or
-        if cleaned_data and not bool(cleaned_data.get("manual_url")) != bool(cleaned_data.get("content_obj"))\
-            != bool(cleaned_data.get("phone")) != bool(cleaned_data.get("mailto"))\
-               != bool(cleaned_data.get("relative_path")):
-            raise ValidationError(
-                '''These fields are exclusive, ensure only one is selected'''
-            )
-"""
 
 class UrlOverride(AbstractUrl):
     url = models.ForeignKey(Url, on_delete=models.CASCADE)
