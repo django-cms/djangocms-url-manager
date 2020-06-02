@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from django.contrib.sites.models import Site
 
 from djangocms_url_manager.forms import (
@@ -377,3 +379,13 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
         instance = form.save()
         self.assertEqual(instance.get_url(instance.site), "https://www.github.com")
+
+    def test_get_url_change_to_page(self):
+        manual_url = "https://example.com/"
+        url = self._create_url(manual_url=manual_url)
+        self.assertEqual(url.get_url(url.site), manual_url)
+        url.content_object = self.page
+        url.save()
+        parsed = urlparse(url.get_url(url.site))
+        self.assertEqual(parsed.netloc, "example.com")
+        self.assertEqual(parsed.path, "/en/test/")

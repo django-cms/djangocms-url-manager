@@ -127,7 +127,6 @@ class UrlForm(forms.ModelForm):
         url_type = data.get("url_type")
         content_object = data.get("content_object")
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
-        field_exclude_list = ["url_type", "site"]
 
         for type_name in dict(BASIC_TYPE_CHOICES).keys():
             if type_name != url_type:
