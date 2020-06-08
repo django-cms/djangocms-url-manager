@@ -115,7 +115,7 @@ class Url(AbstractUrl):
         logger.warning(
             """
             URL.get_model method should only be called on models populated via forms that implement a XOR on fields
-            within supported_models nad basic_types!
+            within supported_models and basic_types!
             """
         )
         obj = self._get_url_obj(site)

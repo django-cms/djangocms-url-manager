@@ -77,14 +77,14 @@ class GetUrlTestCase(BaseUrlTestCase):
         self.assertEqual(parsed.netloc, "example.com")
         self.assertEqual(parsed.path, "/en/test/")
 
-    def test__get_url_obj(self):
+    def test_get_url_obj(self):
         self.assertEqual(self.url._get_url_obj(self.url.site), self.url)
 
-    def test__get_url_obj_other_site(self):
+    def test_get_url_obj_other_site(self):
         urloverride = self._create_url_override(self.url, self.site2, self.page2)
         self.assertEqual(self.url._get_url_obj(self.site2), urloverride)
 
-    def test__get_url_obj_other_site_with_no_override(self):
+    def test_get_url_obj_other_site_with_no_override(self):
         site3 = Site.objects.create(name="bar.com", domain="bar.com")
         self.assertEqual(self.url._get_url_obj(site3), self.url)
 

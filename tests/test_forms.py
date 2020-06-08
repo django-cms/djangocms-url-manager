@@ -334,6 +334,10 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
     def test_url_override_form_validate_object_with_this_site_and_object_already_exists(
         self
     ):
+        """
+        Test form is returning errors on failed validation
+        - We cannot have two override models with the same site and object.
+        """
         self._create_url_override(self.url, self.site2, self.page2)
         form = UrlOverrideForm(
             {
@@ -352,6 +356,14 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         )
 
     def test_plugin_returns_correct_url_for_type_on_update(self):
+        """
+        Get URL returns based on a series of if statements meaning without proper validation the incorrect value
+        is returned if the content type was previously a page but has since been changed to a manual_url
+        - Create a url pointing to a page
+        - Ensure get_url returns the correct url
+        - Change it to a manual_url
+        - Ensure that get_url returns the updated url
+        """
         form = UrlForm(
             {
                 "internal_name": "Test Name",
