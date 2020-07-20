@@ -1,6 +1,8 @@
 from django.conf import settings
+from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
+from django.test import RequestFactory
 
 from cms.api import create_page
 from cms.models import Page
@@ -12,6 +14,7 @@ from djangocms_url_manager.constants import (
     SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
     SELECT2_URLS,
 )
+from djangocms_url_manager.admin import UrlAdmin
 from djangocms_url_manager.models import Url as UrlModel, UrlOverride
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 
@@ -35,6 +38,7 @@ class BaseUrlTestCase(CMSTestCase):
         )
         self.url = self._create_url(content_object=self.page)
         self.url2 = self._create_url(manual_url="https://example.com/", site=self.site2)
+        self.url_queryset = UrlModel.objects.all()
         self.poll = Poll.objects.create(name="Test poll")
         self.poll_content = PollContent.objects.create(
             poll=self.poll, language=self.language, text="example"
@@ -46,6 +50,8 @@ class BaseUrlTestCase(CMSTestCase):
         self.poll_content_contenttype_id = ContentType.objects.get_for_model(
             PollContent
         ).id
+        self.url_admin = UrlAdmin(UrlModel, admin)
+        self.url_admin_request = RequestFactory().get("/admin/djangocms_url_manager")
 
     def _create_url(
         self,

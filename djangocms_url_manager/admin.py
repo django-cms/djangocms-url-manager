@@ -1,8 +1,12 @@
 from django.contrib import admin
+from django.contrib.contenttypes.models import ContentType
+
+from cms.models import Page, PageContent
 
 from .forms import UrlForm, UrlOverrideForm
 from .models import Url, UrlOverride
 from .urls import urlpatterns
+from .utils import supported_models
 
 
 __all__ = ["UrlAdmin", "UrlOverrideInlineAdmin"]
@@ -28,5 +32,27 @@ class UrlAdmin(admin.ModelAdmin):
 
     def get_model_url(self, obj):
         return obj.get_url(obj.site)
+
+    def get_search_results(self, request, queryset, search_term):
+        """
+        Override the ModelAdmin method for fetching search results to filter across a the enabled content type (Page)
+        :param request: Url Admin request
+        :param queryset: Url queryset
+        :param search_term: Term to be searched for
+        :return: results
+        """
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        page_content_queryset = PageContent.objects.filter(title=search_term)
+
+        for page_content in page_content_queryset:
+            try:
+                queryset |= self.model.objects.filter(
+                    object_id=page_content.page.id,
+                    content_type=ContentType.objects.get_for_model(Page).id
+                )
+            except:
+                pass
+
+        return queryset, use_distinct
 
     get_model_url.short_description = "URL"
