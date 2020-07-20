@@ -9,12 +9,12 @@ from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
 from cms.utils.urlutils import admin_reverse
 
+from djangocms_url_manager.admin import UrlAdmin
 from djangocms_url_manager.compat import CMS_36, get_page_placeholders
 from djangocms_url_manager.constants import (
     SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
     SELECT2_URLS,
 )
-from djangocms_url_manager.admin import UrlAdmin
 from djangocms_url_manager.models import Url as UrlModel, UrlOverride
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 
