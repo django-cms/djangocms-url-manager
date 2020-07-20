@@ -43,12 +43,13 @@ class UrlAdmin(admin.ModelAdmin):
         """
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         page_content_queryset = PageContent.objects.filter(title=search_term)
+        content_type_id = ContentType.objects.get_for_model(Page).id
 
         for page_content in page_content_queryset:
             try:
                 queryset |= self.model.objects.filter(
                     object_id=page_content.page.id,
-                    content_type=ContentType.objects.get_for_model(Page).id
+                    content_type=content_type_id
                 )
             except:
                 pass
