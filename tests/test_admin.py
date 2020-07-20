@@ -1,11 +1,3 @@
-from django.contrib import admin
-from django.contrib.contenttypes.models import ContentType
-
-from cms.models import PageContent
-
-from djangocms_url_manager.admin import UrlAdmin
-from djangocms_url_manager.models import Url
-
 from .base import BaseUrlTestCase
 
 

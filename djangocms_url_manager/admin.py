@@ -6,7 +6,6 @@ from cms.models import Page, PageContent
 from .forms import UrlForm, UrlOverrideForm
 from .models import Url, UrlOverride
 from .urls import urlpatterns
-from .utils import supported_models
 
 
 __all__ = ["UrlAdmin", "UrlOverrideInlineAdmin"]
@@ -51,7 +50,7 @@ class UrlAdmin(admin.ModelAdmin):
                     object_id=page_content.page.id,
                     content_type=content_type_id
                 )
-            except:
+            except BaseException:
                 pass
 
         return queryset, use_distinct
