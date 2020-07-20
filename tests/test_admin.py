@@ -13,7 +13,8 @@ class UrlManagerTestCase(BaseUrlTestCase):
 
     def test_get_search_results(self):
         """
-        Test that a filtered queryset is returned containing a match with a given search_term
+        Test that a filtered queryset is returned containing matches with a given search_term
+        Ensure querysets are combined to prevent search from only returning the last hit!
         """
         self.url2.content_object = self.page
         self.url2.save()
