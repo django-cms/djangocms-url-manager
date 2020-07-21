@@ -1,11 +1,11 @@
 from django.contrib import admin
-from django.contrib.contenttypes.models import ContentType
 
 from cms.models import Page, PageContent
 
-from .forms import UrlForm, UrlOverrideForm
-from .models import Url, UrlOverride
-from .urls import urlpatterns
+from djangocms_url_manager.cms_config import UrlCMSAppConfig
+from djangocms_url_manager.forms import UrlForm, UrlOverrideForm
+from djangocms_url_manager.models import Url, UrlOverride
+from djangocms_url_manager.urls import urlpatterns
 
 
 __all__ = ["UrlAdmin", "UrlOverrideInlineAdmin"]
@@ -40,18 +40,12 @@ class UrlAdmin(admin.ModelAdmin):
         :param search_term: Term to be searched for
         :return: results
         """
+        cms_config = UrlCMSAppConfig
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-        page_content_queryset = PageContent.objects.filter(title=search_term)
-        content_type_id = ContentType.objects.get_for_model(Page).id
 
-        for page_content in page_content_queryset:
-            try:
-                queryset |= self.model.objects.filter(
-                    object_id=page_content.page.id,
-                    content_type=content_type_id
-                )
-            except BaseException:
-                pass
+        for search_helpers in cms_config.url_manager_supported_models_search_helpers:
+            for item, search_helper in search_helpers.items():
+                queryset |= search_helper(cms_config, item, queryset, search_term)
 
         return queryset, use_distinct
 
