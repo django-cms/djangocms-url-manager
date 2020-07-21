@@ -19,7 +19,8 @@ class UrlCMSAppConfig(CMSAppConfig):
 
     def get_page_search_results(self, model, queryset, search_term):
         """
-        Override the ModelAdmin method for fetching search results to filter across a the enabled content type (Page)
+        A helper method to filter across generic foreign key relations.
+        Provide additional helpers for any models when extending this app.
         :param model: The supported model
         :param queryset: The queryset to be filtered
         :param search_term: Term to be searched for

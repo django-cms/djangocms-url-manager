@@ -32,7 +32,7 @@ class UrlAdmin(admin.ModelAdmin):
 
     def get_search_results(self, request, queryset, search_term):
         """
-        Override the ModelAdmin method for fetching search results to filter across a the enabled content type (Page)
+        Override the ModelAdmin method for fetching search results to filter across the enabled content types
         :param request: Url Admin request
         :param queryset: Url queryset
         :param search_term: Term to be searched for
