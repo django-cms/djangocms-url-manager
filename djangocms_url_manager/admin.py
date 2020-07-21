@@ -1,7 +1,5 @@
 from django.contrib import admin
 
-from cms.models import Page, PageContent
-
 from djangocms_url_manager.cms_config import UrlCMSAppConfig
 from djangocms_url_manager.forms import UrlForm, UrlOverrideForm
 from djangocms_url_manager.models import Url, UrlOverride

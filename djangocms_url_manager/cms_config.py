@@ -58,4 +58,3 @@ class UrlManagerCMSExtension(CMSAppExtension):
 
     def configure_app(self, cms_config):
         self.handle_url_manager_setting(cms_config)
-
