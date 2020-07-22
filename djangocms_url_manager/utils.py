@@ -73,6 +73,15 @@ def supported_models():
     except AttributeError:
         return app_config.url_manager_supported_models
 
+@lru_cache(maxsize=1)
+def supported_models_search_helpers():
+    app_config = apps.get_app_config("djangocms_url_manager")
+    try:
+        extension = app_config.cms_extension
+        return extension.url_manager_supported_models_search_helpers
+    except AttributeError:
+        return app_config.url_manager_supported_models_search_helpers
+
 
 def is_model_supported(model):
     """Return bool value if model is in keys"""

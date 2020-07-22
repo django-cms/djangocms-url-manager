@@ -1,5 +1,5 @@
 from importlib import reload
-from unittest import skipIf
+from unittest import skipIf, skip
 from unittest.mock import Mock
 
 from django.conf import settings
@@ -11,8 +11,12 @@ from cms.test_utils.testcases import CMSTestCase
 
 from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
-from djangocms_url_manager.test_utils.polls.utils import get_all_poll_content_objects
-from djangocms_url_manager.utils import supported_models
+from djangocms_url_manager.test_utils.polls.utils import get_all_poll_content_objects, get_poll_search_results
+from djangocms_url_manager.utils import (
+    get_page_search_results,
+    supported_models,
+    supported_models_search_helpers
+)
 
 
 @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
@@ -118,6 +122,23 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         extensions.handle_url_manager_setting(cms_config)
         self.assertDictEqual(
             supported_models(), {Page: None, PollContent: get_all_poll_content_objects}
+        )
+
+    def test_url_manager_search_helpers(self):
+        from djangocms_url_manager.cms_config import UrlManagerCMSExtension
+
+        extensions = UrlManagerCMSExtension()
+        cms_config = Mock(
+            spec=[],
+            djangocms_url_manager_enabled=True,
+            url_manager_supported_models=[PollContent],
+            url_manager_supported_models_search_helpers=[get_poll_search_results]
+        )
+        extensions.handle_url_manager_setting(cms_config)
+
+        self.assertDictEqual(
+            supported_models_search_helpers(),
+            {Page: get_page_search_results, PollContent: get_poll_search_results}
         )
 
 

@@ -38,14 +38,11 @@ class UrlAdmin(admin.ModelAdmin):
         :param search_term: Term to be searched for
         :return: results
         """
-        import pdb
-        pdb.set_trace()
         cms_config = UrlCMSAppConfig
         queryset, use_distinct = super(UrlAdmin, self).get_search_results(request, queryset, search_term)
 
-        for search_helpers in cms_config.url_manager_supported_models_search_helpers:
-            for item, search_helper in search_helpers.items():
-                queryset |= search_helper(item, queryset, search_term)
+        for model, search_helper in cms_config.url_manager_supported_models_search_helpers.items():
+            queryset |= search_helper(model, queryset, search_term)
 
         return queryset, use_distinct
 
