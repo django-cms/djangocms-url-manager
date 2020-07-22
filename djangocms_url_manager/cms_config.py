@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
 from cms.app_base import CMSAppConfig, CMSAppExtension
-from cms.models import Page, PageContent
+from cms.models import Page
 
 from djangocms_url_manager.utils import get_page_search_results, parse_settings
 
@@ -58,4 +58,3 @@ class UrlManagerCMSExtension(CMSAppExtension):
     def configure_app(self, cms_config):
         self.handle_url_manager_setting(cms_config)
         self.handle_url_manager_search_setting(cms_config)
-

@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.base import ModelBase
 
-from cms.models import Page, PageContent
+from cms.models import PageContent
 
 from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.models import Url
@@ -72,6 +72,7 @@ def supported_models():
         return extension.url_manager_supported_models
     except AttributeError:
         return app_config.url_manager_supported_models
+
 
 @lru_cache(maxsize=1)
 def supported_models_search_helpers():

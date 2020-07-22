@@ -1,5 +1,5 @@
 from importlib import reload
-from unittest import skipIf, skip
+from unittest import skipIf
 from unittest.mock import Mock
 
 from django.conf import settings
@@ -11,11 +11,14 @@ from cms.test_utils.testcases import CMSTestCase
 
 from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
-from djangocms_url_manager.test_utils.polls.utils import get_all_poll_content_objects, get_poll_search_results
+from djangocms_url_manager.test_utils.polls.utils import (
+    get_all_poll_content_objects,
+    get_poll_search_results,
+)
 from djangocms_url_manager.utils import (
     get_page_search_results,
     supported_models,
-    supported_models_search_helpers
+    supported_models_search_helpers,
 )
 
 
