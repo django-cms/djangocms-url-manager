@@ -11,7 +11,7 @@ class UrlManagerTestCase(BaseUrlTestCase):
         """
         self.url2.content_object = self.page2
         self.url2.save()
-        print(dir(self.poll_content))
+
         search_term = self.page.get_title()
         results, use_distinct = self.url_admin.get_search_results(
             self.url_admin_request, self.url_queryset, search_term
@@ -27,8 +27,8 @@ class UrlManagerTestCase(BaseUrlTestCase):
     def test_get_search_results_versioning(self):
         from djangocms_versioning.constants import DRAFT, PUBLISHED
 
-        published_version = self._get_version(self.page, PUBLISHED, self.language)
-        draft_version = self._get_version(self.page, DRAFT, self.language)
+        self._get_version(self.page, PUBLISHED, self.language)
+        self._get_version(self.page, DRAFT, self.language)
 
         self.url.content_object = self.page
         search_term = self.page.get_title()
@@ -38,8 +38,7 @@ class UrlManagerTestCase(BaseUrlTestCase):
         )
 
         self.assertEqual(results.first(), self.url)
-        self.assertFalse(draft_version in results)
-        self.assertEqual(results.count(), 2)
+        self.assertEqual(results.count(), 1)
 
     def test_failed_to_find_results(self):
         """
