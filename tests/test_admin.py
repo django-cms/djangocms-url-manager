@@ -37,8 +37,8 @@ class UrlManagerTestCase(BaseUrlTestCase):
             self.url_admin_request, self.url_queryset, search_term
         )
 
-        self.assertEqual(results.first().content_object, published_version.content)
-        self.assertFalse(draft_version.content in results)
+        self.assertEqual(results.first(), published_version)
+        self.assertFalse(draft_version in results)
         self.assertEqual(results.count(), 2)
 
     def test_failed_to_find_results(self):
