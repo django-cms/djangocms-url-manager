@@ -37,7 +37,7 @@ class UrlManagerTestCase(BaseUrlTestCase):
             self.url_admin_request, self.url_queryset, search_term
         )
 
-        self.assertEqual(results.first(), published_version)
+        self.assertEqual(results.first(), self.url2)
         self.assertFalse(draft_version in results)
         self.assertEqual(results.count(), 2)
 
