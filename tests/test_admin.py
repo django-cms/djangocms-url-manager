@@ -27,11 +27,11 @@ class UrlManagerTestCase(BaseUrlTestCase):
     def test_get_search_results_versioning(self):
         from djangocms_versioning.constants import DRAFT, PUBLISHED
 
-        published_version = self._get_version(self.poll_content, PUBLISHED, self.language)
-        draft_version = self._get_version(self.poll_content, DRAFT, self.language)
+        published_version = self._get_version(self.page, PUBLISHED, self.language)
+        draft_version = self._get_version(self.page, DRAFT, self.language)
 
-        self.url2.content_object = self.poll
-        search_term = self.poll_content.text
+        self.url2.content_object = self.page
+        search_term = self.page.get_title()
 
         results, use_distinct = self.url_admin.get_search_results(
             self.url_admin_request, self.url_queryset, search_term
