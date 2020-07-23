@@ -1,3 +1,5 @@
+from unittest import skipUnless
+
 from djangocms_url_manager.test_utils import polls
 
 from .base import BaseUrlTestCase
@@ -20,19 +22,24 @@ class UrlManagerTestCase(BaseUrlTestCase):
         self.assertEqual(results.last(), self.url2)
         self.assertEqual(results.count(), 2)
 
+    @skipUnless(
+        BaseUrlTestCase.is_versioning_enabled(), "Test only relevant for versioning"
+    )
     def test_get_search_results_versioning(self):
-        from djangocms_versioning.constants import DRAFT
-        page3 = self._create_page(title=self.page.get_title(), site=self.site2, published=True)
-        draft_version = self._get_version(page3, DRAFT, self.language)
-        self.url2.content_object = page3
-        search_term = self.page.get_title()
+        poll_published = self.poll_content
+        poll_published.publish()
+        poll_draft = self.poll_content2
+
+
+        self.url2.content_object = self.poll
+        search_term = self.poll_content.text
 
         results, use_distinct = self.url_admin.get_search_results(
             self.url_admin_request, self.url_queryset, search_term
         )
 
-        self.assertEqual(results.first().content.object, self.url)
-        self.assertEqual(results.last().content_object, self.url2)
+        self.assertEqual(results.first().content_object, self.poll_published)
+        self.assertEqual(results.count(), 1)
 
     def test_failed_to_find_results(self):
         """
