@@ -13,6 +13,7 @@ class UrlManagerTestCase(BaseUrlTestCase):
         """
         self.url2.content_object = self.page2
         self.url2.save()
+        print(dir(self.poll_content))
         search_term = self.page.get_title()
         results, use_distinct = self.url_admin.get_search_results(
             self.url_admin_request, self.url_queryset, search_term
@@ -26,8 +27,9 @@ class UrlManagerTestCase(BaseUrlTestCase):
         BaseUrlTestCase.is_versioning_enabled(), "Test only relevant for versioning"
     )
     def test_get_search_results_versioning(self):
+        from djangocms_versioning.constants import DRAFT
         poll_published = self.poll_content
-        poll_published.publish()
+        poll_published._publish(poll_published.poll, DRAFT, self.language)
         poll_draft = self.poll_content2
 
 
