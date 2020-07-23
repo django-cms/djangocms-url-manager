@@ -30,14 +30,14 @@ class UrlManagerTestCase(BaseUrlTestCase):
         published_version = self._get_version(self.page, PUBLISHED, self.language)
         draft_version = self._get_version(self.page, DRAFT, self.language)
 
-        self.url2.content_object = self.page
+        self.url.content_object = self.page
         search_term = self.page.get_title()
 
         results, use_distinct = self.url_admin.get_search_results(
             self.url_admin_request, self.url_queryset, search_term
         )
 
-        self.assertEqual(results.first(), self.url2)
+        self.assertEqual(results.first(), self.url)
         self.assertFalse(draft_version in results)
         self.assertEqual(results.count(), 2)
 
