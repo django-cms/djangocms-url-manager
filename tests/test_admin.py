@@ -21,6 +21,24 @@ class UrlManagerTestCase(BaseUrlTestCase):
         self.assertEqual(results.last(), self.url2)
         self.assertEqual(results.count(), 2)
 
+    def test_get_search_results_partial_search_term(self):
+        """
+        A filtered queryset is returned containing matches with a given search_term
+        Ensure querysets are combined to prevent search from only returning the last hit and that values are returned
+        for partial search terms
+        """
+        self.url2.content_object = self.page2
+        self.url2.save()
+
+        search_term = self.page.get_title()[:2]
+        results, use_distinct = self.url_admin.get_search_results(
+            self.url_admin_request, self.url_queryset, search_term
+        )
+
+        self.assertEqual(results.first(), self.url)
+        self.assertEqual(results.last(), self.url2)
+        self.assertEqual(results.count(), 2)
+
     @skipUnless(
         BaseUrlTestCase.is_versioning_enabled(), "Test only relevant for versioning"
     )
