@@ -26,9 +26,9 @@ class UrlManagerTestCase(BaseUrlTestCase):
     )
     def test_get_search_results_versioning(self):
         from djangocms_versioning.constants import DRAFT, PUBLISHED
-        poll_published = self.poll_content
-        published_version = self._get_version(poll_published.poll, PUBLISHED, self.language)
-        draft_version = self._get_version(poll_published.poll, DRAFT, self.language)
+
+        published_version = self._get_version(self.poll_content, PUBLISHED, self.language)
+        draft_version = self._get_version(self.poll_content, DRAFT, self.language)
 
         self.url2.content_object = self.poll
         search_term = self.poll_content.text
@@ -39,7 +39,7 @@ class UrlManagerTestCase(BaseUrlTestCase):
 
         self.assertEqual(results.first().content_object, published_version.content)
         self.assertFalse(draft_version.content in results)
-        self.assertEqual(results.count(), 1)
+        self.assertEqual(results.count(), 2)
 
     def test_failed_to_find_results(self):
         """
