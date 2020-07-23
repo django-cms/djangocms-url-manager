@@ -1,7 +1,5 @@
 from unittest import skipUnless
 
-from djangocms_url_manager.test_utils import polls
-
 from .base import BaseUrlTestCase
 
 
@@ -27,11 +25,10 @@ class UrlManagerTestCase(BaseUrlTestCase):
         BaseUrlTestCase.is_versioning_enabled(), "Test only relevant for versioning"
     )
     def test_get_search_results_versioning(self):
-        from djangocms_versioning.constants import DRAFT
+        from djangocms_versioning.constants import DRAFT, PUBLISHED
         poll_published = self.poll_content
-        poll_published._publish(poll_published.poll, DRAFT, self.language)
-        poll_draft = self.poll_content2
-
+        published_version = self._get_version(poll_published.poll, PUBLISHED, self.language)
+        draft_version = self._get_version(poll_published.poll, DRAFT, self.language)
 
         self.url2.content_object = self.poll
         search_term = self.poll_content.text
@@ -40,7 +37,8 @@ class UrlManagerTestCase(BaseUrlTestCase):
             self.url_admin_request, self.url_queryset, search_term
         )
 
-        self.assertEqual(results.first().content_object, self.poll_published)
+        self.assertEqual(results.first().content_object, published_version.content)
+        self.assertFalse(draft_version.content in results)
         self.assertEqual(results.count(), 1)
 
     def test_failed_to_find_results(self):
@@ -54,6 +52,3 @@ class UrlManagerTestCase(BaseUrlTestCase):
         )
 
         self.assertEqual(results.count(), 0)
-
-    def test_get_search_results_poll_contents(self):
-        app_config = polls.cms_config.PollsCMSConfig
