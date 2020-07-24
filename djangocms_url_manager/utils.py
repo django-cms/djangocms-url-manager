@@ -3,10 +3,14 @@ from collections import Iterable, OrderedDict
 from functools import lru_cache
 
 from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.base import ModelBase
 
+from cms.models import PageContent
+
 from djangocms_url_manager.compat import CMS_36
+from djangocms_url_manager.models import Url
 
 
 def parse_settings(config, attr_name):
@@ -70,6 +74,16 @@ def supported_models():
         return app_config.url_manager_supported_models
 
 
+@lru_cache(maxsize=1)
+def supported_models_search_helpers():
+    app_config = apps.get_app_config("djangocms_url_manager")
+    try:
+        extension = app_config.cms_extension
+        return extension.url_manager_supported_models_search_helpers
+    except AttributeError:
+        return app_config.url_manager_supported_models_search_helpers
+
+
 def is_model_supported(model):
     """Return bool value if model is in keys"""
     return model in supported_models().keys()
@@ -79,3 +93,27 @@ def get_supported_model_queryset(model):
     func = supported_models()[model]
     if func:
         return functools.partial(func, model)
+
+
+def get_page_search_results(model, queryset, search_term):
+    """
+    A helper method to filter across generic foreign key relations.
+    Provide additional helpers for any models when extending this app.
+    :param model: The supported model
+    :param queryset: The queryset to be filtered
+    :param search_term: Term to be searched for
+    :return: results
+    """
+    page_content_queryset = PageContent.objects.filter(title__icontains=search_term)
+    content_type_id = ContentType.objects.get_for_model(model).id
+
+    for page_content in page_content_queryset:
+        try:
+            queryset |= Url.objects.filter(
+                object_id=page_content.page.id,
+                content_type=content_type_id
+            )
+        except BaseException:
+            pass
+
+    return queryset
