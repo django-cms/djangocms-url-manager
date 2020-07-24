@@ -36,12 +36,11 @@ class UrlManagerCMSExtension(CMSAppExtension):
         )
 
     def handle_url_manager_search_setting(self, cms_config):
-        """Check the url_manager_supported_models settings has been correctly set
+        """Check the handle_url_manager_search_setting settings has been correctly set
         and add it to the masterlist
         """
         if hasattr(cms_config, "url_manager_supported_models_search_helpers"):
             url_manager_model_helpers = getattr(cms_config, "url_manager_supported_models_search_helpers")
-            print(url_manager_model_helpers)
             if isinstance(url_manager_model_helpers, dict):
                 self.url_manager_supported_models_search_helpers = {
                     **self.url_manager_supported_models_search_helpers, **url_manager_model_helpers

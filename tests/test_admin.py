@@ -3,7 +3,7 @@ from unittest import skipUnless
 from .base import BaseUrlTestCase
 
 
-class UrlManagerTestCase(BaseUrlTestCase):
+class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
     def test_get_search_results(self):
         """
         A filtered queryset is returned containing matches with a given search_term
