@@ -14,7 +14,7 @@ from .utils import supported_models
 class Select2Mixin:
     class Media:
         css = {"all": ("cms/js/select2/select2.css",)}
-        js = ("cms/js/select2/select2.js", "djangocms_url_manager/js/create_url.js")
+        js = ("admin/js/jquery.init.js", "cms/js/select2/select2.js", "djangocms_url_manager/js/create_url.js")
 
 
 class SiteSelectWidget(Select2Mixin, forms.Select):
