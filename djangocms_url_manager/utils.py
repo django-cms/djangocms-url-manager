@@ -104,7 +104,7 @@ def get_page_search_results(model, queryset, search_term):
     :param search_term: Term to be searched for
     :return: results
     """
-    page_content_queryset = PageContent.objects.filter(title__icontains=search_term)
+    page_content_queryset = PageContent._base_manager.filter(title__icontains=search_term)
     content_type_id = ContentType.objects.get_for_model(model).id
 
     for page_content in page_content_queryset:
