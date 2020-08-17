@@ -186,10 +186,11 @@ class UrlForm(forms.ModelForm):
     def save(self, **kwargs):
         url_type = self.cleaned_data.get("url_type")
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
-        if not is_basic_type:
-            self.instance.content_object = self.cleaned_data["content_object"]
-        else:
+        if is_basic_type:
+            # Set content object to none to prevent GFK url always being returned by getter.
             self.instance.content_object = None
+        else:
+            self.instance.content_object = self.cleaned_data["content_object"]
         return super().save(**kwargs)
 
 
