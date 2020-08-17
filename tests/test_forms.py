@@ -452,7 +452,9 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     def test_get_url_change_content_type(self):
         """
-        Test that get_url returns the correct url when a content type is change from one to another
+        Ensure get_url returns the correct url when a content type is changed from one to another using URlForm
+        The issue was present previously as the getter for URL would assume that the form was setting the Generic
+        Foreign Key to None!
         """
         # Create a URL with content type page
         form = UrlForm(
@@ -506,8 +508,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
                 "content_object": None,
             }
         )
-        import pdb
-        pdb.set_trace()
 
         # Confirm the form is valid
         self.assertTrue(form.is_valid())
@@ -518,7 +518,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         # Ensure the correct url is being returned
         self.assertEqual(instance.get_url(instance.site), "https://www.example.com")
 
-        # Create a form to update the model to a content type
+        # Create a new form to set the URL to use a Generic FK
         form = UrlForm(
             {
                 "internal_name": "Test Name",
@@ -532,8 +532,28 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         # Ensure form is valid
         self.assertTrue(form.is_valid())
 
-        # Svae the form
+        # Save the form
         instance = form.save()
 
         self.assertEqual(instance.get_url(instance.site), "//foo.com/en/admin/polls/pollcontent/")
+
+        # Create a URL form targeting a manual url again
+        form = UrlForm(
+            {
+                "internal_name": "Test Name",
+                "site": self.site2.id,
+                "url_type": "manual_url",
+                "manual_url": "https://www.example.com",
+                "content_object": None,
+            }
+        )
+
+        # Ensure form is valid
+        self.assertTrue(form.is_valid())
+
+        # Save the form the create a model instance
+        instance = form.save()
+
+        # Ensure the correct url is being returned after change
+        self.assertEqual(instance.get_url(instance.site), "https://www.example.com")
 
