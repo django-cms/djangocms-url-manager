@@ -9,7 +9,6 @@ from djangocms_url_manager.forms import (
 )
 
 from .base import BaseUrlTestCase
-from djangocms_url_manager.models import BASIC_TYPE_CHOICES
 
 
 class UrlManagerFormsTestCase(BaseUrlTestCase):
@@ -556,4 +555,3 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
         # Ensure the correct url is being returned after change
         self.assertEqual(instance.get_url(instance.site), "https://www.example.com")
-

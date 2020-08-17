@@ -125,7 +125,7 @@ class Url(AbstractUrl):
                 url = "//{}{}".format(
                     obj.site.domain, obj.content_object.get_absolute_url(language=language)
                 )
-            except:
+            except BaseException:
                 url = "//{}{}".format(
                     obj.site.domain, obj.content_object.get_absolute_url()
                 )
