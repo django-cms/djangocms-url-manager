@@ -121,9 +121,14 @@ class Url(AbstractUrl):
         obj = self._get_url_obj(site)
         language = get_default_language_for_site(obj.site)
         if obj.content_object:
-            url = "//{}{}".format(
-                obj.site.domain, obj.content_object.get_absolute_url(language=language)
-            )
+            try:
+                url = "//{}{}".format(
+                    obj.site.domain, obj.content_object.get_absolute_url(language=language)
+                )
+            except:
+                url = "//{}{}".format(
+                    obj.site.domain, obj.content_object.get_absolute_url()
+                )
         elif obj.manual_url:
             url = obj.manual_url
         elif obj.relative_path:
