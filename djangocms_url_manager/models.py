@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -10,6 +12,8 @@ from cms.utils.i18n import get_default_language_for_site
 
 from djangocms_attributes_field.fields import AttributesField
 
+
+logger = logging.getLogger(__name__)
 
 __all__ = ["Url", "LinkPlugin"]
 
@@ -101,11 +105,28 @@ class Url(AbstractUrl):
         return obj
 
     def get_url(self, site):
+        """
+            The implementation of this seems to have been based on the assumption that the model was...
+            populated using the forms.py save and clean logic.
+
+            All fields in basic_types and supported_models should be exclusive or's, otherwise the value will be
+            returned based on the order of the below method rather than the intended value.
+        """
+        logger.warning(
+            """
+            URL.get_model method should only be called on models populated via forms that implement a XOR on fields
+            within supported_models and basic_types!
+            """
+        )
         obj = self._get_url_obj(site)
         language = get_default_language_for_site(obj.site)
         if obj.content_object:
+            try:
+                absolute_url = obj.content_object.get_absolute_url(language=language)
+            except BaseException:
+                absolute_url = obj.content_object.get_absolute_url()
             url = "//{}{}".format(
-                obj.site.domain, obj.content_object.get_absolute_url(language=language)
+                obj.site.domain, absolute_url
             )
         elif obj.manual_url:
             url = obj.manual_url

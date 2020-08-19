@@ -135,6 +135,7 @@ class UrlForm(forms.ModelForm):
         if is_basic_type:
             if url_type not in self.errors and not data[url_type]:
                 self.add_error(url_type, _("Field is required"))
+
         elif content_object:
             site = data.get("site")
             try:
@@ -145,7 +146,7 @@ class UrlForm(forms.ModelForm):
                     content_object_qs = content_object_qs.on_site(site)
                 elif hasattr(model, "site"):
                     content_object_qs = content_object_qs.filter(site=site)
-                content_object = content_object_qs.get(pk=int(content_object))
+                content_object = content_object_qs.get(pk=content_object)
 
                 if (
                     # dont validate for UrlOverride
@@ -185,7 +186,10 @@ class UrlForm(forms.ModelForm):
     def save(self, **kwargs):
         url_type = self.cleaned_data.get("url_type")
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
-        if not is_basic_type:
+        if is_basic_type:
+            # Set content object to none to prevent GFK url always being returned by getter.
+            self.instance.content_object = None
+        else:
             self.instance.content_object = self.cleaned_data["content_object"]
         return super().save(**kwargs)
 
@@ -204,7 +208,7 @@ class UrlOverrideForm(UrlForm):
             raise forms.ValidationError(
                 {
                     "site": _(
-                        "Overriden site must be different from the original."
+                        "Overridden site must be different from the original."
                     )  # noqa: E501
                 }
             )
