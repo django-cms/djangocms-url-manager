@@ -3,3 +3,5 @@ djangocms_helper
 pyflakes>=2.1.1
 flake8
 isort
+django-classy-tags<2.0.0
+django-sekizai<2.0.0
