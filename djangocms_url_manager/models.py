@@ -45,8 +45,17 @@ BASIC_TYPE_CHOICES = (
 
 
 class AbstractUrl(models.Model):
-    site = models.ForeignKey(Site, on_delete=models.PROTECT)
-    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT, null=True)
+    site = models.ForeignKey(
+        Site,
+        related_name="%(app_label)s_%(class)s_site",
+        on_delete=models.PROTECT,
+    )
+    content_type = models.ForeignKey(
+        ContentType,
+        related_name="%(app_label)s_%(class)s_site",
+        on_delete=models.PROTECT,
+        null=True,
+    )
     object_id = models.PositiveIntegerField(null=True)
     content_object = GenericForeignKey("content_type", "object_id")
     manual_url = models.URLField(
