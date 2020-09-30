@@ -52,7 +52,7 @@ class AbstractUrl(models.Model):
     )
     content_type = models.ForeignKey(
         ContentType,
-        related_name="%(app_label)s_%(class)s_site",
+        related_name="%(app_label)s_%(class)s_content_type",
         on_delete=models.PROTECT,
         null=True,
     )
