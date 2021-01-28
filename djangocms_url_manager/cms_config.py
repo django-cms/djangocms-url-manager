@@ -1,7 +1,13 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
-from cms.app_base import CMSAppConfig, CMSAppExtension
+try:
+    from cms.app_base import CMSAppConfig, CMSAppExtension
+# django CMS 3.x does not have a compatible configuration system
+except ImportError:
+    CMSAppConfig = object
+    CMSAppExtension = object
+
 from cms.models import Page
 
 from djangocms_url_manager.utils import get_page_search_results, parse_settings
