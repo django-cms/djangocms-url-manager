@@ -7,7 +7,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.base import ModelBase
 
-from cms.models import PageContent
+try:
+    from cms.models import PageContent
+# django CMS 3.x
+except ImportError:
+    from cms.models import Title as PageContent
 
 from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.models import Url
