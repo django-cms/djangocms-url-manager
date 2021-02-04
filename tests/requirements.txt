@@ -3,5 +3,8 @@ djangocms_helper
 pyflakes>=2.1.1
 flake8
 isort
-django-classy-tags<2.0.0
-django-sekizai<2.0.0
+django-classy-tags<2.0.0  # django 1.11 and 2.1 compat
+django-sekizai<2.0.0  # django 1.11 and 2.1 compat
+djangocms-admin-style<2.0.0  # django 1.11 and 2.1 compat
+django-treebeard<4.4  # django 1.11 and 2.1 compat
+http://github.com/divio/djangocms-versioning/tarball/master#egg=djangocms-versioning
