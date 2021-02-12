@@ -7,10 +7,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.base import ModelBase
 
-from cms.models import PageContent
-
-from djangocms_url_manager.compat import CMS_36
+from djangocms_url_manager.compat import CMS_LT_4
 from djangocms_url_manager.models import Url
+
+try:
+    from cms.models import PageContent
+# django CMS 3.x
+except ImportError:
+    from cms.models import Title as PageContent
 
 
 def parse_settings(config, attr_name):
@@ -18,7 +22,7 @@ def parse_settings(config, attr_name):
     if not hasattr(config, attr_name):
         raise ImproperlyConfigured(
             "{} must be defined in your {}".format(
-                attr_name, "settings" if CMS_36 else "cms_config"
+                attr_name, "settings" if CMS_LT_4 else "cms_config"
             )
         )
     models = getattr(config, attr_name)

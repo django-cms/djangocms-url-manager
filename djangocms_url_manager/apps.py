@@ -9,9 +9,9 @@ class UrlManagerConfig(AppConfig):
     url_manager_supported_models = {}
 
     def ready(self):
-        from .compat import CMS_36
+        from .compat import CMS_LT_4
 
-        if CMS_36:
+        if CMS_LT_4:
             from .utils import parse_settings
 
             self.url_manager_supported_models = parse_settings(

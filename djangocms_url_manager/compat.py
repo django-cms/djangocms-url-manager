@@ -5,7 +5,7 @@ import cms
 
 CMS_VERSION = cms.__version__
 
-CMS_36 = LooseVersion(CMS_VERSION) < LooseVersion("3.7")
+CMS_LT_4 = LooseVersion(CMS_VERSION) < LooseVersion("4.0")
 
 
 def get_page_placeholders(page, language=None):
