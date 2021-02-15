@@ -1,17 +1,8 @@
 version: 2.0
 
-py35default: &py35default
-  docker:
-    - image: circleci/python:3.5
-  steps:
-   - setup_remote_docker:
-       docker_layer_caching: false
-   - checkout
-   - attach_workspace:
-       at: /tmp/images
-   - run: docker load -i /tmp/images/py35.tar || true
-   - run: docker run py35 tox -e $CIRCLE_STAGE
+# Define images
 
+## Python 3.6
 py36default: &py36default
   docker:
     - image: circleci/python:3.6
@@ -24,6 +15,11 @@ py36default: &py36default
    - run: docker load -i /tmp/images/py36.tar || true
    - run: docker run py36 tox -e $CIRCLE_STAGE
 
+py36_requires: &py36_requires
+  requires:
+    - py36_base
+
+## Python 3.7
 py37default: &py37default
    docker:
      - image: circleci/python:3.7
@@ -36,33 +32,47 @@ py37default: &py37default
     - run: docker load -i /tmp/images/py37.tar || true
     - run: docker run py37 tox -e $CIRCLE_STAGE
 
-
-py35_requires: &py35_requires
-  requires:
-    - py35_base
-
-py36_requires: &py36_requires
-  requires:
-    - py36_base
-
 py37_requires: &py37_requires
   requires:
     - py37_base
 
+## Python 3.8
+py38default: &py38default
+   docker:
+     - image: circleci/python:3.8
+   steps:
+    - setup_remote_docker:
+        docker_layer_caching: false
+    - checkout
+    - attach_workspace:
+        at: /tmp/images
+    - run: docker load -i /tmp/images/py38.tar || true
+    - run: docker run py38 tox -e $CIRCLE_STAGE
+
+py38_requires: &py38_requires
+  requires:
+    - py38_base
+
+## Python 3.9
+py39default: &py39default
+   docker:
+     - image: circleci/python:3.9
+   steps:
+    - setup_remote_docker:
+        docker_layer_caching: false
+    - checkout
+    - attach_workspace:
+        at: /tmp/images
+    - run: docker load -i /tmp/images/py39.tar || true
+    - run: docker run py39 tox -e $CIRCLE_STAGE
+
+py39_requires: &py39_requires
+  requires:
+    - py39_base
+
+# Define the jobs to run
+
 jobs:
-  py35_base:
-    docker:
-      - image: circleci/python:3.5
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: false
-      - run: docker build -f .circleci/Dockerfile --build-arg PYTHON_VERSION=3.5 -t py35 .
-      - run: mkdir images
-      - run: docker save -o images/py35.tar py35
-      - persist_to_workspace:
-         root: images
-         paths: py35.tar
   py36_base:
     docker:
       - image: circleci/python:3.6
@@ -76,7 +86,6 @@ jobs:
       - persist_to_workspace:
          root: images
          paths: py36.tar
-
   py37_base:
     docker:
       - image: circleci/python:3.7
@@ -90,63 +99,97 @@ jobs:
       - persist_to_workspace:
          root: images
          paths: py37.tar
+  py38_base:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - run: docker build -f .circleci/Dockerfile --build-arg PYTHON_VERSION=3.8 -t py38 .
+      - run: mkdir images
+      - run: docker save -o images/py38.tar py38
+      - persist_to_workspace:
+         root: images
+         paths: py38.tar
+  py39_base:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - run: docker build -f .circleci/Dockerfile --build-arg PYTHON_VERSION=3.9 -t py39 .
+      - run: mkdir images
+      - run: docker save -o images/py39.tar py39
+      - persist_to_workspace:
+         root: images
+         paths: py39.tar
   flake8:
-    <<: *py35default
+    <<: *py36default
   isort:
-    <<: *py35default
+    <<: *py36default
+
   py36-dj111-sqlite-cms40:
     <<: *py36default
 
-  py35-dj20-sqlite-cms40:
-    <<: *py35default
   py36-dj20-sqlite-cms40:
     <<: *py36default
   py37-dj20-sqlite-cms40:
     <<: *py37default
   py37-dj20-sqlite-cms40-versioning:
     <<: *py37default
+  py38-dj20-sqlite-cms40:
+    <<: *py38default
+  py38-dj20-sqlite-cms40-versioning:
+    <<: *py38default
 
-  py35-dj21-sqlite-cms40:
-    <<: *py35default
   py36-dj21-sqlite-cms40:
     <<: *py36default
   py37-dj21-sqlite-cms40:
     <<: *py37default
   py37-dj21-sqlite-cms40-versioning:
     <<: *py37default
+  py38-dj21-sqlite-cms40:
+    <<: *py38default
+  py38-dj21-sqlite-cms40-versioning:
+    <<: *py38default
 
-  py35-dj22-sqlite-cms40:
-    <<: *py35default
   py36-dj22-sqlite-cms40:
     <<: *py36default
   py37-dj22-sqlite-cms40:
     <<: *py37default
   py37-dj22-sqlite-cms40-versioning:
     <<: *py37default
+  py38-dj22-sqlite-cms40:
+    <<: *py38default
+  py38-dj22-sqlite-cms40-versioning:
+    <<: *py38default
+  py39-dj22-sqlite-cms40:
+    <<: *py39default
+  py39-dj22-sqlite-cms40-versioning:
+    <<: *py39default
 
-#######################
+# Define the sequence to run the jobs defined
 
 workflows:
   version: 2
   build:
     jobs:
-      - py35_base
       - py36_base
       - py37_base
+      - py38_base
+      - py39_base
       - flake8:
           requires:
-            - py35_base
+            - py36_base
       - isort:
           requires:
-            - py35_base
+            - py36_base
       - py36-dj111-sqlite-cms40:
           requires:
             - py36_base
 
-
-      - py35-dj20-sqlite-cms40:
-          requires:
-            - py35_base
       - py36-dj20-sqlite-cms40:
           requires:
             - py36_base
@@ -156,25 +199,29 @@ workflows:
       - py37-dj20-sqlite-cms40-versioning:
           requires:
             - py37_base
-
-
-      - py35-dj21-sqlite-cms40:
+      - py38-dj20-sqlite-cms40:
           requires:
-            - py35_base
+            - py38_base
+      - py38-dj20-sqlite-cms40-versioning:
+          requires:
+            - py38_base
+
       - py36-dj21-sqlite-cms40:
           requires:
             - py36_base
-      - py37-dj21-sqlite-cms40-versioning:
-          requires:
-            - py37_base
       - py37-dj21-sqlite-cms40:
          requires:
             - py37_base
-
-
-      - py35-dj22-sqlite-cms40:
+      - py37-dj21-sqlite-cms40-versioning:
           requires:
-            - py35_base
+            - py37_base
+      - py38-dj21-sqlite-cms40:
+         requires:
+            - py38_base
+      - py38-dj21-sqlite-cms40-versioning:
+          requires:
+            - py38_base
+
       - py36-dj22-sqlite-cms40:
           requires:
             - py36_base
@@ -184,4 +231,15 @@ workflows:
       - py37-dj22-sqlite-cms40-versioning:
           requires:
              - py37_base
-
+      - py38-dj22-sqlite-cms40:
+         requires:
+            - py38_base
+      - py38-dj22-sqlite-cms40-versioning:
+          requires:
+             - py38_base
+      - py39-dj22-sqlite-cms40:
+         requires:
+            - py39_base
+      - py39-dj22-sqlite-cms40-versioning:
+          requires:
+             - py39_base
