@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("sites", "0002_alter_domain_unique"),
         ("contenttypes", "0002_remove_content_type_name"),
+        ('cms', '0034_remove_pagecontent_placeholders'),
     ]
 
     operations = [
