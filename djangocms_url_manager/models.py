@@ -90,19 +90,6 @@ class AbstractUrl(models.Model):
 
 class Url(AbstractUrl):
 
-    internal_name = models.CharField(
-        verbose_name=_("internal name"),
-        max_length=255,
-        help_text=_("Provide internal name for URL objects for searching purpose"),
-    )
-    date_modified = models.DateTimeField(
-        verbose_name=_("Date Modified"), auto_now=True
-    )
-
-    class Meta:
-        verbose_name = _("url")
-        verbose_name_plural = _("urls")
-
     def _get_url_obj(self, site):
         if self.site_id == site:
             obj = self
@@ -157,6 +144,23 @@ class Url(AbstractUrl):
 
     def get_absolute_url(self):
         return self.get_url(self.site)
+
+
+class UrlGrouper(AbstractUrl):
+    url_grouper = models.ForeignKey(Url, on_delete=models.CASCADE)
+    internal_name = models.CharField(
+        verbose_name=_("internal name"),
+        max_length=255,
+        help_text=_("Provide internal name for URL objects for searching purpose"),
+    )
+    date_modified = models.DateTimeField(
+        verbose_name=_("Date Modified"), auto_now=True
+    )
+
+    class Meta:
+        verbose_name = _("url")
+        verbose_name_plural = _("urls")
+
 
 
 class UrlOverride(AbstractUrl):
