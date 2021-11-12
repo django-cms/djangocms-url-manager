@@ -77,7 +77,7 @@ class UrlWithVersionFactory(AbstractSnippetFactory):
         if not create:
             # Simple build, do nothing.
             return
-        UrlManagerVersionFactory(content=self, **kwargs)
+        UrlVersionFactory(content=self, **kwargs)
 
     class Meta:
         model = Url
