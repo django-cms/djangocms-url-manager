@@ -2,12 +2,10 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
 import factory
+from djangocms_versioning.models import Version
+from factory.fuzzy import FuzzyText
 
 from djangocms_url_manager.models import Url, UrlGrouper
-
-from djangocms_versioning.models import Version
-
-from factory.fuzzy import FuzzyText
 
 
 class UserFactory(factory.django.DjangoModelFactory):
