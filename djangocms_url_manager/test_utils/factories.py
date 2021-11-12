@@ -41,7 +41,7 @@ class AbstractVersionFactory(factory.django.DjangoModelFactory):
         abstract = True
 
 
-class UrlManagerGrouperFactory(factory.django.DjangoModelFactory):
+class UrlGrouperFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = UrlGrouper
