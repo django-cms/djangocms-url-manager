@@ -69,7 +69,7 @@ class UrlVersionFactory(AbstractVersionFactory):
         model = Version
 
 
-class UrlManagerWithVersionFactory(AbstractSnippetFactory):
+class UrlWithVersionFactory(AbstractSnippetFactory):
     @factory.post_generation
     def version(self, create, extracted, **kwargs):
         # NOTE: Use this method as below to define version attributes:
