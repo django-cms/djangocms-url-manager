@@ -4,6 +4,9 @@ Changelog
 
 Unreleased
 ==========
+* Added grouper model
+* Added versioning config in cms_config
+* Added versioning factory
 
 0.0.11
 ==========
