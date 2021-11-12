@@ -88,7 +88,7 @@ class AbstractUrl(models.Model):
         abstract = True
 
 
-class UrlGrouper(AbstractUrl):
+class UrlGrouper(models.Model):
     pass
 
 
