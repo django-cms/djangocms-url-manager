@@ -47,8 +47,8 @@ class UrlGrouperFactory(factory.django.DjangoModelFactory):
         model = UrlGrouper
 
 
-class AbstractSnippetFactory(factory.django.DjangoModelFactory):
-    url_grouper = factory.SubFactory(UrlManagerGrouperFactory)
+class AbstractUrlFactory(factory.django.DjangoModelFactory):
+    url_grouper = factory.SubFactory(UrlGrouperFactory)
     url = factory.SubFactory(UserFactory)
     internal_name = FuzzyText(length=10)
     date_modified = factory.Faker('date_object')
@@ -57,7 +57,7 @@ class AbstractSnippetFactory(factory.django.DjangoModelFactory):
         abstract = True
 
 
-class UrlFactory(AbstractSnippetFactory):
+class UrlFactory(AbstractUrlFactory):
     class Meta:
         model = Url
 
@@ -69,7 +69,7 @@ class UrlVersionFactory(AbstractVersionFactory):
         model = Version
 
 
-class UrlWithVersionFactory(AbstractSnippetFactory):
+class UrlWithVersionFactory(AbstractUrlFactory):
     @factory.post_generation
     def version(self, create, extracted, **kwargs):
         # NOTE: Use this method as below to define version attributes:

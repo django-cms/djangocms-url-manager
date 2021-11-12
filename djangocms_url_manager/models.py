@@ -89,19 +89,18 @@ class AbstractUrl(models.Model):
 
 
 class UrlGrouper(models.Model):
-    pass
+    internal_name = models.CharField(
+        verbose_name=_("internal name"),
+        max_length=255,
+        help_text=_("Provide internal name for URL objects for searching purpose"),
+    )
 
 
 class Url(AbstractUrl):
     url_grouper = models.ForeignKey(
         UrlGrouper,
         on_delete=models.CASCADE,
-        related_name='%(app_label)s_%(class)s_url_grouper,
-    )
-    internal_name = models.CharField(
-        verbose_name=_("internal name"),
-        max_length=255,
-        help_text=_("Provide internal name for URL objects for searching purpose"),
+        related_name='%(app_label)s_%(class)s_url_grouper',
     )
     date_modified = models.DateTimeField(
         verbose_name=_("Date Modified"), auto_now=True
