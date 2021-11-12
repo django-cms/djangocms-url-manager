@@ -62,7 +62,7 @@ class UrlFactory(AbstractSnippetFactory):
         model = Url
 
 
-class UrlManagerVersionFactory(AbstractVersionFactory):
+class UrlVersionFactory(AbstractVersionFactory):
     content = factory.SubFactory(UrlManagerFactory)
 
     class Meta:
