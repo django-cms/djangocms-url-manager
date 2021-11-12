@@ -96,7 +96,7 @@ class Url(AbstractUrl):
     url_grouper = models.ForeignKey(
         UrlGrouper,
         on_delete=models.CASCADE,
-        related_name='%(app_label)s_%(class)s_related',
+        related_name='%(app_label)s_%(class)s_url_grouper,
     )
     internal_name = models.CharField(
         verbose_name=_("internal name"),
