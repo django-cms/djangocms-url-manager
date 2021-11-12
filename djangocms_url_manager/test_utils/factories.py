@@ -57,7 +57,7 @@ class AbstractSnippetFactory(factory.django.DjangoModelFactory):
         abstract = True
 
 
-class UrlManagerFactory(AbstractSnippetFactory):
+class UrlFactory(AbstractSnippetFactory):
     class Meta:
         model = Url
 
