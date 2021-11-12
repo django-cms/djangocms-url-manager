@@ -47,7 +47,6 @@ class UrlGrouperFactory(factory.django.DjangoModelFactory):
 
 class AbstractUrlFactory(factory.django.DjangoModelFactory):
     url_grouper = factory.SubFactory(UrlGrouperFactory)
-    url = factory.SubFactory(UserFactory)
     internal_name = FuzzyText(length=10)
     date_modified = factory.Faker('date_object')
 
