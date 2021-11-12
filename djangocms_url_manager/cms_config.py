@@ -11,6 +11,7 @@ from .models import Url
 
 class UrlCMSAppConfig(CMSAppConfig):
     djangocms_url_manager_enabled = True
+    djangocms_versioning_enabled = True
     url_manager_supported_models = [Page]
     djangocms_navigation_enabled = getattr(
         settings, "DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED", False
@@ -20,6 +21,8 @@ class UrlCMSAppConfig(CMSAppConfig):
     url_manager_supported_models_search_helpers = {
         Page: get_page_search_results,
     }
+
+    versioning = []
 
 
 class UrlManagerCMSExtension(CMSAppExtension):
