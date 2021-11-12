@@ -89,10 +89,6 @@ class AbstractUrl(models.Model):
 
 
 class Url(AbstractUrl):
-    class Meta:
-        verbose_name = _("url")
-        verbose_name_plural = _("urls")
-
     def _get_url_obj(self, site):
         if self.site_id == site:
             obj = self

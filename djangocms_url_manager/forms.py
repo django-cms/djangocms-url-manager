@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from cms.utils.urlutils import admin_reverse
 
 from .constants import SELECT2_CONTENT_TYPE_OBJECT_URL_NAME, SELECT2_URLS
-from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlOverride
+from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlOverride, UrlGrouper
 from .utils import supported_models
 
 
@@ -81,7 +81,7 @@ class UrlForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Url
+        model = UrlGrouper
         fields = (
             "internal_name",
             "url_type",
