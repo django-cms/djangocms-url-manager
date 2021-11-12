@@ -81,7 +81,7 @@ class UrlForm(forms.ModelForm):
     )
 
     class Meta:
-        model = UrlGrouper
+        model = Url
         fields = (
             "internal_name",
             "url_type",
