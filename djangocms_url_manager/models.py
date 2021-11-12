@@ -106,6 +106,7 @@ class Url(AbstractUrl):
         UrlGrouper,
         on_delete=models.CASCADE,
         related_name='%(app_label)s_%(class)s_url_grouper',
+        null=True
     )
     date_modified = models.DateTimeField(
         verbose_name=_("Date Modified"), auto_now=True
