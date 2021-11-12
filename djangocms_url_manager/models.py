@@ -97,6 +97,11 @@ class UrlGrouper(models.Model):
 
 
 class Url(AbstractUrl):
+    internal_name = models.CharField(
+        verbose_name=_("internal name"),
+        max_length=255,
+        help_text=_("Provide internal name for URL objects for searching purpose"),
+    )
     url_grouper = models.ForeignKey(
         UrlGrouper,
         on_delete=models.CASCADE,
