@@ -11,18 +11,29 @@ from .models import Url
 
 class UrlCMSAppConfig(CMSAppConfig):
     djangocms_url_manager_enabled = True
-    djangocms_versioning_enabled = True
     url_manager_supported_models = [Page]
     djangocms_navigation_enabled = getattr(
         settings, "DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED", False
     )
+    djangocms_moderation_enabled = getattr(
+        settings, 'MODERATING_URL_MANAGER_MODELS_ENABLED', True)
+    djangocms_versioning_enabled = getattr(
+        settings, 'VERSIONING_URL_MANAGER_MODELS_ENABLED', True)
     navigation_models = {Url: ["internal_name"]}
-
+    moderated_models = [Url]
     url_manager_supported_models_search_helpers = {
         Page: get_page_search_results,
     }
 
-    versioning = []
+    if djangocms_versioning_enabled:
+        from djangocms_versioning.datastructures import VersionableItem, default_copy
+        versioning = [
+            VersionableItem(
+                content_model=Url,
+                grouper_field_name='url_grouper',
+                copy_function=default_copy,
+            ),
+        ]
 
 
 class UrlManagerCMSExtension(CMSAppExtension):
