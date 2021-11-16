@@ -3,8 +3,11 @@ from unittest import skipIf
 from unittest.mock import Mock
 
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, override_settings
+
+import factory
 
 from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
@@ -15,6 +18,7 @@ from djangocms_url_manager.test_utils.polls.utils import (
     get_all_poll_content_objects,
     get_poll_search_results,
 )
+from djangocms_url_manager.test_utils.factories import UrlWithVersionFactory, UrlVersionFactory
 from djangocms_url_manager.utils import (
     get_page_search_results,
     supported_models,
@@ -174,3 +178,16 @@ class NavigationSettingTestCase(TestCase):
         del settings.DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED
         reload(cms_config)
         self.assertFalse(cms_config.UrlCMSAppConfig.djangocms_navigation_enabled)
+
+
+@skipIf(CMS_36, "Test relevant only for CMS>=4.0")
+class UrlManagerVersioningTestCase(CMSTestCase):
+    def setUp(self):
+        self.site_1 = Site.objects.create(name="bar.com", domain="bar.com")
+        self.site_id = 1
+
+    def test_copy_function(self):
+        UrlWithVersionFactory(internal_name="test name",
+                              date_modified=factory.Faker('date_object'),
+                              site_id=self.site_id)
+        # url.versions.last().publish(user=self.get_superuser())
