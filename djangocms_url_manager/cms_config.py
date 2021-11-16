@@ -23,11 +23,11 @@ class UrlCMSAppConfig(CMSAppConfig):
     navigation_models = {Url: ["internal_name"]}
     # djangocms-moderation settings
     djangocms_moderation_enabled = getattr(
-        settings, 'MODERATING_URL_MANAGER_MODELS_ENABLED', True)
+        settings, 'MODERATING_URL_MANAGER_MODELS_ENABLED', False)
     moderated_models = [Url]
     # djangocms-versioning settings
     djangocms_versioning_enabled = getattr(
-        settings, 'VERSIONING_URL_MANAGER_MODELS_ENABLED', True)
+        settings, 'VERSIONING_URL_MANAGER_MODELS_ENABLED', False)
 
     if djangocms_versioning_enabled:
         from djangocms_versioning.datastructures import VersionableItem, default_copy
