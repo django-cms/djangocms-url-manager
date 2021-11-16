@@ -7,18 +7,18 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, override_settings
 
-import factory
-
 from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
 
+import factory
+
 from djangocms_url_manager.compat import CMS_36
+from djangocms_url_manager.test_utils.factories import UrlWithVersionFactory
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 from djangocms_url_manager.test_utils.polls.utils import (
     get_all_poll_content_objects,
     get_poll_search_results,
 )
-from djangocms_url_manager.test_utils.factories import UrlWithVersionFactory, UrlVersionFactory
 from djangocms_url_manager.utils import (
     get_page_search_results,
     supported_models,
