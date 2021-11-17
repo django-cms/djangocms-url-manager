@@ -8,6 +8,7 @@ from djangocms_url_manager.utils import get_page_search_results, parse_settings
 
 from .models import Url
 
+
 try:
     from djangocms_versioning.constants import DRAFT  # NOQA
 
