@@ -9,11 +9,18 @@ from djangocms_url_manager.utils import get_page_search_results, parse_settings
 from .models import Url
 
 try:
-    from djangocms_versioning.constants import DRAFT
+    from djangocms_versioning.constants import DRAFT # NOQA
 
     djangocms_versioning_installed = True
 except ImportError:
     djangocms_versioning_installed = False
+
+try:
+    from djangocms_moderation import __version__  # NOQA
+
+    djangocms_moderation_installed = True
+except ImportError:
+    djangocms_moderation_installed = False
 
 
 class UrlCMSAppConfig(CMSAppConfig):
@@ -30,7 +37,8 @@ class UrlCMSAppConfig(CMSAppConfig):
     # djangocms-moderation settings
     djangocms_moderation_enabled = getattr(
         settings, 'MODERATING_URL_MANAGER_MODELS_ENABLED', True)
-    moderated_models = [Url]
+    if djangocms_moderation_enabled and djangocms_moderation_installed:
+        moderated_models = [Url]
     # djangocms-versioning settings
     djangocms_versioning_enabled = getattr(
         settings, 'VERSIONING_URL_MANAGER_MODELS_ENABLED', True)
