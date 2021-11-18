@@ -177,6 +177,12 @@ class UrlOverride(AbstractUrl):
     internal_name = models.CharField(
         verbose_name=_("internal name"), max_length=255,
     )
+    url_grouper = models.ForeignKey(
+        UrlGrouper,
+        on_delete=models.CASCADE,
+        related_name='%(app_label)s_%(class)s_url_grouper',
+        null=True
+    )
 
     class Meta:
         verbose_name = _("url override")

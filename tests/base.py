@@ -15,7 +15,11 @@ from djangocms_url_manager.constants import (
     SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
     SELECT2_URLS,
 )
-from djangocms_url_manager.models import Url as UrlModel, UrlOverride
+from djangocms_url_manager.models import (
+    UrlGrouper,
+    Url as UrlModel,
+    UrlOverride,
+)
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 
 
@@ -55,6 +59,7 @@ class BaseUrlTestCase(CMSTestCase):
 
     def _create_url(
         self,
+        internal_name="",
         site=None,
         content_object=None,
         manual_url="",
@@ -66,6 +71,9 @@ class BaseUrlTestCase(CMSTestCase):
         if site is None:
             site = self.default_site
 
+        url_grouper = UrlGrouper.objects.create(
+            internal_name=internal_name,
+        )
         return UrlModel.objects.create(
             site=site,
             content_object=content_object,
@@ -74,6 +82,7 @@ class BaseUrlTestCase(CMSTestCase):
             phone=phone,
             mailto=mailto,
             anchor=anchor,
+            url_grouper=url_grouper
         )
 
     def _create_url_override(

@@ -151,7 +151,8 @@ class UrlForm(forms.ModelForm):
                 if (
                     # dont validate for UrlOverride
                     not data.get("url")
-                    and Url.objects.filter(
+                    # Ensure that we are filtering using the base manager, otherwise draft will be excluded
+                    and Url._base_manager.filter(
                         content_type=content_type, object_id=data["content_object"]
                     ).exists()
                 ):
@@ -253,7 +254,7 @@ class HtmlLinkForm(forms.ModelForm):
     def clean(self):
         data = super().clean()
         try:
-            data["url"] = Url.objects.get(pk=int(data["url"]))
+            data["url"] = Url._base_manager.get(pk=int(data["url"]))
         except ValueError:
             self.add_error("url", _("Invalid value"))
         except ObjectDoesNotExist:

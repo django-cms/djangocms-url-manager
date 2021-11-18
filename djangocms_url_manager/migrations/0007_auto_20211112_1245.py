@@ -23,4 +23,9 @@ class Migration(migrations.Migration):
             name='url_grouper',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='djangocms_url_manager_url_url_grouper', to='djangocms_url_manager.UrlGrouper'),
         ),
+        migrations.AddField(
+            model_name='urloverride',
+            name='url_grouper',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='djangocms_url_manager_url_url_grouper', to='djangocms_url_manager.UrlGrouper'),
+        ),
     ]
