@@ -37,7 +37,8 @@ class UrlCMSAppConfig(CMSAppConfig):
     navigation_models = {Url: ["internal_name"]}
     # djangocms-moderation settings
     djangocms_moderation_enabled = getattr(
-        settings, 'MODERATING_URL_MANAGER_MODELS_ENABLED', True)
+        settings, 'MODERATING_URL_MANAGER_MODELS_ENABLED', True
+    )
     if djangocms_moderation_enabled and djangocms_moderation_installed:
         moderated_models = [Url]
     # djangocms-versioning settings
