@@ -205,14 +205,26 @@ class UrlOverrideForm(UrlForm):
         url = data.get("url")
         site = data.get("site")
 
-        if url and url.site == site:
-            raise forms.ValidationError(
-                {
-                    "site": _(
-                        "Overridden site must be different from the original."
-                    )  # noqa: E501
-                }
-            )
+        if url:
+            if UrlOverride.objects.filter(
+                url=url, site=site
+            ).exists():
+                raise forms.ValidationError(
+                    {
+                        "__all__": _(
+                            "Url override with this Site and Url already exists."
+                        )
+                    }
+                )
+            if url.site == site:
+                raise forms.ValidationError(
+                    {
+                        "site": _(
+                            "Overridden site must be different from the original."
+                        )  # noqa: E501
+                    }
+                )
+
         return data
 
 

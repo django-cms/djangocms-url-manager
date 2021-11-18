@@ -11,8 +11,6 @@ class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
         """
         self.url2.content_object = self.page2
         self.url2.save()
-        import pdb
-        pdb.set_trace()
 
         search_term = self.page.get_title()
         results, use_distinct = self.url_admin.get_search_results(

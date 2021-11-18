@@ -1,8 +1,9 @@
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse
-from django.views.generic import ListView
+from django.http import Http404, JsonResponse
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic import ListView, TemplateView
 
 from djangocms_url_manager.models import Url
 from djangocms_url_manager.utils import get_supported_model_queryset, is_model_supported
@@ -109,3 +110,25 @@ class UrlSelect2View(ListView):
 
     def get_paginate_by(self, queryset):
         return self.request.GET.get("limit", 30)
+
+class UrlPreviewView(TemplateView):
+    template_name = "djangocms_url_manager/admin/preview.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        url_id = kwargs.get("url_id", None)
+
+        if not url_id:
+            raise Http404(_("url_id must be provided."))
+
+        try:
+            url = Url._base_manager.get(pk=self.kwargs.get("url_id"))
+        except Url.DoesNotExist:
+            raise Http404(_("Url does not exist."))
+
+        context.update({
+            "url": url,
+            "opts": Url._meta,
+        })
+
+        return context

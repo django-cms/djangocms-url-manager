@@ -393,7 +393,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertFalse(form.is_valid())
         self.assertDictEqual(
             form.errors,
-            {"__all__": ["Url override with this Site and Url already exists."], },
+            {"__all__": ["Url override with this Site and Url already exists."],}
         )
 
     def test_plugin_returns_correct_url_for_type_on_update(self):

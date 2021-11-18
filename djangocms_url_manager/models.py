@@ -95,6 +95,24 @@ class UrlGrouper(models.Model):
         help_text=_("Provide internal name for URL objects for searching purpose"),
     )
 
+    @property
+    def url(self, show_editable=False):
+            url_models = [Url, UrlOverride]
+
+            for model in url_models:
+                if show_editable:
+                    # When in edit and preview mode, we should querying for the latest content
+                    queryset = model._base_manager.filter(
+                        url_grouper=self
+                    )
+                else:
+                    # When in "live" mode we should only be querying for the published version
+                    queryset = model.objects.filter(
+                        url_grouper=self
+                    )
+                if queryset.exists():
+                    return queryset.order_by("-pk").first()
+
 
 class Url(AbstractUrl):
     internal_name = models.CharField(
@@ -187,7 +205,6 @@ class UrlOverride(AbstractUrl):
     class Meta:
         verbose_name = _("url override")
         verbose_name_plural = _("url overrides")
-        unique_together = (("site", "url"),)
 
 
 class LinkPlugin(CMSPlugin):
