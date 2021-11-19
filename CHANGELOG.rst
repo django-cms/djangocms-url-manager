@@ -9,6 +9,7 @@ Unreleased
 * Added versioning factory
 * Updated versioning config in cms_config and created default copy method testcase.
 * Data migration added for Url Grouper model
+* Github Actions integration
 
 0.0.11
 ==========
