@@ -1,0 +1,8 @@
+coverage
+djangocms_helper
+flake8
+isort
+pyflakes>=2.1.1
+
+# Unreleased packages for django-cms 4.0.x
+http://github.com/divio/djangocms-versioning/tarball/master#egg=djangocms-versioning
