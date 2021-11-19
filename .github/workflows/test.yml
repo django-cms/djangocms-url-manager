@@ -6,7 +6,7 @@ jobs:
   unit-tests-versioning:
     runs-on: ubuntu-latest
     env:
-      ENABLE_VERSIONING = 1
+      ENABLE_VERSIONING: 1
     strategy:
       fail-fast: false
       matrix:
