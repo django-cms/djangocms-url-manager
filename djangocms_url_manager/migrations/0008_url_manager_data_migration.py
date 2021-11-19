@@ -15,15 +15,6 @@ except ImportError:
     djangocms_versioning_installed = False
 
 
-def _get_model_fields(instance, model, field_exclusion_list=[]):
-    field_exclusion_list.append(model._meta.pk.name)
-    return {
-        field.name: getattr(instance, field.name)
-        for field in model._meta.fields
-        if field.name not in field_exclusion_list
-    }
-
-
 def forwards(apps, schema_editor):
     create_contenttypes(global_apps.get_app_config("djangocms_url_manager"))
 
