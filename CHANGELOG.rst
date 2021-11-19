@@ -8,6 +8,7 @@ Unreleased
 * Added versioning config in cms_config
 * Added versioning factory
 * Updated versioning config in cms_config and created default copy method testcase.
+* Github Actions integration
 
 0.0.11
 ==========
