@@ -7,6 +7,7 @@ Unreleased
 * Added grouper model
 * Added versioning config in cms_config
 * Added versioning factory
+* Updated versioning config in cms_config and created default copy method testcase.
 
 0.0.11
 ==========
