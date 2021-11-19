@@ -7,7 +7,7 @@ from djangocms_url_manager.test_utils.polls.utils import (
 
 
 EXTRA_INSTALLED_APPS = []
-ENABLE_VERSIONING = bool(os.environ.get("ENABLE_VERSIONING", False))
+ENABLE_VERSIONING = bool(os.environ.get("ENABLE_VERSIONING", True))
 if ENABLE_VERSIONING:
     EXTRA_INSTALLED_APPS.append("djangocms_versioning")
 
@@ -15,8 +15,14 @@ ENABLE_NAVIGATION = bool(os.environ.get("ENABLE_NAVIGATION", False))
 if ENABLE_NAVIGATION:
     EXTRA_INSTALLED_APPS.append("djangocms_navigation")
 
+ENABLE_MODERATION = bool(os.environ.get("ENABLE_MODERATION", True))
+if ENABLE_MODERATION:
+    EXTRA_INSTALLED_APPS.append("djangocms_moderation")
+
 HELPER_SETTINGS = {
     "VERSIONING_CMS_MODELS_ENABLED": ENABLE_VERSIONING,
+    "VERSIONING_URL_MANAGER_MODELS_ENABLED": ENABLE_VERSIONING,
+    "MODERATING_URL_MANAGER_MODELS_ENABLED": ENABLE_MODERATION,
     "TOP_INSTALLED_APPS": ["djangocms_url_manager"],
     "INSTALLED_APPS": [
         "djangocms_url_manager.test_utils.polls",
@@ -34,6 +40,7 @@ HELPER_SETTINGS = {
         "djangocms_url_manager": None,
         "djangocms_versioning": None,
         "djangocms_navigation": None,
+        "djangocms_moderation": None,
     },
     "CMS_PERMISSION": True,
     # At present, testing requires bootstrap to be disabled.
