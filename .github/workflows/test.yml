@@ -12,8 +12,8 @@ jobs:
       matrix:
         python-version: [ 3.7, 3.8, 3.9, ]  # latest release minus two
         requirements-file: [
-            dj11_cms40.txt,
             dj22_cms40.txt,
+            dj32_cms40.txt,
         ]
         os: [
             ubuntu-20.04,
@@ -45,8 +45,8 @@ jobs:
       matrix:
         python-version: [ 3.7, 3.8, 3.9, ]  # latest release minus two
         requirements-file: [
-            dj11_cms40.txt,
             dj22_cms40.txt,
+            dj32_cms40.txt,
         ]
 
     steps:
