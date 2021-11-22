@@ -50,7 +50,7 @@ def forwards(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("djangocms_url_manager", "0007_auto_20211112_1245")
+        ("djangocms_url_manager", "0008_linkplugin_url_grouper")
     ]
 
     operations = [
