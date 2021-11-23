@@ -191,7 +191,6 @@ class LinkPlugin(CMSPlugin):
         related_name='%(app_label)s_%(class)s_url_grouper',
         null=True
     )
-    internal_name = models.CharField(verbose_name=_("internal name"), max_length=120)
     label = models.CharField(verbose_name=_("label"), max_length=120)
     template = models.CharField(
         verbose_name=_("Template"),
