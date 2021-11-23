@@ -16,7 +16,6 @@ except ImportError:
 
 
 def forwards(apps, schema_editor):
-    create_contenttypes(global_apps.get_app_config("djangocms_url_manager"))
 
     djangocms_versioning_config_enabled = UrlCMSAppConfig.djangocms_versioning_enabled
     ContentType = apps.get_model("contenttypes", "ContentType")
