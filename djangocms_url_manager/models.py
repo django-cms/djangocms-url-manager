@@ -192,9 +192,6 @@ class LinkPlugin(CMSPlugin):
         null=True
     )
     internal_name = models.CharField(verbose_name=_("internal name"), max_length=120)
-    url = models.ForeignKey(
-        Url, verbose_name=_("url"), related_name="cms_plugins", on_delete=models.CASCADE
-    )
     label = models.CharField(verbose_name=_("label"), max_length=120)
     template = models.CharField(
         verbose_name=_("Template"),
