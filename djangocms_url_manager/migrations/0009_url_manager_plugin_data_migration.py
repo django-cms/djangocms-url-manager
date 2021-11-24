@@ -13,7 +13,7 @@ def forwards(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djangocms_url_manager', '0009_url_manager_data_migration'),
+        ('djangocms_url_manager', '0008_url_manager_data_migration'),
     ]
 
     operations = [

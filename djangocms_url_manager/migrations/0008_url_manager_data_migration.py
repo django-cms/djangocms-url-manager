@@ -8,7 +8,7 @@ from djangocms_url_manager.conf import (
 )
 
 try:
-    from djangocms_versioning.constants import DRAFT
+    from djangocms_versioning.constants import PUBLISHED
 
     djangocms_versioning_installed = True
 except ImportError:
@@ -39,7 +39,7 @@ def forwards(apps, schema_editor):
             Version = apps.get_model('djangocms_versioning', 'Version')
             Version.objects.create(
                 created_by=migration_user,
-                state=DRAFT,
+                state=PUBLISHED,
                 number=1,
                 object_id=url.pk,
                 content_type=url_contenttype,
@@ -48,7 +48,7 @@ def forwards(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("djangocms_url_manager", "0008_linkplugin_url_grouper")
+        ("djangocms_url_manager", "0007_auto_20211124_0408")
     ]
 
     operations = [
