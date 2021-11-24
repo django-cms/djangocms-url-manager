@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from cms.utils.urlutils import admin_reverse
 
 from .constants import SELECT2_CONTENT_TYPE_OBJECT_URL_NAME, SELECT2_URLS
-from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlOverride
+from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlGrouper, UrlOverride
 from .utils import supported_models
 
 
@@ -97,6 +97,10 @@ class UrlForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        if self.fields.get("url_grouper"):
+            self.fields["url_grouper"].required = False
+            self.fields["url_grouper"].widget = forms.HiddenInput()
+
         # Set choices based on setup models for type field
         choices = []
         for model in supported_models():
@@ -185,13 +189,20 @@ class UrlForm(forms.ModelForm):
 
     def save(self, **kwargs):
         url_type = self.cleaned_data.get("url_type")
+        commit = kwargs.get("commit", True)
+
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
         if is_basic_type:
             # Set content object to none to prevent GFK url always being returned by getter.
             self.instance.content_object = None
         else:
             self.instance.content_object = self.cleaned_data["content_object"]
-        return super().save(**kwargs)
+        url = super().save(commit=False)
+        if not hasattr(url, "url_grouper"):
+            url.url_grouper = UrlGrouper.objects.create()
+        if commit:
+            url.save()
+        return url
 
 
 class UrlOverrideForm(UrlForm):

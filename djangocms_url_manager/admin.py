@@ -6,6 +6,17 @@ from djangocms_url_manager.models import Url, UrlOverride
 from djangocms_url_manager.urls import urlpatterns
 
 
+# Use the version mixin if djangocms-versioning is installed and enabled
+url_admin_classes = [admin.ModelAdmin]
+djangocms_versioning_enabled = UrlCMSAppConfig.djangocms_versioning_enabled
+
+try:
+    from djangocms_versioning.admin import ExtendedVersionAdminMixin
+
+    if djangocms_versioning_enabled:
+        url_admin_classes.insert(0, ExtendedVersionAdminMixin)
+except ImportError:
+    pass
 __all__ = ["UrlAdmin", "UrlOverrideInlineAdmin"]
 
 
@@ -16,7 +27,7 @@ class UrlOverrideInlineAdmin(admin.StackedInline):
 
 
 @admin.register(Url)
-class UrlAdmin(admin.ModelAdmin):
+class UrlAdmin(*url_admin_classes):
     form = UrlForm
     inlines = [UrlOverrideInlineAdmin]
     list_display = ("internal_name", "get_model_url", "date_modified", )
