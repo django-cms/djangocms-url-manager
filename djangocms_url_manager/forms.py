@@ -2,14 +2,24 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
+from django.forms.models import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from cms.utils.urlutils import admin_reverse
 
+from .cms_config import UrlCMSAppConfig
 from .constants import SELECT2_CONTENT_TYPE_OBJECT_URL_NAME, SELECT2_URLS
 from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlGrouper, UrlOverride
 from .utils import supported_models
 
+
+try:
+    from djangocms_versioning import __version__
+    is_versioning_enabled = True
+except ImportError:
+    is_versioning_enabled = False
+
+djangocms_versioning_enabled = UrlCMSAppConfig.djangocms_versioning_enabled
 
 class Select2Mixin:
     class Media:
@@ -96,7 +106,6 @@ class UrlForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         if self.fields.get("url_grouper"):
             self.fields["url_grouper"].required = False
             self.fields["url_grouper"].widget = forms.HiddenInput()
@@ -189,16 +198,15 @@ class UrlForm(forms.ModelForm):
 
     def save(self, **kwargs):
         url_type = self.cleaned_data.get("url_type")
+        url = super().save(commit=False)
         commit = kwargs.get("commit", True)
-
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
         if is_basic_type:
             # Set content object to none to prevent GFK url always being returned by getter.
             self.instance.content_object = None
         else:
             self.instance.content_object = self.cleaned_data["content_object"]
-        url = super().save(commit=False)
-        if not hasattr(url, "url_grouper"):
+        if not getattr(url, "url_grouper"):
             url.url_grouper = UrlGrouper.objects.create()
         if commit:
             url.save()
@@ -208,7 +216,9 @@ class UrlForm(forms.ModelForm):
 class UrlOverrideForm(UrlForm):
     class Meta:
         model = UrlOverride
-        fields = ("url",) + UrlForm.Meta.fields
+        base_fields = UrlForm.Meta.fields
+        base_fields = base_fields[:-1]
+        fields = ("url",) + base_fields
 
     def clean(self):
         data = super().clean()
@@ -246,13 +256,13 @@ class HtmlLinkForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Set url if object exists
-        if self.instance and self.instance.url_id:
-            self.fields["url"].initial = self.instance.url_id
+        if self.instance and self.instance.url_grouper_id:
+            # TODO: Check which version we should be passing here
+            self.fields["url"].initial = self.instance.url_grouper.url()
 
     class Meta:
         model = LinkPlugin
         fields = (
-            "internal_name",
             "site",
             "url",
             "label",
@@ -264,7 +274,7 @@ class HtmlLinkForm(forms.ModelForm):
     def clean(self):
         data = super().clean()
         try:
-            data["url"] = Url.objects.get(pk=int(data["url"]))
+            data["url"] = Url._base_manager.get(pk=int(data["url"]))
         except ValueError:
             self.add_error("url", _("Invalid value"))
         except ObjectDoesNotExist:

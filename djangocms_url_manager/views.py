@@ -2,7 +2,7 @@ from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 
 from djangocms_url_manager.models import Url
 from djangocms_url_manager.utils import get_supported_model_queryset, is_model_supported
@@ -12,6 +12,7 @@ class ContentTypeObjectSelect2View(ListView):
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         context = self.get_context_data()
+        print(context)
         data = {
             "results": [
                 {"text": str(obj), "id": obj.pk} for obj in context["object_list"]
@@ -93,7 +94,7 @@ class UrlSelect2View(ListView):
 
     def get_queryset(self):
         site = self.request.GET.get("site")
-        queryset = Url.objects.all()
+        queryset = Url._base_manager.all()
 
         try:
             pk = int(self.request.GET.get("pk"))
@@ -109,3 +110,25 @@ class UrlSelect2View(ListView):
 
     def get_paginate_by(self, queryset):
         return self.request.GET.get("limit", 30)
+
+class UrlPreviewView(TemplateView):
+    template_name = "djangocms_url_manager/admin/preview.html"
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        url_id = kwargs.get("url_id", None)
+
+        if not url_id:
+            Http404("URL ID must be provided")
+
+        try:
+            url = Url._base_manager.get(pk=url_id)
+        except Url.DoesNotExist:
+            raise Http404
+
+        context.update({
+            "url": url,
+            opts: Url._meta
+        })
+        return context

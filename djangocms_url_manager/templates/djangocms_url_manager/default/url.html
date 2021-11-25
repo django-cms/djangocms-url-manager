@@ -1,6 +1,6 @@
 {% load cms_tags djangocms_url_manager_tags %}{% spaceless %}
 
 {# this needs to be in one line for rendering purpose #}
-{% endspaceless %}<a href="{% render_url instance.url %}"{% if instance.target %} target="{{ instance.target }}"{% endif %}{% if instance.attributes %} {{ instance.attributes_str }}{% endif %}>{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% empty %}{{ instance.label }}{% endfor %}</a>{% spaceless %}
+{% endspaceless %}<a href="{% render_url instance %}"{% if instance.target %} target="{{ instance.target }}"{% endif %}{% if instance.attributes %} {{ instance.attributes_str }}{% endif %}>{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% empty %}{{ instance.label }}{% endfor %}</a>{% spaceless %}
 
 {% endspaceless %}

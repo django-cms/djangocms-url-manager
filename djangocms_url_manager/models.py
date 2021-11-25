@@ -13,7 +13,6 @@ from cms.utils.i18n import get_default_language_for_site
 from djangocms_attributes_field.fields import AttributesField
 from djangocms_versioning.constants import DRAFT, PUBLISHED
 
-
 logger = logging.getLogger(__name__)
 
 __all__ = ["Url", "LinkPlugin"]
@@ -90,6 +89,7 @@ class AbstractUrl(models.Model):
 
 
 class UrlGrouper(models.Model):
+
     def url(self, show_editable=False):
         # TODO: Check the results of this method with ARCHIVED etc.
         if show_editable:
