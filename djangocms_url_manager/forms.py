@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from cms.utils.urlutils import admin_reverse
 
 from .constants import SELECT2_CONTENT_TYPE_OBJECT_URL_NAME, SELECT2_URLS
-from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlOverride
+from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlOverride, UrlGrouper
 from .utils import supported_models
 
 
@@ -185,13 +185,19 @@ class UrlForm(forms.ModelForm):
 
     def save(self, **kwargs):
         url_type = self.cleaned_data.get("url_type")
+        url = super().save(commit=False)
+        commit = kwargs.get("commit", True)
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
         if is_basic_type:
             # Set content object to none to prevent GFK url always being returned by getter.
             self.instance.content_object = None
         else:
             self.instance.content_object = self.cleaned_data["content_object"]
-        return super().save(**kwargs)
+        if not getattr(url, "url_grouper"):
+            url.url_grouper = UrlGrouper.objects.create()
+        if commit:
+            url.save()
+        return url
 
 
 class UrlOverrideForm(UrlForm):
@@ -241,7 +247,7 @@ class HtmlLinkForm(forms.ModelForm):
     class Meta:
         model = LinkPlugin
         fields = (
-            "internal_name",
+            # "internal_name",
             "site",
             "url",
             "label",

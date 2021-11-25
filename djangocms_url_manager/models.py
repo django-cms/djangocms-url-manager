@@ -89,11 +89,7 @@ class AbstractUrl(models.Model):
 
 
 class UrlGrouper(models.Model):
-    internal_name = models.CharField(
-        verbose_name=_("internal name"),
-        max_length=255,
-        help_text=_("Provide internal name for URL objects for searching purpose"),
-    )
+    pass
 
 
 class Url(AbstractUrl):

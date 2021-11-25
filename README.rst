@@ -1,6 +1,6 @@
-****************
+**********************
 django CMS URL Manager
-****************
+**********************
 
 ============
 Installation
@@ -31,3 +31,8 @@ to perform the application's database migrations.
 =====
 Usage
 =====
+
+Migration 0008 requires the use of a user in order to create versions for existing urls (if djangocms_versioning is installed and enabled), a user can be chosen with the setting DJANGOCMS_URL_MANAGER_VERSIONING_MIGRATION_USER_ID, the default is 1.
+
+
+    DJANGOCMS_URL_MANAGER_VERSIONING_MIGRATION_USER_ID = 2 # Will use user with id: 2

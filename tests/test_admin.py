@@ -4,7 +4,7 @@ from .base import BaseUrlTestCase
 
 
 class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
-    @skip("Failed test should be addresses in future ticket")
+    # @skip("Failed test should be addresses in future ticket")
     def test_get_search_results(self):
         """
         A filtered queryset is returned containing matches with a given search_term
