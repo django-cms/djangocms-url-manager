@@ -48,7 +48,8 @@ class BaseUrlTestCase(CMSTestCase):
         )
         self.url = self._create_url(content_object=self.page)
         self.url2 = self._create_url(manual_url="https://example.com/", site=self.site2)
-        self.url_queryset = UrlModel.objects.all()
+        self.url_queryset_published = UrlModel.objects.all()
+        self.url_queryset = UrlModel._base_manager.all()
         self.poll = Poll.objects.create(name="Test poll")
         self.poll_content = PollContent.objects.create(
             poll=self.poll, language=self.language, text="example"
