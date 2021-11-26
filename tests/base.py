@@ -19,6 +19,7 @@ from djangocms_url_manager.constants import (
 from djangocms_url_manager.models import Url as UrlModel, UrlGrouper, UrlOverride
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 
+
 try:
     from djangocms_versioning.constants import DRAFT
     from djangocms_versioning.models import Version

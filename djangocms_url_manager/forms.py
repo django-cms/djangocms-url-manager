@@ -193,8 +193,10 @@ class UrlForm(forms.ModelForm):
             self.instance.content_object = None
         else:
             self.instance.content_object = self.cleaned_data["content_object"]
-        if not getattr(url, "url_grouper"):
-            url.url_grouper = UrlGrouper.objects.create()
+            # Check whether the form used has the url_grouper attribute, as overrides do not.
+        if hasattr(url, "url_grouper"):
+            if not getattr(url, "url_grouper"):
+                url.url_grouper = UrlGrouper.objects.create()
         if commit:
             url.save()
         return url
@@ -207,7 +209,6 @@ class UrlOverrideForm(UrlForm):
 
     def clean(self):
         data = super().clean()
-        # TODO: Replace url
         url = data.get("url")
         site = data.get("site")
 

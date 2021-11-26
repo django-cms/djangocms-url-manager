@@ -1,6 +1,7 @@
 coverage
 django-formtools==2.2
 djangocms_helper
+djangocms-attributes-field
 factory-boy
 flake8
 isort

@@ -13,9 +13,9 @@ from .base import BaseUrlTestCase
 
 
 class UrlManagerFormsTestCase(BaseUrlTestCase):
-    @skip("Failed test should be addresses in future ticket")
     def test_url_override_form(self):
         site3 = Site.objects.create(name="bar.com", domain="bar.com")
+        self.url.versions.first().publish(user=self.superuser)
         form = UrlOverrideForm(
             {
                 "internal_name": "Test Name",
@@ -40,7 +40,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.phone, ""),
         self.assertEqual(instance.url_id, self.url.pk),
 
-    @skip("Failed test should be addresses in future ticket")
     def test_url_override_form_disallow_same_site_as_original_url(self):
         form = UrlOverrideForm({"internal_name": "Test Name", "url": self.url.pk, "site": self.url.site_id})
 
