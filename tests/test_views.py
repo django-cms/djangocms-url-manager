@@ -1,4 +1,4 @@
-from unittest import skip, skipIf, skipUnless
+from unittest import skipIf, skipUnless
 
 from django.contrib.contenttypes.models import ContentType
 

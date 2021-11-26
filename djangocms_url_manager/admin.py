@@ -27,6 +27,7 @@ class UrlOverrideInlineAdmin(admin.StackedInline):
     form = UrlOverrideForm
     extra = 0
 
+
 @admin.register(Url)
 class UrlAdmin(*url_admin_classes):
     form = UrlForm

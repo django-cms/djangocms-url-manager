@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
-from django.forms.models import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from cms.utils.urlutils import admin_reverse
@@ -237,12 +236,6 @@ class UrlOverrideForm(UrlForm):
                 }
             )
         return data
-
-    def save(self, **kwargs):
-        print('in save')
-        test2 = self.cleaned_data
-        print('1111')
-        return url
 
 
 class HtmlLinkForm(forms.ModelForm):

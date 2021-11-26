@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.views.generic import ListView, TemplateView
 
 from djangocms_url_manager.models import Url
@@ -111,9 +111,9 @@ class UrlSelect2View(ListView):
     def get_paginate_by(self, queryset):
         return self.request.GET.get("limit", 30)
 
+
 class UrlPreviewView(TemplateView):
     template_name = "djangocms_url_manager/admin/preview.html"
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -129,6 +129,6 @@ class UrlPreviewView(TemplateView):
 
         context.update({
             "url": url,
-            opts: Url._meta
+            "opts": Url._meta
         })
         return context
