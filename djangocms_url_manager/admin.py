@@ -5,7 +5,6 @@ from djangocms_url_manager.cms_config import UrlCMSAppConfig
 from djangocms_url_manager.forms import UrlForm, UrlOverrideForm
 from djangocms_url_manager.models import Url, UrlOverride
 from djangocms_url_manager.urls import urlpatterns
-from djangocms_url_manager.views import UrlPreviewView
 
 
 # Use the version mixin if djangocms-versioning is installed and enabled
@@ -38,16 +37,7 @@ class UrlAdmin(*url_admin_classes):
     ordering = ("internal_name", "date_modified", )
 
     def get_urls(self):
-        urls = super().get_urls()
-        info = self.model._meta.app_label, self.model._meta.model_name
-
-        return [
-            url(
-                r"^(?P<url_id>\d+)/preview/$",
-                self.admin_site.admin_view(UrlPreviewView.as_view()),
-                name="{}_{}_preview".format(*info)
-            )
-        ] + urls + urlpatterns
+        return urlpatterns + super().get_urls()
 
     def get_model_url(self, obj):
         return obj.get_url(obj.site)

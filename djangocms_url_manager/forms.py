@@ -13,12 +13,13 @@ from .utils import supported_models
 
 
 try:
-    from djangocms_versioning import __version__
+    from djangocms_versioning import __version__  # noqa
     is_versioning_enabled = True
 except ImportError:
     is_versioning_enabled = False
 
 djangocms_versioning_enabled = UrlCMSAppConfig.djangocms_versioning_enabled
+
 
 class Select2Mixin:
     class Media:
