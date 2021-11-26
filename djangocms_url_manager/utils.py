@@ -109,7 +109,7 @@ def get_page_search_results(model, queryset, search_term):
 
     for page_content in page_content_queryset:
         try:
-            queryset |= Url.objects.filter(
+            queryset |= Url._base_manager.filter(
                 object_id=page_content.page.id,
                 content_type=content_type_id
             )
