@@ -1,10 +1,10 @@
-from django.conf.urls import url
 from django.contrib import admin
 
 from djangocms_url_manager.cms_config import UrlCMSAppConfig
 from djangocms_url_manager.forms import UrlForm, UrlOverrideForm
 from djangocms_url_manager.models import Url, UrlOverride
 from djangocms_url_manager.urls import urlpatterns
+# from djangocms_url_manager.views import UrlPreviewView
 
 
 # Use the version mixin if djangocms-versioning is installed and enabled

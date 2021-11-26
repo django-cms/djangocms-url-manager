@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, JsonResponse
+from django.http import JsonResponse
 from django.views.generic import ListView
 
 from djangocms_url_manager.models import Url
