@@ -10,13 +10,22 @@ from cms.test_utils.testcases import CMSTestCase
 from cms.utils.urlutils import admin_reverse
 
 from djangocms_url_manager.admin import UrlAdmin
+from djangocms_url_manager.cms_config import UrlCMSAppConfig
 from djangocms_url_manager.compat import CMS_36, get_page_placeholders
 from djangocms_url_manager.constants import (
     SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
     SELECT2_URLS,
 )
-from djangocms_url_manager.models import Url as UrlModel, UrlOverride
+from djangocms_url_manager.models import Url as UrlModel, UrlGrouper, UrlOverride
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
+
+try:
+    from djangocms_versioning.constants import DRAFT
+    from djangocms_versioning.models import Version
+
+    djangocms_versioning_installed = True
+except ImportError:
+    djangocms_versioning_installed = False
 
 
 class BaseUrlTestCase(CMSTestCase):
@@ -66,7 +75,7 @@ class BaseUrlTestCase(CMSTestCase):
         if site is None:
             site = self.default_site
 
-        return UrlModel.objects.create(
+        url = UrlModel.objects.create(
             site=site,
             content_object=content_object,
             manual_url=manual_url,
@@ -74,7 +83,18 @@ class BaseUrlTestCase(CMSTestCase):
             phone=phone,
             mailto=mailto,
             anchor=anchor,
+            url_grouper=UrlGrouper.objects.create(),
         )
+        if djangocms_versioning_installed and UrlCMSAppConfig.djangocms_versioning_enabled:
+            Version.objects.create(
+                content=url,
+                created_by=self.superuser,
+                state=DRAFT,
+                content_type_id=ContentType.objects.get_for_model(UrlModel).id,
+            )
+
+
+        return url
 
     def _create_url_override(
         self,
