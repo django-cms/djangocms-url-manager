@@ -184,7 +184,6 @@ class UrlForm(forms.ModelForm):
         return anchor
 
     def save(self, **kwargs):
-        print("here")
         url_type = self.cleaned_data.get("url_type")
         url = super().save(commit=False)
         commit = kwargs.get("commit", True)
