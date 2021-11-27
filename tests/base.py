@@ -94,6 +94,7 @@ class BaseUrlTestCase(CMSTestCase):
                 state=DRAFT,
                 content_type_id=ContentType.objects.get_for_model(UrlModel).id,
             )
+
         return url
 
     def _create_url_override(

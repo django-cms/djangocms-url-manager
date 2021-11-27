@@ -6,9 +6,19 @@ from django.utils.translation import ugettext_lazy as _
 
 from cms.utils.urlutils import admin_reverse
 
+from .cms_config import UrlCMSAppConfig
 from .constants import SELECT2_CONTENT_TYPE_OBJECT_URL_NAME, SELECT2_URLS
 from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlGrouper, UrlOverride
 from .utils import supported_models
+
+
+try:
+    from djangocms_versioning import __version__  # noqa
+    is_versioning_enabled = True
+except ImportError:
+    is_versioning_enabled = False
+
+djangocms_versioning_enabled = UrlCMSAppConfig.djangocms_versioning_enabled
 
 
 class Select2Mixin:
@@ -96,6 +106,9 @@ class UrlForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if self.fields.get("url_grouper"):
+            self.fields["url_grouper"].required = False
+            self.fields["url_grouper"].widget = forms.HiddenInput()
 
         # Set choices based on setup models for type field
         choices = []
@@ -193,6 +206,7 @@ class UrlForm(forms.ModelForm):
             self.instance.content_object = None
         else:
             self.instance.content_object = self.cleaned_data["content_object"]
+
         # Check whether the form used has the url_grouper attribute, as overrides do not.
         if hasattr(url, "url_grouper"):
             if not getattr(url, "url_grouper"):
@@ -205,10 +219,13 @@ class UrlForm(forms.ModelForm):
 class UrlOverrideForm(UrlForm):
     class Meta:
         model = UrlOverride
-        fields = ("url",) + UrlForm.Meta.fields
+        base_fields = UrlForm.Meta.fields
+        base_fields = base_fields[:-1]
+        fields = ("url",) + base_fields
 
     def clean(self):
         data = super().clean()
+        # TODO: Replace url
         url = data.get("url")
         site = data.get("site")
 
@@ -249,7 +266,6 @@ class HtmlLinkForm(forms.ModelForm):
     class Meta:
         model = LinkPlugin
         fields = (
-            # "internal_name",
             "site",
             "url_grouper",
             "label",

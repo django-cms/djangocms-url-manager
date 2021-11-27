@@ -1,4 +1,4 @@
-from unittest import skip, skipIf, skipUnless
+from unittest import skipIf, skipUnless
 
 from django.contrib.contenttypes.models import ContentType
 
@@ -219,8 +219,12 @@ class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
         response = self.client.get(self.select2_urls_endpoint)
         self.assertEqual(response.status_code, 403)
 
-    @skip("Failed test should be addresses in future ticket")
     def test_select2_url_view_without_site_id(self):
+        url1_version = self.url.versions.first()
+        url1_version.publish(self.superuser)
+        url2_version = self.url2.versions.last()
+        url2_version.publish(self.superuser)
+
         with self.login_user_context(self.superuser):
             response = self.client.get(self.select2_urls_endpoint)
         self.assertEqual(response.status_code, 200)
@@ -228,8 +232,10 @@ class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
             [p["id"] for p in response.json()["results"]], [self.url.pk, self.url2.pk]
         )
 
-    @skip("Failed test should be addresses in future ticket")
     def test_select2_url_view_with_site_id(self):
+        url2_version = self.url2.versions.first()
+        url2_version.publish(self.superuser)
+
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_urls_endpoint, data={"site": self.site2.pk}
@@ -237,21 +243,28 @@ class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual([p["id"] for p in response.json()["results"]], [self.url2.pk])
 
-    @skip("Failed test should be addresses in future ticket")
     def test_select2_url_view_with_object_pk(self):
+        url_version = self.url.versions.first()
+        url_version.publish(self.superuser)
+
         with self.login_user_context(self.superuser):
             response = self.client.get(
-                self.select2_urls_endpoint, data={"pk": self.url2.pk}
+                self.select2_urls_endpoint, data={"pk": self.url.pk}
             )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual([a["id"] for a in response.json()["results"]], [self.url2.pk])
+        self.assertEqual([a["id"] for a in response.json()["results"]], [self.url.pk])
 
-    @skip("Failed test should be addresses in future ticket")
     def test_select2_url_view_set_limit(self):
-        self._create_url(anchor="test")
+        url = self.url.versions.first()
+        url.publish(self.superuser)
+
+        url2_version = self.url2.versions.first()
+        url2_version.publish(self.superuser)
+
         with self.login_user_context(self.superuser):
-            response = self.client.get(self.select2_urls_endpoint, data={"limit": 2})
+            response = self.client.get(self.select2_urls_endpoint, data={"limit": 1})
+
         content = response.json()
         self.assertEqual(response.status_code, 200)
         self.assertTrue(content["more"])
-        self.assertEqual(len(content["results"]), 2)
+        self.assertEqual(len(content["results"]), 1)

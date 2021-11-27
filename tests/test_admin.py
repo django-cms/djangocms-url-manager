@@ -1,29 +1,33 @@
-from unittest import skip
+from unittest import skipUnless
 
 from .base import BaseUrlTestCase
 
 
 class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
-    @skip("Failed test should be addresses in future ticket")
+
     def test_get_search_results(self):
         """
         A filtered queryset is returned containing matches with a given search_term
         Ensure querysets are combined to prevent search from only returning the last hit!
         """
         self.url2.content_object = self.page2
-        self.url2.versions.first().publish(user=self.superuser)
         self.url2.save()
+
+        url2_version = self.url2.versions.last()
+        url2_version.publish(self.superuser)
+
+        url1_version = self.url.versions.first()
+        url1_version.publish(self.superuser)
 
         search_term = self.page.get_title()
         results, use_distinct = self.url_admin.get_search_results(
             self.url_admin_request, self.url_queryset, search_term
         )
 
-        self.assertEqual(results.last(), self.url)
-        self.assertEqual(results.first(), self.url2)
+        self.assertEqual(results.first(), self.url)
+        self.assertEqual(results.last(), self.url2)
         self.assertEqual(results.count(), 2)
 
-    @skip("Failed test should be addresses in future ticket")
     def test_get_search_results_partial_search_term(self):
         """
         A filtered queryset is returned containing matches with a given search_term
@@ -42,10 +46,9 @@ class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
         self.assertEqual(results.last(), self.url2)
         self.assertEqual(results.count(), 2)
 
-    # @skipUnless(
-    #     BaseUrlTestCase.is_versioning_enabled(), "Test only relevant for versioning"
-    # )
-    @skip("Failed test should be addresses in future ticket")
+    @skipUnless(
+        BaseUrlTestCase.is_versioning_enabled(), "Test only relevant for versioning"
+    )
     def test_get_search_results_versioning(self):
         from djangocms_versioning.constants import DRAFT, PUBLISHED
 
@@ -62,7 +65,6 @@ class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
         self.assertEqual(results.first(), self.url)
         self.assertEqual(results.count(), 1)
 
-    @skip("Failed test should be addresses in future ticket")
     def test_failed_to_find_results(self):
         """
         Failures to find terms should be handled gracefully.

@@ -93,7 +93,7 @@ class UrlSelect2View(ListView):
 
     def get_queryset(self):
         site = self.request.GET.get("site")
-        queryset = Url.objects.all()
+        queryset = Url._base_manager.all()
 
         try:
             pk = int(self.request.GET.get("pk"))
