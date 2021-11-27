@@ -4,7 +4,7 @@ from .base import BaseUrlTestCase
 
 
 class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
-    @skip("Failed test should be addresses in future ticket")
+    # @skip("Failed test should be addresses in future ticket")
     def test_get_search_results(self):
         """
         A filtered queryset is returned containing matches with a given search_term
@@ -12,6 +12,12 @@ class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
         """
         self.url2.content_object = self.page2
         self.url2.save()
+
+        url2_version = self.url2.versions.last()
+        url2_version.publish(self.superuser)
+
+        url1_version = self.url.versions.first()
+        url1_version.publish(self.superuser)
 
         search_term = self.page.get_title()
         results, use_distinct = self.url_admin.get_search_results(

@@ -13,4 +13,3 @@ urlpatterns = [
         r"^select2/urls/$", views.UrlSelect2View.as_view(), name=constants.SELECT2_URLS
     ),
 ]
-
