@@ -193,7 +193,7 @@ class UrlForm(forms.ModelForm):
             self.instance.content_object = None
         else:
             self.instance.content_object = self.cleaned_data["content_object"]
-            # Check whether the form used has the url_grouper attribute, as overrides do not.
+        # Check whether the form used has the url_grouper attribute, as overrides do not.
         if hasattr(url, "url_grouper"):
             if not getattr(url, "url_grouper"):
                 url.url_grouper = UrlGrouper.objects.create()
