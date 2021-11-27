@@ -161,16 +161,17 @@ class UrlForm(forms.ModelForm):
                     content_object_qs = content_object_qs.filter(site=site)
                 content_object = content_object_qs.get(pk=content_object)
 
-                if (
-                    # dont validate for UrlOverride
-                    not data.get("url")
-                    and Url.objects.filter(
+                # dont validate for UrlOverride
+                if not data.get("url"):
+                    url_grouper = data.get("url_grouper")
+                    queryset = Url._base_manager.filter(
                         content_type=content_type, object_id=data["content_object"]
-                    ).exists()
-                ):
-                    self.add_error(
-                        "content_object", _("Url with this object already exists")
                     )
+                    queryset.exclude(url_grouper=url_grouper)
+                    if queryset.exists():
+                        self.add_error(
+                            "content_object", _("Url with this object already exists")
+                        )
 
                 data["content_object"] = content_object
             except ObjectDoesNotExist:
@@ -205,7 +206,7 @@ class UrlForm(forms.ModelForm):
             # Set content object to none to prevent GFK url always being returned by getter.
             self.instance.content_object = None
         else:
-            self.instance.content_object = self.cleaned_data["content_object"]
+            self.instance.content_object = self.cleaned_data.get("content_object")
 
         # Check whether the form used has the url_grouper attribute, as overrides do not.
         if hasattr(url, "url_grouper"):

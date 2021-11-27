@@ -295,8 +295,8 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.mailto, "")
         self.assertEqual(instance.phone, "")
 
-    @skip("Failed test should be addresses in future ticket")
     def test_create_url_for_content_object_that_already_have_url(self):
+        self.url.versions.first().publish(user=self.superuser)
         form = UrlForm(
             {
                 "internal_name": "Test Name",
@@ -348,18 +348,17 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
     @skip("Failed test should be addresses in future ticket")
     def test_url_override_form_dont_validate_object_already_exists(self):
-        self._create_url(site=self.site2, content_object=self.page2)
+        url = self._create_url(site=self.site2, content_object=self.page2)
 
-        form = UrlOverrideForm(
-            {
-                "internal_name": "Test Name",
-                "site": self.site2.pk,
-                # self.url is with self.default_site and self.page
-                "url": self.url.pk,
-                "url_type": self.page_contenttype_id,
-                "content_object": self.page2.pk,
-            }
-        )
+        data = {
+            "internal_name": "Test Name",
+            "site": self.site2.pk,
+            # self.url is with self.default_site and self.page
+            "url": url.pk,
+            "url_type": self.page_contenttype_id,
+            "manual_url": "https://www.test.com"
+        }
+        form = UrlOverrideForm(data=data, instance=url)
 
         self.assertTrue(form.is_valid())
 
@@ -373,7 +372,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.relative_path, ""),
         self.assertEqual(instance.mailto, ""),
         self.assertEqual(instance.phone, ""),
-        self.assertEqual(instance.url_id, self.url.pk),
+        self.assertEqual(instance.url_grouper.url(True).pk, url.pk),
 
     @skip("Failed test should be addresses in future ticket")
     def test_url_override_form_validate_object_with_this_site_and_object_already_exists(
