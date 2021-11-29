@@ -1,10 +1,5 @@
 from unittest import skipUnless
 
-from django.urls import reverse
-
-from djangocms_url_manager.admin import UrlAdmin, UrlOverrideInlineAdmin
-from djangocms_url_manager.models import Url, UrlOverride
-
 from .base import BaseUrlTestCase
 
 
