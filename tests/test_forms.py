@@ -1,9 +1,6 @@
 from urllib.parse import urlparse
 
-from djangocms_url_manager.forms import (
-    ContentTypeObjectSelectWidget,
-    UrlForm,
-)
+from djangocms_url_manager.forms import ContentTypeObjectSelectWidget, UrlForm
 
 from .base import BaseUrlTestCase
 
