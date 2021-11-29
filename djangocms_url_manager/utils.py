@@ -89,6 +89,15 @@ def is_model_supported(model):
     return model in supported_models().keys()
 
 
+def is_versioning_enabled():
+    from djangocms_url_manager.models import Url
+    try:
+        app_config = apps.get_app_config('djangocms_versioning')
+        return app_config.cms_extension.is_content_model_versioned(Url)
+    except LookupError:
+        return False
+
+
 def get_supported_model_queryset(model):
     func = supported_models()[model]
     if func:
