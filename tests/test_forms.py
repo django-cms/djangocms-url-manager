@@ -1,12 +1,8 @@
-from unittest import skip
 from urllib.parse import urlparse
-
-from django.contrib.sites.models import Site
 
 from djangocms_url_manager.forms import (
     ContentTypeObjectSelectWidget,
     UrlForm,
-    UrlOverrideForm,
 )
 
 from .base import BaseUrlTestCase
