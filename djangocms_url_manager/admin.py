@@ -4,6 +4,7 @@ from djangocms_url_manager.cms_config import UrlCMSAppConfig
 from djangocms_url_manager.forms import UrlForm, UrlOverrideForm
 from djangocms_url_manager.models import Url, UrlOverride
 from djangocms_url_manager.urls import urlpatterns
+from djangocms_url_manager.utils import is_versioning_enabled
 
 
 # Use the version mixin if djangocms-versioning is installed and enabled
@@ -36,6 +37,7 @@ class UrlAdmin(*url_admin_classes):
     search_fields = ("manual_url", "internal_name", "relative_path", "mailto", "phone")
     list_filter = ("site__name",)
     ordering = ("internal_name", "date_modified", )
+    change_form_template = "admin/djangocms_url_manager/url/change_form.html"
 
     def get_urls(self):
         return urlpatterns + super().get_urls()
@@ -59,3 +61,11 @@ class UrlAdmin(*url_admin_classes):
         return queryset, use_distinct
 
     get_model_url.short_description = "URL"
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        # Provide additional context to the changeform
+        extra_context['is_versioning_enabled'] = is_versioning_enabled()
+        return super().change_view(
+            request, object_id, form_url, extra_context=extra_context,
+        )
