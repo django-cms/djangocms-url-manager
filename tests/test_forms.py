@@ -13,46 +13,6 @@ from .base import BaseUrlTestCase
 
 
 class UrlManagerFormsTestCase(BaseUrlTestCase):
-    @skip("Failed test should be addresses in future ticket")
-    def test_url_override_form(self):
-        site3 = Site.objects.create(name="bar.com", domain="bar.com")
-        # self.url.versions.first().publish(user=self.superuser)
-        form = UrlOverrideForm(
-            {
-                "internal_name": "Test Name",
-                "url": self.url.pk,
-                "site": site3.pk,
-                "url_type": "manual_url",
-                "manual_url": "http://google.com/",
-            }
-        )
-
-        self.assertTrue(form.is_valid())
-        instance = form.save()
-
-        self.assertEqual(instance.site_id, site3.pk),
-        self.assertEqual(instance.manual_url, "http://google.com/"),
-        self.assertEqual(instance.relative_path, ""),
-        self.assertEqual(instance.content_type_id, None),
-        self.assertEqual(instance.object_id, None),
-        self.assertEqual(instance.anchor, ""),
-        self.assertEqual(instance.mailto, ""),
-        self.assertEqual(instance.phone, ""),
-        self.assertEqual(instance.url_id, self.url.pk),
-
-    @skip("Failed test should be addresses in future ticket")
-    def test_url_override_form_disallow_same_site_as_original_url(self):
-        form = UrlOverrideForm({"internal_name": "Test Name", "url": self.url.pk, "site": self.url.site_id})
-
-        self.assertFalse(form.is_valid())
-        self.assertDictEqual(
-            form.errors,
-            {
-                "url_type": ["This field is required."],
-                "content_object": ["Field is required"],
-                "site": ["Overridden site must be different from the original."],
-            },
-        )
 
     def test_data_select_widget_build_attrs(self):
         self.assertDictContainsSubset(
@@ -345,61 +305,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         )
 
         self.assertDictEqual(form.errors, {"content_object": ["Field is required"], })
-
-    @skip("Failed test should be addresses in future ticket")
-    def test_url_override_form_dont_validate_object_already_exists(self):
-        url = self._create_url(site=self.site2, content_object=self.page2)
-
-        data = {
-            "internal_name": "Test Name",
-            "site": self.site2.pk,
-            # self.url is with self.default_site and self.page
-            "url": url.pk,
-            "url_type": self.page_contenttype_id,
-            "manual_url": "https://www.test.com"
-        }
-        form = UrlOverrideForm(data=data, instance=url)
-
-        self.assertTrue(form.is_valid())
-
-        instance = form.save()
-
-        self.assertEqual(instance.site_id, self.site2.pk),
-        self.assertEqual(instance.content_type_id, self.page_contenttype_id),
-        self.assertEqual(instance.object_id, self.page2.pk),
-        self.assertEqual(instance.anchor, ""),
-        self.assertEqual(instance.manual_url, ""),
-        self.assertEqual(instance.relative_path, ""),
-        self.assertEqual(instance.mailto, ""),
-        self.assertEqual(instance.phone, ""),
-        self.assertEqual(instance.url_grouper.url(True).pk, url.pk),
-
-    @skip("Failed test should be addresses in future ticket")
-    def test_url_override_form_validate_object_with_this_site_and_object_already_exists(
-        self
-    ):
-        """
-        Test form is returning errors on failed validation
-        - We cannot have two override models with the same site and object.
-        """
-        self._create_url_override(self.url, self.site2, self.page2)
-
-        form = UrlOverrideForm(
-            {
-                "internal_name": "Test Name",
-                # self.url is with self.default_site and self.page
-                "url": self.url.pk,
-                "site": self.site2.id,
-                "url_type": self.page_contenttype_id,
-                "content_object": self.page2.pk,
-            }
-        )
-
-        self.assertFalse(form.is_valid())
-        self.assertDictEqual(
-            form.errors,
-            {"__all__": ["Url override with this Site and Url already exists."], },
-        )
 
     def test_plugin_returns_correct_url_for_type_on_update(self):
         """
