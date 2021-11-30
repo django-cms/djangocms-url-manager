@@ -10,6 +10,6 @@ register = template.Library()
 def render_url(context, instance):
     request = context["request"]
     toolbar = get_toolbar_from_request(request)
-    url = instance.url_grouper.get_content(toolbar.preview_mode_active)
+    url = instance.get_content(toolbar.preview_mode_active)
     renderer = toolbar.get_content_renderer()
     return url.get_url(renderer.current_site) or ""

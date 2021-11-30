@@ -7,7 +7,7 @@ from .base import BaseUrlTestCase
 
 class UrlManagerTemplateTagsTestCase(BaseUrlTestCase):
     url_template = (
-        """{% load djangocms_url_manager_tags %}{% render_url url %}"""
+        """{% load djangocms_url_manager_tags %}{% render_url url.url_grouper %}"""
     )  # noqa: E501
 
     def test_render_url(self):

@@ -14,7 +14,6 @@ from cms.utils.i18n import get_default_language_for_site
 
 from djangocms_attributes_field.fields import AttributesField
 from djangocms_url_manager.utils import is_versioning_enabled
-from djangocms_versioning.constants import DRAFT, PUBLISHED
 
 
 logger = logging.getLogger(__name__)
@@ -102,7 +101,7 @@ class UrlGrouper(models.Model):
         return self.get_name() or ''
 
     def get_name(self):
-        content = self.get_content(show_draft_content=True).first()
+        content = self.get_content(show_draft_content=True)
         name = getattr(content, 'internal_name', 'URL {}'.format(self.pk))
         if is_versioning_enabled() and content:
             from djangocms_versioning.constants import DRAFT
@@ -124,7 +123,7 @@ class UrlGrouper(models.Model):
             # archived with a previous version re-published
             qs = remove_published_where(qs)
             qs = qs.filter(Q(versions__state=DRAFT) | Q(versions__state=PUBLISHED)).order_by('-versions__created')
-        return qs
+        return qs.first()
 
 
 class Url(AbstractUrl):
