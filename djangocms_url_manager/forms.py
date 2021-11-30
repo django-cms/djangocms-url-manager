@@ -224,7 +224,6 @@ class UrlOverrideForm(UrlForm):
 
     def clean(self):
         data = super().clean()
-        # TODO: Replace url
         url = data.get("url")
         site = data.get("site")
 
