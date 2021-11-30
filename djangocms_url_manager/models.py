@@ -101,15 +101,6 @@ class UrlGrouper(models.Model):
         """Show alias name for current language"""
         return self.get_name() or ''
 
-    def url(self, show_editable=False):
-        if show_editable:
-            return Url._base_manager.filter(
-                versions__state__in=[DRAFT, PUBLISHED],
-                url_grouper=self,
-            ).order_by("-pk").first()
-        else:
-            return Url.objects.filter(url_grouper=self).order_by("-pk").first()
-
     def get_name(self):
         content = self.get_content(show_draft_content=True).first()
         name = getattr(content, 'internal_name', 'URL {}'.format(self.pk))
