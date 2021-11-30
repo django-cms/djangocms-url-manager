@@ -3,8 +3,11 @@ from unittest import skipIf, skipUnless
 from django.contrib.contenttypes.models import ContentType
 
 from cms.models import Page, User
+from cms.utils.urlutils import admin_reverse
 
 from djangocms_url_manager.compat import CMS_36
+from djangocms_url_manager.constants import SELECT2_URLS
+from djangocms_url_manager.utils import is_versioning_enabled
 
 from .base import BaseUrlTestCase
 
@@ -67,6 +70,33 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
                 {"text": self.page.get_title(), "id": self.page.pk},
                 {"text": self.page2.get_title(), "id": self.page2.pk},
             ],
+        )
+
+    def test_select2_view(self):
+
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                admin_reverse(
+                    SELECT2_URLS,
+                ),
+            )
+
+        result = [self.url.pk, self.url2.pk, ]
+        text_result = ['test 2']
+
+        if is_versioning_enabled():
+            # The following versions have draft content
+            text_result.append('//example.com/en/test/ (Not published)')
+            text_result.append('https://example.com/ (Not published)')
+        else:
+            text_result.append('foo')
+            text_result.append('foo4')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([a['id'] for a in response.json()['results']], result)
+        self.assertEqual(
+            [a['text'] for a in response.json()['results']],
+            text_result,
         )
 
     def test_return_poll_content_in_select2_view(self):
