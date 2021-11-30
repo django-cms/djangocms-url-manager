@@ -220,7 +220,7 @@ class UrlForm(forms.ModelForm):
 class UrlOverrideForm(UrlForm):
     class Meta:
         model = UrlOverride
-        base_fields = UrlForm.Meta.fields
+        fields = ("url",) + UrlForm.Meta.fields
         fields = ("url",) + base_fields
 
     def clean(self):
