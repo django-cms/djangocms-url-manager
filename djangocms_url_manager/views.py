@@ -94,7 +94,7 @@ class UrlSelect2View(ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        # site = self.request.GET.get("site")
+        site = self.request.GET.get("site")
         queryset = super().get_queryset().distinct()
 
         try:
@@ -102,6 +102,8 @@ class UrlSelect2View(ListView):
         except (TypeError, ValueError):
             pk = None
 
+        if site:
+            queryset = queryset.filter(djangocms_url_manager_url_url_grouper__site=site)
         if pk:
             queryset = queryset.filter(pk=pk)
         return queryset
