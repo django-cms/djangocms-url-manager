@@ -19,4 +19,4 @@ def render_url(context, instance):
     if not url:
         return ""
     renderer = toolbar.get_content_renderer()
-    return url.get_url(renderer.current_site) or ""
+    return url.get_url(renderer.current_site)
