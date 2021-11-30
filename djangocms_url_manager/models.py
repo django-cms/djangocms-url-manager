@@ -91,7 +91,6 @@ class AbstractUrl(models.Model):
 
 class UrlGrouper(models.Model):
     def url(self, show_editable=False):
-        # TODO: Check the results of this method with ARCHIVED etc.
         if show_editable:
             return Url._base_manager.filter(
                 versions__state__in=[DRAFT, PUBLISHED],
