@@ -24,8 +24,11 @@ def forwards(apps, schema_editor):
 
     url_contenttype = ContentType.objects.get(app_label='djangocms_url_manager', model='url')
     url_queryset = Url.objects.all()
-    # Get a migration user.
-    migration_user = User.objects.get(id=DJANGOCMS_URL_MANAGER_VERSIONING_MIGRATION_USER_ID)
+
+    if djangocms_versioning_config_enabled and djangocms_versioning_installed:
+        # Get a migration user.
+        migration_user = User.objects.get(id=DJANGOCMS_URL_MANAGER_VERSIONING_MIGRATION_USER_ID)
+        Version = apps.get_model('djangocms_versioning', 'Version')
 
     for url in url_queryset:
         grouper = UrlGrouper.objects.create()
@@ -35,7 +38,6 @@ def forwards(apps, schema_editor):
 
         # Create initial Url Versions if versioning is enabled and installed.
         if djangocms_versioning_config_enabled and djangocms_versioning_installed:
-            Version = apps.get_model('djangocms_versioning', 'Version')
             Version.objects.create(
                 created_by=migration_user,
                 state=PUBLISHED,
