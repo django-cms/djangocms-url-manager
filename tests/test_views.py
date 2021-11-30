@@ -82,15 +82,15 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
             )
 
         result = [self.url.pk, self.url2.pk, ]
-        text_result = ['test 2']
+        text_result = []
 
         if is_versioning_enabled():
             # The following versions have draft content
-            text_result.append('//example.com/en/test/ (Not published)')
-            text_result.append('https://example.com/ (Not published)')
+            text_result.append(f"{self.url.internal_name} (Not published)")
+            text_result.append(f'{self.url2.internal_name} (Not published)')
         else:
-            text_result.append('foo')
-            text_result.append('foo4')
+            text_result.append(f"{self.url.internal_name}")
+            text_result.append(f"{self.url2.internal_name}")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual([a['id'] for a in response.json()['results']], result)

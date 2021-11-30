@@ -5,12 +5,15 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.db import models
+from django.db.models import Q
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 from cms.models import CMSPlugin
 from cms.utils.i18n import get_default_language_for_site
 
 from djangocms_attributes_field.fields import AttributesField
+from djangocms_url_manager.utils import is_versioning_enabled
 from djangocms_versioning.constants import DRAFT, PUBLISHED
 
 
@@ -90,6 +93,14 @@ class AbstractUrl(models.Model):
 
 
 class UrlGrouper(models.Model):
+    def __str__(self):
+        return self.name
+
+    @cached_property
+    def name(self):
+        """Show alias name for current language"""
+        return self.get_name() or ''
+
     def url(self, show_editable=False):
         if show_editable:
             return Url._base_manager.filter(
@@ -98,6 +109,31 @@ class UrlGrouper(models.Model):
             ).order_by("-pk").first()
         else:
             return Url.objects.filter(url_grouper=self).order_by("-pk").first()
+
+    def get_name(self):
+        content = self.get_content(show_draft_content=True).first()
+        name = getattr(content, 'internal_name', 'URL {}'.format(self.pk))
+        if is_versioning_enabled() and content:
+            from djangocms_versioning.constants import DRAFT
+            version = content.versions.first()
+
+            if version.state == DRAFT:
+                return '{} (Not published)'.format(name)
+
+        return name
+
+    def get_content(self, show_draft_content=False):
+        qs = Url._base_manager.filter(url_grouper=self)
+
+        if show_draft_content and is_versioning_enabled():
+            from djangocms_versioning.constants import DRAFT, PUBLISHED
+            from djangocms_versioning.helpers import remove_published_where
+
+            # Ensure that we are getting the latest valid content, the top most version can become
+            # archived with a previous version re-published
+            qs = remove_published_where(qs)
+            qs = qs.filter(Q(versions__state=DRAFT) | Q(versions__state=PUBLISHED)).order_by('-versions__created')
+        return qs
 
 
 class Url(AbstractUrl):

@@ -10,7 +10,6 @@ from django.db.models.base import ModelBase
 from cms.models import PageContent
 
 from djangocms_url_manager.compat import CMS_36
-from djangocms_url_manager.models import Url
 
 
 def parse_settings(config, attr_name):
@@ -113,6 +112,7 @@ def get_page_search_results(model, queryset, search_term):
     :param search_term: Term to be searched for
     :return: results
     """
+    from djangocms_url_manager.models import Url
     page_content_queryset = PageContent._base_manager.filter(title__icontains=search_term)
     content_type_id = ContentType.objects.get_for_model(model).id
 
