@@ -354,13 +354,11 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
                 # self.url is with self.default_site and self.page
                 "url": self.url.pk,
                 "url_type": self.page_contenttype_id,
-                "manual_url": "https://www.test.com"
+                "content_object": self.page2.pk,
             }
         )
 
-        is_valid = form.is_valid()
-
-        self.assertTrue(is_valid)
+        self.assertTrue(form.is_valid())
 
         instance = form.save()
 
@@ -372,7 +370,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.relative_path, ""),
         self.assertEqual(instance.mailto, ""),
         self.assertEqual(instance.phone, ""),
-        self.assertEqual(instance.url_grouper.url(True).pk, url.pk)
+        self.assertEqual(instance.url_id, self.url.pk)
 
     def test_url_override_form_validate_object_with_this_site_and_object_already_exists(
         self

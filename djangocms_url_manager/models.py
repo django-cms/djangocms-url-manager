@@ -131,7 +131,7 @@ class AbstractUrlGrouper(models.Model):
 
 class UrlGrouper(AbstractUrlGrouper):
     def get_content_queryset(self):
-        return Url._base_manager.filter(url_grouper=self)
+        return Url.objects.filter(url_grouper=self)
 
 
 class Url(AbstractUrl):
