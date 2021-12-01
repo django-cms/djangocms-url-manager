@@ -92,7 +92,10 @@ class AbstractUrl(models.Model):
         abstract = True
 
 
-class UrlGrouper(models.Model):
+class AbstractUrlGrouper(models.Model):
+    class Meta:
+        abstract = True
+
     def __str__(self):
         return self.name
 
@@ -113,6 +116,11 @@ class UrlGrouper(models.Model):
 
         return name
 
+    def get_content(self, show_draft_content=False):
+        raise NotImplementedError("Models inheriting AbstractUrlGrouper should implement get_content")
+
+
+class UrlGrouper(AbstractUrlGrouper):
     def get_content(self, show_draft_content=False):
         qs = Url._base_manager.filter(url_grouper=self)
 

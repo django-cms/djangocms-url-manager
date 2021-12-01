@@ -187,6 +187,18 @@ class UrlForm(forms.ModelForm):
             self.add_error("anchor", _('Do not include a preceding "#" symbol.'))
         return anchor
 
+    def create_grouper(self, url):
+        """
+        If a grouper doesn't yet exist for the instance we may need to create one.
+
+        :param url: a url instance
+        :returns url: a url instance that may have a grouper attached.
+        """
+        # Check whether the form used has the url_grouper attribute, as overrides do not.
+        if isinstance(url, Url) and not getattr(url, "url_grouper"):
+            url.url_grouper = UrlGrouper.objects.create()
+        return url
+
     def save(self, **kwargs):
         url_type = self.cleaned_data.get("url_type")
         url = super().save(commit=False)
@@ -197,11 +209,9 @@ class UrlForm(forms.ModelForm):
             self.instance.content_object = None
         else:
             self.instance.content_object = self.cleaned_data.get("content_object")
+        # Create the grouper if it doesn't exist
+        url = self.create_grouper(url)
 
-        # Check whether the form used has the url_grouper attribute, as overrides do not.
-        if hasattr(url, "url_grouper"):
-            if not getattr(url, "url_grouper"):
-                url.url_grouper = UrlGrouper.objects.create()
         if commit:
             url.save()
         return url
