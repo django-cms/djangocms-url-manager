@@ -345,8 +345,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertDictEqual(form.errors, {"content_object": ["Field is required"], })
 
     def test_url_override_form_dont_validate_object_already_exists(self):
-        url = self._create_url(site=self.site2, content_object=self.page2)
-        url.versions.first().publish(user=self.superuser)
         self.url.versions.first().publish(user=self.superuser)
 
         form = UrlOverrideForm(
