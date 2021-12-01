@@ -8,7 +8,9 @@ Unreleased
 * Added versioning config in cms_config
 * Added versioning factory
 * Updated versioning config in cms_config and created default copy method testcase.
+* Data migration added for Url Grouper model
 * Github Actions integration
+* Removed internal_name field from LinkPlugin model. Added migration for the link plugin
 
 0.0.11
 ==========

@@ -4,7 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.views.generic import ListView
 
-from djangocms_url_manager.models import Url
+from djangocms_url_manager.models import UrlGrouper
 from djangocms_url_manager.utils import get_supported_model_queryset, is_model_supported
 
 
@@ -75,6 +75,8 @@ class ContentTypeObjectSelect2View(ListView):
 
 
 class UrlSelect2View(ListView):
+    queryset = UrlGrouper.objects.all()
+
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         context = self.get_context_data()
@@ -93,7 +95,7 @@ class UrlSelect2View(ListView):
 
     def get_queryset(self):
         site = self.request.GET.get("site")
-        queryset = Url.objects.all()
+        queryset = super().get_queryset().distinct()
 
         try:
             pk = int(self.request.GET.get("pk"))
@@ -101,8 +103,7 @@ class UrlSelect2View(ListView):
             pk = None
 
         if site:
-            queryset = queryset.filter(site=site)
-
+            queryset = queryset.filter(djangocms_url_manager_url_url_grouper__site=site)
         if pk:
             queryset = queryset.filter(pk=pk)
         return queryset

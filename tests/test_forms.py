@@ -1,4 +1,3 @@
-from unittest import skip
 from urllib.parse import urlparse
 
 from django.contrib.sites.models import Site
@@ -13,9 +12,9 @@ from .base import BaseUrlTestCase
 
 
 class UrlManagerFormsTestCase(BaseUrlTestCase):
-    @skip("Failed test should be addresses in future ticket")
     def test_url_override_form(self):
         site3 = Site.objects.create(name="bar.com", domain="bar.com")
+        self.url.versions.first().publish(user=self.superuser)
         form = UrlOverrideForm(
             {
                 "internal_name": "Test Name",
@@ -27,7 +26,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         )
 
         self.assertTrue(form.is_valid())
-
         instance = form.save()
 
         self.assertEqual(instance.site_id, site3.pk),
@@ -40,8 +38,8 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.phone, ""),
         self.assertEqual(instance.url_id, self.url.pk),
 
-    @skip("Failed test should be addresses in future ticket")
     def test_url_override_form_disallow_same_site_as_original_url(self):
+        self.url.versions.first().publish(user=self.superuser)
         form = UrlOverrideForm({"internal_name": "Test Name", "url": self.url.pk, "site": self.url.site_id})
 
         self.assertFalse(form.is_valid())
@@ -295,8 +293,8 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.mailto, "")
         self.assertEqual(instance.phone, "")
 
-    @skip("Failed test should be addresses in future ticket")
     def test_create_url_for_content_object_that_already_have_url(self):
+        self.url.versions.first().publish(user=self.superuser)
         form = UrlForm(
             {
                 "internal_name": "Test Name",
@@ -346,9 +344,10 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
 
         self.assertDictEqual(form.errors, {"content_object": ["Field is required"], })
 
-    @skip("Failed test should be addresses in future ticket")
     def test_url_override_form_dont_validate_object_already_exists(self):
-        self._create_url(site=self.site2, content_object=self.page2)
+        url = self._create_url(site=self.site2, content_object=self.page2)
+        url.versions.first().publish(user=self.superuser)
+        self.url.versions.first().publish(user=self.superuser)
 
         form = UrlOverrideForm(
             {
@@ -357,11 +356,13 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
                 # self.url is with self.default_site and self.page
                 "url": self.url.pk,
                 "url_type": self.page_contenttype_id,
-                "content_object": self.page2.pk,
+                "manual_url": "https://www.test.com"
             }
         )
 
-        self.assertTrue(form.is_valid())
+        is_valid = form.is_valid()
+
+        self.assertTrue(is_valid)
 
         instance = form.save()
 
@@ -373,9 +374,8 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.relative_path, ""),
         self.assertEqual(instance.mailto, ""),
         self.assertEqual(instance.phone, ""),
-        self.assertEqual(instance.url_id, self.url.pk),
+        self.assertEqual(instance.url_grouper.url(True).pk, url.pk)
 
-    @skip("Failed test should be addresses in future ticket")
     def test_url_override_form_validate_object_with_this_site_and_object_already_exists(
         self
     ):
@@ -384,6 +384,7 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         - We cannot have two override models with the same site and object.
         """
         self._create_url_override(self.url, self.site2, self.page2)
+        self.url.versions.first().publish(user=self.superuser)
 
         form = UrlOverrideForm(
             {
