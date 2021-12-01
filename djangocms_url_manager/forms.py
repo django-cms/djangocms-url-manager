@@ -259,7 +259,7 @@ class HtmlLinkForm(forms.ModelForm):
 
         # Set url if object exists
         if self.instance and self.instance.url_grouper_id:
-            self.fields["url_grouper"].initial = self.instance.url_grouper.url()
+            self.fields["url_grouper"].initial = self.instance.url_grouper_id
 
     class Meta:
         model = LinkPlugin
