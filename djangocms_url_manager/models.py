@@ -1,5 +1,3 @@
-import logging
-
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -16,8 +14,6 @@ from djangocms_attributes_field.fields import AttributesField
 
 from djangocms_url_manager.utils import is_versioning_enabled
 
-
-logger = logging.getLogger(__name__)
 
 __all__ = ["Url", "LinkPlugin"]
 
@@ -116,13 +112,11 @@ class AbstractUrlGrouper(models.Model):
 
         return name
 
-    def get_content(self, show_draft_content=False):
-        raise NotImplementedError("Models inheriting AbstractUrlGrouper should implement get_content")
+    def get_content_queryset(self):
+        raise NotImplementedError("Models implementing AbstractUrlGrouper should implement get_content_queryset")
 
-
-class UrlGrouper(AbstractUrlGrouper):
     def get_content(self, show_draft_content=False):
-        qs = Url._base_manager.filter(url_grouper=self)
+        qs = self.get_content_queryset()
 
         if show_draft_content and is_versioning_enabled():
             from djangocms_versioning.constants import DRAFT, PUBLISHED
@@ -133,6 +127,11 @@ class UrlGrouper(AbstractUrlGrouper):
             qs = remove_published_where(qs)
             qs = qs.filter(Q(versions__state=DRAFT) | Q(versions__state=PUBLISHED)).order_by('-versions__created')
         return qs.first()
+
+
+class UrlGrouper(AbstractUrlGrouper):
+    def get_content_queryset(self):
+        return Url._base_manager.filter(url_grouper=self)
 
 
 class Url(AbstractUrl):
@@ -167,18 +166,9 @@ class Url(AbstractUrl):
 
     def get_url(self, site):
         """
-            The implementation of this seems to have been based on the assumption that the model was...
-            populated using the forms.py save and clean logic.
-
-            All fields in basic_types and supported_models should be exclusive or's, otherwise the value will be
-            returned based on the order of the below method rather than the intended value.
+        All fields in basic_types and supported_models should be exclusive or's, otherwise the value will be
+        returned based on the order of the below method rather than the intended value.
         """
-        logger.warning(
-            """
-            URL.get_model method should only be called on models populated via forms that implement a XOR on fields
-            within supported_models and basic_types!
-            """
-        )
         obj = self._get_url_obj(site)
         language = get_default_language_for_site(obj.site)
         if obj.content_object:
