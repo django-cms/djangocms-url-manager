@@ -2,20 +2,14 @@ from importlib import reload
 from unittest import skipIf
 from unittest.mock import Mock
 
-from django.apps import apps
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, override_settings
 
 from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
 
-import factory
-
 from djangocms_url_manager.compat import CMS_36
-from djangocms_url_manager.models import Url, UrlGrouper
-from djangocms_url_manager.test_utils.factories import UrlWithVersionFactory
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 from djangocms_url_manager.test_utils.polls.utils import (
     get_all_poll_content_objects,
@@ -180,27 +174,3 @@ class NavigationSettingTestCase(TestCase):
         del settings.DJANGOCMS_NAVIGATION_CMS_MODELS_ENABLED
         reload(cms_config)
         self.assertFalse(cms_config.UrlCMSAppConfig.djangocms_navigation_enabled)
-
-
-@skipIf(CMS_36, "Test relevant only for CMS>=4.0")
-class VersioningConfigTestCase(CMSTestCase):
-    def test_url_manager_copy_method(self):
-        """
-        Default copy method should copy all data to new version and should be identical.
-        """
-
-        url_config = apps.get_app_config("djangocms_url_manager").cms_config
-        old_url = UrlWithVersionFactory(
-            internal_name="test url",
-            date_modified=factory.Faker('date_object'),
-            site=Site.objects.create(name="bar.com", domain="bar.com")
-        )
-
-        new_url = url_config.versioning[0].copy_function(old_url)
-
-        self.assertNotEqual(old_url, new_url)
-        self.assertEqual(old_url.internal_name, new_url.internal_name)
-        self.assertEqual(old_url.url_grouper, new_url.url_grouper)
-        self.assertNotEqual(old_url.pk, new_url.pk)
-        self.assertEqual(1, UrlGrouper.objects.count())
-        self.assertEqual(2, Url._base_manager.count())
