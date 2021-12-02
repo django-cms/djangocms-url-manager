@@ -10,6 +10,8 @@ register = template.Library()
 def render_url(context, instance):
     request = context["request"]
     toolbar = get_toolbar_from_request(request)
+
+    # Are we in an editable mode?
     show_draft_content = False
     if toolbar.edit_mode_active or toolbar.preview_mode_active:
         show_draft_content = True

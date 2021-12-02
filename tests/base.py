@@ -10,7 +10,6 @@ from cms.test_utils.testcases import CMSTestCase
 from cms.utils.urlutils import admin_reverse
 
 from djangocms_url_manager.admin import UrlAdmin
-from djangocms_url_manager.cms_config import UrlCMSAppConfig
 from djangocms_url_manager.compat import CMS_36, get_page_placeholders
 from djangocms_url_manager.constants import (
     SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
@@ -18,15 +17,14 @@ from djangocms_url_manager.constants import (
 )
 from djangocms_url_manager.models import Url as UrlModel, UrlGrouper, UrlOverride
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
+from djangocms_url_manager.utils import is_versioning_enabled
 
 
 try:
     from djangocms_versioning.constants import DRAFT
     from djangocms_versioning.models import Version
-
-    djangocms_versioning_installed = True
 except ImportError:
-    djangocms_versioning_installed = False
+    pass
 
 
 class BaseUrlTestCase(CMSTestCase):
@@ -87,7 +85,7 @@ class BaseUrlTestCase(CMSTestCase):
             anchor=anchor,
             url_grouper=UrlGrouper.objects.create(),
         )
-        if djangocms_versioning_installed and UrlCMSAppConfig.djangocms_versioning_enabled:
+        if is_versioning_enabled():
             Version.objects.create(
                 content=url,
                 created_by=self.superuser,
@@ -121,7 +119,7 @@ class BaseUrlTestCase(CMSTestCase):
 
     @classmethod
     def is_versioning_enabled(cls):
-        return "djangocms_versioning" in settings.INSTALLED_APPS
+        return is_versioning_enabled()
 
     def _get_version(self, grouper, version_state, language=None):
         language = language or self.language

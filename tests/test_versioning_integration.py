@@ -7,10 +7,11 @@ from cms.toolbar.utils import get_object_edit_url
 
 from djangocms_versioning.models import Version
 
-from djangocms_url_manager.models import (
-    UrlGrouper,
-    Url as UrlModel,
-    UrlOverride,
+from djangocms_url_manager.models import UrlOverride
+from djangocms_url_manager.test_utils.factories import (
+    UrlFactory,
+    UrlGrouperFactory,
+    UrlOverrideFactory,
 )
 
 
@@ -19,7 +20,7 @@ class VersioningIntegrationTestCase(CMSTestCase):
         self.language = "en"
         self.user = self.get_superuser()
         self.site = Site.objects.first()
-        self.url_grouper = UrlGrouper.objects.create()
+        self.url_grouper = UrlGrouperFactory()
         self.page = create_page(
             title="help",
             template="page.html",
@@ -34,8 +35,8 @@ class VersioningIntegrationTestCase(CMSTestCase):
         """
         Creating a draft version from a published version copies the form correctly
         """
-        url_content = UrlModel.objects.create(
-            internal_name="some url",
+        url_content = UrlFactory(
+            url_grouper=self.url_grouper,
             site=self.site,
             content_object=self.page,
             manual_url="http://www.fake-test.com",
@@ -43,7 +44,6 @@ class VersioningIntegrationTestCase(CMSTestCase):
             anchor="some-page-anchor",
             mailto="mike.smith@fake-test.com",
             phone="00000000000",
-            url_grouper=self.url_grouper,
         )
         original_version = Version.objects.create(
             content=url_content,
@@ -68,23 +68,32 @@ class VersioningIntegrationTestCase(CMSTestCase):
         self.assertEqual(original_content.mailto, new_content.mailto)
         self.assertEqual(original_content.phone, new_content.phone)
 
-    # TODO: Overrides!!!
     def test_version_copy_method_attached_overrides(self):
-        url_content = UrlModel.objects.create(
-            internal_name="some url",
+        site2 = Site.objects.create(name="another-site.com", domain="another-site.com")
+        url_content = UrlFactory(
+            url_grouper=self.url_grouper,
             site=self.site,
             relative_path="some/extra/long/path/",
-            url_grouper=self.url_grouper,
         )
-        url_content_override = UrlOverride.objects.create(
+        url_content_override_1 = UrlOverrideFactory(
             url=url_content,
             site=self.site,
             content_object=self.page,
-            manual_url="http://www.fake-another-test.com",
-            relative_path="some/other/extra/long/path/",
-            anchor="some-other-page-anchor",
-            mailto="mike.smith@another-fake-test.com",
-            phone="00000000000",
+            manual_url="http://www.override1.com",
+            relative_path="override1/path/",
+            anchor="override1-anchor",
+            mailto="mike.smith@override1.com",
+            phone="11111111111",
+        )
+        url_content_override_2 = UrlOverrideFactory(
+            url=url_content,
+            site=site2,
+            content_object=self.page,
+            manual_url="http://www.override2.com",
+            relative_path="override2/path/",
+            anchor="override2-anchor",
+            mailto="mike.smith@override2.com",
+            phone="22222222222",
         )
         original_version = Version.objects.create(
             content=url_content,
@@ -92,20 +101,40 @@ class VersioningIntegrationTestCase(CMSTestCase):
         )
         new_version = original_version.copy(self.user)
 
-        original_content_override = url_content_override
-        new_content_override = UrlOverride.objects.get(url=new_version.content.pk)
-
         # The content attached items have been duplicated correctly
-        self.assertNotEqual(original_content_override.pk, new_content_override.pk)
-        self.assertEqual(original_content_override.internal_name, new_content_override.internal_name)
-        self.assertEqual(original_content_override.site, new_content_override.site)
+        # Url override 1
+        new_content_override_1 = UrlOverride.objects.get(
+            url=new_version.content.pk,
+            mailto="mike.smith@override1.com",
+        )
+
+        self.assertNotEqual(url_content_override_1.pk, new_content_override_1.pk)
+        self.assertEqual(url_content_override_1.internal_name, new_content_override_1.internal_name)
+        self.assertEqual(url_content_override_1.site, new_content_override_1.site)
         # Url override types
-        self.assertEqual(original_content_override.content_object, new_content_override.content_object)
-        self.assertEqual(original_content_override.manual_url, new_content_override.manual_url)
-        self.assertEqual(original_content_override.relative_path, new_content_override.relative_path)
-        self.assertEqual(original_content_override.anchor, new_content_override.anchor)
-        self.assertEqual(original_content_override.mailto, new_content_override.mailto)
-        self.assertEqual(original_content_override.phone, new_content_override.phone)
+        self.assertEqual(url_content_override_1.content_object, new_content_override_1.content_object)
+        self.assertEqual(url_content_override_1.manual_url, new_content_override_1.manual_url)
+        self.assertEqual(url_content_override_1.relative_path, new_content_override_1.relative_path)
+        self.assertEqual(url_content_override_1.anchor, new_content_override_1.anchor)
+        self.assertEqual(url_content_override_1.mailto, new_content_override_1.mailto)
+        self.assertEqual(url_content_override_1.phone, new_content_override_1.phone)
+
+        # Url override 2
+        new_content_override_2 = UrlOverride.objects.get(
+            url=new_version.content.pk,
+            mailto="mike.smith@override2.com",
+        )
+
+        self.assertNotEqual(url_content_override_2.pk, new_content_override_2.pk)
+        self.assertEqual(url_content_override_2.internal_name, new_content_override_2.internal_name)
+        self.assertEqual(url_content_override_2.site, new_content_override_2.site)
+        # Url override types
+        self.assertEqual(url_content_override_2.content_object, new_content_override_2.content_object)
+        self.assertEqual(url_content_override_2.manual_url, new_content_override_2.manual_url)
+        self.assertEqual(url_content_override_2.relative_path, new_content_override_2.relative_path)
+        self.assertEqual(url_content_override_2.anchor, new_content_override_2.anchor)
+        self.assertEqual(url_content_override_2.mailto, new_content_override_2.mailto)
+        self.assertEqual(url_content_override_2.phone, new_content_override_2.phone)
 
 
 class VersioningCMSPageIntegrationTestCase(CMSTestCase):
@@ -114,9 +143,8 @@ class VersioningCMSPageIntegrationTestCase(CMSTestCase):
         self.user = self.get_superuser()
         self.site = Site.objects.first()
 
-        self.url_grouper = UrlGrouper.objects.create()
-        self.url_content = UrlModel.objects.create(
-            internal_name="url 1",
+        self.url_grouper = UrlGrouperFactory()
+        self.url_content = UrlFactory(
             site=self.site,
             relative_path="some/path/",
             url_grouper=self.url_grouper,
