@@ -13,12 +13,6 @@ class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
         self.url2.content_object = self.page2
         self.url2.save()
 
-        url2_version = self.url2.versions.last()
-        url2_version.publish(self.superuser)
-
-        url1_version = self.url.versions.first()
-        url1_version.publish(self.superuser)
-
         search_term = self.page.get_title()
         results, use_distinct = self.url_admin.get_search_results(
             self.url_admin_request, self.url_queryset, search_term
