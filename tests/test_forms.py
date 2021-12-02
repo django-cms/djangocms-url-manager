@@ -2,15 +2,17 @@ from urllib.parse import urlparse
 
 from django.contrib.sites.models import Site
 
+from djangocms_versioning.constants import PUBLISHED
+
 from djangocms_url_manager.forms import (
     ContentTypeObjectSelectWidget,
     UrlForm,
     UrlOverrideForm,
 )
-
-from djangocms_versioning.constants import PUBLISHED
-
-from djangocms_url_manager.test_utils.factories import UrlOverrideFactory, UrlVersionFactory
+from djangocms_url_manager.test_utils.factories import (
+    UrlOverrideFactory,
+    UrlVersionFactory,
+)
 
 from .base import BaseUrlTestCase
 

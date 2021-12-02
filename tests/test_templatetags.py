@@ -4,7 +4,10 @@ from django.test import override_settings
 
 from djangocms_versioning.constants import PUBLISHED
 
-from djangocms_url_manager.test_utils.factories import UrlOverrideFactory, UrlVersionFactory
+from djangocms_url_manager.test_utils.factories import (
+    UrlOverrideFactory,
+    UrlVersionFactory,
+)
 
 from .base import BaseUrlTestCase
 
