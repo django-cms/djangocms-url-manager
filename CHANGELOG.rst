@@ -11,8 +11,9 @@ Unreleased
     - Added versioning testing factory models
     - Data migration added for Url Grouper model
     - Reworked forms and views for versioning support
+    - Removed internal_name field from LinkPlugin model. Added migration for the link plugin
+
 * Github Actions integration
-* Removed internal_name field from LinkPlugin model. Added migration for the link plugin
 
 0.0.11
 ==========
