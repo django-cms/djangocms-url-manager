@@ -7,6 +7,7 @@ from cms.utils.urlutils import admin_reverse
 
 from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.constants import SELECT2_URLS
+from djangocms_url_manager.test_utils.factories import UrlWithVersionFactory
 from djangocms_url_manager.utils import is_versioning_enabled
 
 from .base import BaseUrlTestCase
@@ -274,6 +275,9 @@ class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
         self.assertEqual([a["id"] for a in response.json()["results"]], [self.url2.pk])
 
     def test_select2_url_view_set_limit(self):
+        # Create a third url so the "more" option should eb True
+        UrlWithVersionFactory(site=self.default_site)
+
         with self.login_user_context(self.superuser):
             response = self.client.get(self.select2_urls_endpoint, data={"limit": 2})
 

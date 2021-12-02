@@ -154,11 +154,11 @@ class UrlForm(forms.ModelForm):
                 # dont validate for UrlOverride
                 if not data.get("url"):
                     url_grouper = data.get("url_grouper")
-                    queryset = Url._base_manager.filter(
+                    if Url._base_manager.filter(
                         content_type=content_type, object_id=data["content_object"]
-                    )
-                    queryset.exclude(url_grouper=url_grouper)
-                    if queryset.exists():
+                    ).exclude(
+                        url_grouper=url_grouper
+                    ).exists():
                         self.add_error(
                             "content_object", _("Url with this object already exists")
                         )
