@@ -14,7 +14,6 @@ from .base import BaseUrlTestCase
 class UrlManagerFormsTestCase(BaseUrlTestCase):
     def test_url_override_form(self):
         site3 = Site.objects.create(name="bar.com", domain="bar.com")
-        self.url.versions.first().publish(user=self.superuser)
         form = UrlOverrideForm(
             {
                 "internal_name": "Test Name",
@@ -39,7 +38,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.url_id, self.url.pk),
 
     def test_url_override_form_disallow_same_site_as_original_url(self):
-        self.url.versions.first().publish(user=self.superuser)
         form = UrlOverrideForm({"internal_name": "Test Name", "url": self.url.pk, "site": self.url.site_id})
 
         self.assertFalse(form.is_valid())
@@ -294,7 +292,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertEqual(instance.phone, "")
 
     def test_create_url_for_content_object_that_already_have_url(self):
-        self.url.versions.first().publish(user=self.superuser)
         form = UrlForm(
             {
                 "internal_name": "Test Name",
@@ -345,8 +342,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         self.assertDictEqual(form.errors, {"content_object": ["Field is required"], })
 
     def test_url_override_form_dont_validate_object_already_exists(self):
-        self.url.versions.first().publish(user=self.superuser)
-
         form = UrlOverrideForm(
             {
                 "internal_name": "Test Name",
@@ -380,7 +375,6 @@ class UrlManagerFormsTestCase(BaseUrlTestCase):
         - We cannot have two override models with the same site and object.
         """
         self._create_url_override(self.url, self.site2, self.page2)
-        self.url.versions.first().publish(user=self.superuser)
 
         form = UrlOverrideForm(
             {
