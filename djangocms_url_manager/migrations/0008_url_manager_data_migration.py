@@ -38,12 +38,14 @@ def forwards(apps, schema_editor):
 
         # Create initial Url Versions if versioning is enabled and installed.
         if djangocms_versioning_config_enabled and djangocms_versioning_installed:
+            # Keep the url date modified state in a version
             Version.objects.create(
                 created_by=migration_user,
                 state=PUBLISHED,
                 number=1,
                 object_id=url.pk,
                 content_type=url_contenttype,
+                modified=url.date_modified,
             )
 
 
