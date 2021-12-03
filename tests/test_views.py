@@ -275,7 +275,7 @@ class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
         self.assertEqual([a["id"] for a in response.json()["results"]], [self.url2.pk])
 
     def test_select2_url_view_set_limit(self):
-        # Create a third url so the "more" option should eb True
+        # Create a third url so the "more" option should be True
         UrlWithVersionFactory(site=self.default_site)
 
         with self.login_user_context(self.superuser):
