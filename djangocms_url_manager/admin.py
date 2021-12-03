@@ -9,6 +9,7 @@ from djangocms_url_manager.utils import is_versioning_enabled
 
 # Use the version mixin if djangocms-versioning is installed and enabled
 url_admin_classes = [admin.ModelAdmin]
+url_admin_list_display = ("internal_name", "get_model_url", "date_modified",)
 djangocms_versioning_enabled = UrlCMSAppConfig.djangocms_versioning_enabled
 
 try:
@@ -16,6 +17,7 @@ try:
 
     if djangocms_versioning_enabled:
         url_admin_classes.insert(0, ExtendedVersionAdminMixin)
+        url_admin_list_display = ("internal_name", "get_model_url",)
 except ImportError:
     pass
 
@@ -33,7 +35,7 @@ class UrlOverrideInlineAdmin(admin.StackedInline):
 class UrlAdmin(*url_admin_classes):
     form = UrlForm
     inlines = [UrlOverrideInlineAdmin]
-    list_display = ("internal_name", "get_model_url", "date_modified", )
+    list_display = url_admin_list_display
     search_fields = ("manual_url", "internal_name", "relative_path", "mailto", "phone")
     list_filter = ("site__name",)
     ordering = ("internal_name", "date_modified", )
