@@ -5,8 +5,10 @@ from cms.models import PageContent
 from cms.test_utils.testcases import CMSTestCase
 from cms.toolbar.utils import get_object_edit_url
 
+from djangocms_versioning.constants import PUBLISHED
 from djangocms_versioning.models import Version
 
+from djangocms_url_manager.cms_config import UrlCMSAppConfig
 from djangocms_url_manager.models import UrlOverride
 from djangocms_url_manager.test_utils.factories import (
     UrlFactory,
@@ -142,7 +144,7 @@ class VersioningCMSPageIntegrationTestCase(CMSTestCase):
         self.language = "en"
         self.user = self.get_superuser()
         self.site = Site.objects.first()
-
+        # Url definition
         self.url_grouper = UrlGrouperFactory()
         self.url_content = UrlFactory(
             site=self.site,
@@ -262,3 +264,56 @@ class VersioningCMSPageIntegrationTestCase(CMSTestCase):
         response = self.client.get(request_url)
 
         self.assertContains(response, "some/path/")
+
+
+class UrlCompareViewTestCase(CMSTestCase):
+    def setUp(self):
+        self.language = "en"
+        self.user = self.get_superuser()
+        self.site = Site.objects.first()
+        self.url_grouper = UrlGrouperFactory()
+        self.versionable = UrlCMSAppConfig.versioning[0]
+
+    def test_compare_view(self):
+        published_url_content = UrlFactory(
+            url_grouper=self.url_grouper,
+            site=self.site,
+            manual_url="http://www.published-url.com",
+        )
+        published_version = Version.objects.create(
+            content=published_url_content,
+            created_by=self.user,
+            state=PUBLISHED,
+        )
+        draft_url_content = UrlFactory(
+            url_grouper=self.url_grouper,
+            site=self.site,
+            manual_url="http://www.draft-url.com",
+        )
+        draft_version = Version.objects.create(
+            content=draft_url_content,
+            created_by=self.user,
+        )
+
+        compare_endpoint = self.get_admin_url(
+            self.versionable.version_model_proxy, "compare", published_version.pk
+        )
+        compare_endpoint += "?compare_to=%d" % draft_version.pk
+
+        with self.login_user_context(self.user):
+            response = self.client.get(compare_endpoint)
+
+        context = response.context
+
+        # Sanity check the test setup ensuring the values are different
+        # If they are the same that is cheating!
+        self.assertNotEqual(published_url_content.manual_url, draft_url_content.manual_url)
+        # Now do some real testing, we can't check what was actually rendered because this is
+        # done by a separate call by AJAX, the best that we can do is check the query matches
+        self.assertIn("version_list", context)
+        self.assertQuerysetEqual(
+            context["version_list"],
+            [published_url_content.pk, draft_url_content.pk],
+            transform=lambda o: o.pk,
+            ordered=False,
+        )
