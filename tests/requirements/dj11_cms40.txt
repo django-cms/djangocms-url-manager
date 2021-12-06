@@ -6,3 +6,4 @@ django-classy-tags<2.0.0
 django-sekizai<2.0.0
 django-treebeard<4.4
 djangocms-admin-style<2.0.0
+djangocms-attributes-field<2.0.0

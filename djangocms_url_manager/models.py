@@ -1,10 +1,10 @@
-import logging
-
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.db import models
+from django.db.models import Q
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 from cms.models import CMSPlugin
@@ -12,8 +12,8 @@ from cms.utils.i18n import get_default_language_for_site
 
 from djangocms_attributes_field.fields import AttributesField
 
+from djangocms_url_manager.utils import is_versioning_enabled
 
-logger = logging.getLogger(__name__)
 
 __all__ = ["Url", "LinkPlugin"]
 
@@ -88,12 +88,50 @@ class AbstractUrl(models.Model):
         abstract = True
 
 
-class UrlGrouper(models.Model):
-    internal_name = models.CharField(
-        verbose_name=_("internal name"),
-        max_length=255,
-        help_text=_("Provide internal name for URL objects for searching purpose"),
-    )
+class AbstractUrlGrouper(models.Model):
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+    @cached_property
+    def name(self):
+        """Show alias name for current language"""
+        return self.get_name() or ''
+
+    def get_name(self):
+        content = self.get_content(show_draft_content=True)
+        name = getattr(content, 'internal_name', 'URL {}'.format(self.pk))
+        if is_versioning_enabled() and content:
+            from djangocms_versioning.constants import DRAFT
+            version = content.versions.first()
+
+            if version.state == DRAFT:
+                return '{} (Not published)'.format(name)
+
+        return name
+
+    def get_content_queryset(self):
+        raise NotImplementedError("Models implementing AbstractUrlGrouper should implement get_content_queryset")
+
+    def get_content(self, show_draft_content=False):
+        qs = self.get_content_queryset()
+
+        if show_draft_content and is_versioning_enabled():
+            from djangocms_versioning.constants import DRAFT, PUBLISHED
+            from djangocms_versioning.helpers import remove_published_where
+
+            # Ensure that we are getting the latest valid content, the top most version can become
+            # archived with a previous version re-published
+            qs = remove_published_where(qs)
+            qs = qs.filter(Q(versions__state=DRAFT) | Q(versions__state=PUBLISHED)).order_by('-versions__created')
+        return qs.first()
+
+
+class UrlGrouper(AbstractUrlGrouper):
+    def get_content_queryset(self):
+        return Url.objects.filter(url_grouper=self)
 
 
 class Url(AbstractUrl):
@@ -128,18 +166,9 @@ class Url(AbstractUrl):
 
     def get_url(self, site):
         """
-            The implementation of this seems to have been based on the assumption that the model was...
-            populated using the forms.py save and clean logic.
-
-            All fields in basic_types and supported_models should be exclusive or's, otherwise the value will be
-            returned based on the order of the below method rather than the intended value.
+        All fields in basic_types and supported_models should be exclusive or's, otherwise the value will be
+        returned based on the order of the below method rather than the intended value.
         """
-        logger.warning(
-            """
-            URL.get_model method should only be called on models populated via forms that implement a XOR on fields
-            within supported_models and basic_types!
-            """
-        )
         obj = self._get_url_obj(site)
         language = get_default_language_for_site(obj.site)
         if obj.content_object:
@@ -185,9 +214,11 @@ class UrlOverride(AbstractUrl):
 
 
 class LinkPlugin(CMSPlugin):
-    internal_name = models.CharField(verbose_name=_("internal name"), max_length=120)
-    url = models.ForeignKey(
-        Url, verbose_name=_("url"), related_name="cms_plugins", on_delete=models.CASCADE
+    url_grouper = models.ForeignKey(
+        UrlGrouper,
+        on_delete=models.CASCADE,
+        related_name='%(app_label)s_%(class)s_url_grouper',
+        null=True
     )
     label = models.CharField(verbose_name=_("label"), max_length=120)
     template = models.CharField(

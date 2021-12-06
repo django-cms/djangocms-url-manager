@@ -1,14 +1,16 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 
 import factory
 from djangocms_versioning.models import Version
-from factory.fuzzy import FuzzyText
+from factory.django import DjangoModelFactory
+from factory.fuzzy import FuzzyChoice, FuzzyText
 
-from djangocms_url_manager.models import Url, UrlGrouper
+from djangocms_url_manager.models import Url, UrlGrouper, UrlOverride
 
 
-class UserFactory(factory.django.DjangoModelFactory):
+class UserFactory(DjangoModelFactory):
     username = FuzzyText(length=12)
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
@@ -27,7 +29,41 @@ class UserFactory(factory.django.DjangoModelFactory):
         return manager.create_user(*args, **kwargs)
 
 
-class AbstractVersionFactory(factory.django.DjangoModelFactory):
+class UrlGrouperFactory(DjangoModelFactory):
+
+    class Meta:
+        model = UrlGrouper
+
+
+class AbstractUrlFactory(DjangoModelFactory):
+    site = FuzzyChoice(Site.objects.all())
+    manual_url = ""
+    relative_path = ""
+    anchor = ""
+    mailto = ""
+    phone = ""
+
+    class Meta:
+        abstract = True
+
+
+class UrlFactory(AbstractUrlFactory):
+    url_grouper = factory.SubFactory(UrlGrouperFactory)
+    internal_name = FuzzyText(length=10)
+    date_modified = factory.Faker('date_object')
+
+    class Meta:
+        model = Url
+
+
+class UrlOverrideFactory(AbstractUrlFactory):
+    url = factory.SubFactory(UrlOverride)
+
+    class Meta:
+        model = UrlOverride
+
+
+class AbstractVersionFactory(DjangoModelFactory):
     object_id = factory.SelfAttribute("content.id")
     content_type = factory.LazyAttribute(
         lambda o: ContentType.objects.get_for_model(o.content)
@@ -39,26 +75,6 @@ class AbstractVersionFactory(factory.django.DjangoModelFactory):
         abstract = True
 
 
-class UrlGrouperFactory(factory.django.DjangoModelFactory):
-
-    class Meta:
-        model = UrlGrouper
-
-
-class AbstractUrlFactory(factory.django.DjangoModelFactory):
-    url_grouper = factory.SubFactory(UrlGrouperFactory)
-    internal_name = FuzzyText(length=10)
-    date_modified = factory.Faker('date_object')
-
-    class Meta:
-        abstract = True
-
-
-class UrlFactory(AbstractUrlFactory):
-    class Meta:
-        model = Url
-
-
 class UrlVersionFactory(AbstractVersionFactory):
     content = factory.SubFactory(UrlFactory)
 
@@ -66,11 +82,11 @@ class UrlVersionFactory(AbstractVersionFactory):
         model = Version
 
 
-class UrlWithVersionFactory(AbstractUrlFactory):
+class UrlWithVersionFactory(UrlFactory):
     @factory.post_generation
     def version(self, create, extracted, **kwargs):
         # NOTE: Use this method as below to define version attributes:
-        # PageContentWithVersionFactory(version__label='label1')
+        # UrlWithVersionFactory(version__label='label1')
         if not create:
             # Simple build, do nothing.
             return

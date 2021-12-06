@@ -5,3 +5,4 @@ django-classy-tags
 django-sekizai
 django-treebeard
 djangocms-admin-style
+djangocms-attributes-field

@@ -1,10 +1,14 @@
-from unittest import skip, skipIf, skipUnless
+from unittest import skipIf, skipUnless
 
 from django.contrib.contenttypes.models import ContentType
 
 from cms.models import Page, User
+from cms.utils.urlutils import admin_reverse
 
 from djangocms_url_manager.compat import CMS_36
+from djangocms_url_manager.constants import SELECT2_URLS
+from djangocms_url_manager.test_utils.factories import UrlWithVersionFactory
+from djangocms_url_manager.utils import is_versioning_enabled
 
 from .base import BaseUrlTestCase
 
@@ -67,6 +71,33 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
                 {"text": self.page.get_title(), "id": self.page.pk},
                 {"text": self.page2.get_title(), "id": self.page2.pk},
             ],
+        )
+
+    def test_select2_view(self):
+
+        with self.login_user_context(self.superuser):
+            response = self.client.get(
+                admin_reverse(
+                    SELECT2_URLS,
+                ),
+            )
+
+        result = [self.url.pk, self.url2.pk, ]
+        text_result = []
+
+        if is_versioning_enabled():
+            # The following versions have draft content
+            text_result.append(f"{self.url.internal_name} (Not published)")
+            text_result.append(f'{self.url2.internal_name} (Not published)')
+        else:
+            text_result.append(f"{self.url.internal_name}")
+            text_result.append(f"{self.url2.internal_name}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([a['id'] for a in response.json()['results']], result)
+        self.assertEqual(
+            [a['text'] for a in response.json()['results']],
+            text_result,
         )
 
     def test_return_poll_content_in_select2_view(self):
@@ -219,7 +250,6 @@ class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
         response = self.client.get(self.select2_urls_endpoint)
         self.assertEqual(response.status_code, 403)
 
-    @skip("Failed test should be addresses in future ticket")
     def test_select2_url_view_without_site_id(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(self.select2_urls_endpoint)
@@ -228,7 +258,6 @@ class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
             [p["id"] for p in response.json()["results"]], [self.url.pk, self.url2.pk]
         )
 
-    @skip("Failed test should be addresses in future ticket")
     def test_select2_url_view_with_site_id(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
@@ -237,7 +266,6 @@ class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual([p["id"] for p in response.json()["results"]], [self.url2.pk])
 
-    @skip("Failed test should be addresses in future ticket")
     def test_select2_url_view_with_object_pk(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
@@ -246,11 +274,13 @@ class UrlManagerSelect2UrlsViewsTestCase(BaseUrlTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual([a["id"] for a in response.json()["results"]], [self.url2.pk])
 
-    @skip("Failed test should be addresses in future ticket")
     def test_select2_url_view_set_limit(self):
-        self._create_url(anchor="test")
+        # Create a third url so the "more" option should be True
+        UrlWithVersionFactory(site=self.default_site)
+
         with self.login_user_context(self.superuser):
             response = self.client.get(self.select2_urls_endpoint, data={"limit": 2})
+
         content = response.json()
         self.assertEqual(response.status_code, 200)
         self.assertTrue(content["more"])

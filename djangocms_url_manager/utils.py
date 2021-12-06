@@ -10,7 +10,6 @@ from django.db.models.base import ModelBase
 from cms.models import PageContent
 
 from djangocms_url_manager.compat import CMS_36
-from djangocms_url_manager.models import Url
 
 
 def parse_settings(config, attr_name):
@@ -89,6 +88,15 @@ def is_model_supported(model):
     return model in supported_models().keys()
 
 
+def is_versioning_enabled():
+    from djangocms_url_manager.models import Url
+    try:
+        app_config = apps.get_app_config('djangocms_versioning')
+        return app_config.cms_extension.is_content_model_versioned(Url)
+    except LookupError:
+        return False
+
+
 def get_supported_model_queryset(model):
     func = supported_models()[model]
     if func:
@@ -104,12 +112,13 @@ def get_page_search_results(model, queryset, search_term):
     :param search_term: Term to be searched for
     :return: results
     """
+    from djangocms_url_manager.models import Url
     page_content_queryset = PageContent._base_manager.filter(title__icontains=search_term)
     content_type_id = ContentType.objects.get_for_model(model).id
 
     for page_content in page_content_queryset:
         try:
-            queryset |= Url.objects.filter(
+            queryset |= Url._base_manager.filter(
                 object_id=page_content.page.id,
                 content_type=content_type_id
             )

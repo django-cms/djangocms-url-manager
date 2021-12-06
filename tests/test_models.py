@@ -65,7 +65,7 @@ class UrlManagerModelsTestCase(BaseUrlTestCase):
             placeholder,
             "HtmlLink",
             language=self.language,
-            url=self.url,
+            url_grouper=self.url.url_grouper,
             label="Test URL plugin",
         )
         self.assertEqual(str(plugin), plugin.label)
