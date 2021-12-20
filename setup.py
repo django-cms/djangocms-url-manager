@@ -4,7 +4,7 @@ import djangocms_url_manager
 
 
 INSTALL_REQUIREMENTS = [
-    "Django>=1.11,<3.0",
+    "Django>=1.11,<3.3",
     "django-cms",
     "djangocms-attributes-field",
 ]
