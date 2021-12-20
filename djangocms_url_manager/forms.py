@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from cms.utils.urlutils import admin_reverse
 
 from .constants import SELECT2_CONTENT_TYPE_OBJECT_URL_NAME, SELECT2_URLS
-from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlOverride
+from .models import BASIC_TYPE_CHOICES, LinkPlugin, Url, UrlGrouper, UrlOverride
 from .utils import supported_models
 
 
@@ -96,6 +96,9 @@ class UrlForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if self.fields.get("url_grouper"):
+            self.fields["url_grouper"].required = False
+            self.fields["url_grouper"].widget = forms.HiddenInput()
 
         # Set choices based on setup models for type field
         choices = []
@@ -148,16 +151,17 @@ class UrlForm(forms.ModelForm):
                     content_object_qs = content_object_qs.filter(site=site)
                 content_object = content_object_qs.get(pk=content_object)
 
-                if (
-                    # dont validate for UrlOverride
-                    not data.get("url")
-                    and Url.objects.filter(
+                # dont validate for UrlOverride
+                if not data.get("url"):
+                    url_grouper = data.get("url_grouper")
+                    if Url._base_manager.filter(
                         content_type=content_type, object_id=data["content_object"]
-                    ).exists()
-                ):
-                    self.add_error(
-                        "content_object", _("Url with this object already exists")
-                    )
+                    ).exclude(
+                        url_grouper=url_grouper
+                    ).exists():
+                        self.add_error(
+                            "content_object", _("Url with this object already exists")
+                        )
 
                 data["content_object"] = content_object
             except ObjectDoesNotExist:
@@ -183,15 +187,34 @@ class UrlForm(forms.ModelForm):
             self.add_error("anchor", _('Do not include a preceding "#" symbol.'))
         return anchor
 
+    def create_grouper(self, url):
+        """
+        If a grouper doesn't yet exist for the instance we may need to create one.
+
+        :param url: a url instance
+        :returns url: a url instance that may have a grouper attached.
+        """
+        # Check whether the form used has the url_grouper attribute, as overrides do not.
+        if isinstance(url, Url) and not getattr(url, "url_grouper"):
+            url.url_grouper = UrlGrouper.objects.create()
+        return url
+
     def save(self, **kwargs):
         url_type = self.cleaned_data.get("url_type")
+        url = super().save(commit=False)
+        commit = kwargs.get("commit", True)
         is_basic_type = url_type in dict(BASIC_TYPE_CHOICES).keys()
         if is_basic_type:
             # Set content object to none to prevent GFK url always being returned by getter.
             self.instance.content_object = None
         else:
-            self.instance.content_object = self.cleaned_data["content_object"]
-        return super().save(**kwargs)
+            self.instance.content_object = self.cleaned_data.get("content_object")
+        # Create the grouper if it doesn't exist
+        url = self.create_grouper(url)
+
+        if commit:
+            url.save()
+        return url
 
 
 class UrlOverrideForm(UrlForm):
@@ -224,7 +247,7 @@ class HtmlLinkForm(forms.ModelForm):
         required=False,
     )
 
-    url = forms.CharField(
+    url_grouper = forms.CharField(
         label=_("Url"),
         widget=HtmlLinkUrlSelectWidget(
             attrs={"data-placeholder": _("Select URL object from list")}
@@ -235,15 +258,14 @@ class HtmlLinkForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Set url if object exists
-        if self.instance and self.instance.url_id:
-            self.fields["url"].initial = self.instance.url_id
+        if self.instance and self.instance.url_grouper_id:
+            self.fields["url_grouper"].initial = self.instance.url_grouper_id
 
     class Meta:
         model = LinkPlugin
         fields = (
-            "internal_name",
             "site",
-            "url",
+            "url_grouper",
             "label",
             "template",
             "target",
@@ -253,7 +275,8 @@ class HtmlLinkForm(forms.ModelForm):
     def clean(self):
         data = super().clean()
         try:
-            data["url"] = Url.objects.get(pk=int(data["url"]))
+            url_grouper_id = int(data["url_grouper"])
+            data["url_grouper"] = UrlGrouper.objects.get(pk=url_grouper_id)
         except ValueError:
             self.add_error("url", _("Invalid value"))
         except ObjectDoesNotExist:

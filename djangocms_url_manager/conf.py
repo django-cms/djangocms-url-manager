@@ -1,0 +1,6 @@
+from django.conf import settings
+
+
+DJANGOCMS_URL_MANAGER_VERSIONING_MIGRATION_USER_ID = getattr(
+    settings, "DJANGOCMS_URL_MANAGER_VERSIONING_MIGRATION_USER_ID", 1
+)

@@ -53,7 +53,7 @@
         $(':not([id*=__prefix__])[id$="site"]').each(function(i, element) {
             initializeSiteWidget($(element));
         });
-        $(':not([id*=__prefix__])[id$="url"]').each(function(i, element) {
+        $(':not([id*=__prefix__])[id$="url_grouper"]').each(function(i, element) {
             initializeUrlWidget($(element));
         });
         django

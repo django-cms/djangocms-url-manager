@@ -16,7 +16,7 @@ class UrlManagerPluginTestCase(BaseUrlTestCase):
             placeholder,
             "HtmlLink",
             language=self.language,
-            url=self.url,
+            url_grouper=self.url.url_grouper,
             label="Test URL plugin",
         )
 
@@ -26,6 +26,7 @@ class UrlManagerPluginTestCase(BaseUrlTestCase):
         )
 
     def test_default_template_show_label_when_no_children_plugins(self):
+        self.url.versions.first().publish(user=self.superuser)
         placeholder = get_page_placeholders(self.page, self.language).get(
             slot="content"
         )
@@ -34,7 +35,7 @@ class UrlManagerPluginTestCase(BaseUrlTestCase):
             placeholder,
             "HtmlLink",
             language=self.language,
-            url=self.url,
+            url_grouper=self.url.url_grouper,
             label="Test URL plugin",
         )
 
@@ -47,12 +48,14 @@ class UrlManagerPluginTestCase(BaseUrlTestCase):
         placeholder = get_page_placeholders(self.page, self.language).get(
             slot="content"
         )
+        url_version = self.url.versions.last()
+        url_version.publish(user=self.superuser)
 
         plugin = add_plugin(
             placeholder,
             "HtmlLink",
             language=self.language,
-            url=self.url,
+            url_grouper=self.url.url_grouper,
             label="Test URL plugin",
         )
         add_plugin(

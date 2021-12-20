@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
@@ -15,8 +14,16 @@ from djangocms_url_manager.constants import (
     SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
     SELECT2_URLS,
 )
-from djangocms_url_manager.models import Url as UrlModel, UrlOverride
+from djangocms_url_manager.models import Url as UrlModel, UrlGrouper, UrlOverride
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
+from djangocms_url_manager.utils import is_versioning_enabled
+
+
+try:
+    from djangocms_versioning.constants import DRAFT
+    from djangocms_versioning.models import Version
+except ImportError:
+    pass
 
 
 class BaseUrlTestCase(CMSTestCase):
@@ -38,7 +45,8 @@ class BaseUrlTestCase(CMSTestCase):
         )
         self.url = self._create_url(content_object=self.page)
         self.url2 = self._create_url(manual_url="https://example.com/", site=self.site2)
-        self.url_queryset = UrlModel.objects.all()
+        self.url_queryset_published = UrlModel.objects.all()
+        self.url_queryset = UrlModel._base_manager.all()
         self.poll = Poll.objects.create(name="Test poll")
         self.poll_content = PollContent.objects.create(
             poll=self.poll, language=self.language, text="example"
@@ -66,7 +74,7 @@ class BaseUrlTestCase(CMSTestCase):
         if site is None:
             site = self.default_site
 
-        return UrlModel.objects.create(
+        url = UrlModel.objects.create(
             site=site,
             content_object=content_object,
             manual_url=manual_url,
@@ -74,7 +82,17 @@ class BaseUrlTestCase(CMSTestCase):
             phone=phone,
             mailto=mailto,
             anchor=anchor,
+            url_grouper=UrlGrouper.objects.create(),
         )
+        if is_versioning_enabled():
+            Version.objects.create(
+                content=url,
+                created_by=self.superuser,
+                state=DRAFT,
+                content_type_id=ContentType.objects.get_for_model(UrlModel).id,
+            )
+
+        return url
 
     def _create_url_override(
         self,
@@ -100,7 +118,7 @@ class BaseUrlTestCase(CMSTestCase):
 
     @classmethod
     def is_versioning_enabled(cls):
-        return "djangocms_versioning" in settings.INSTALLED_APPS
+        return is_versioning_enabled()
 
     def _get_version(self, grouper, version_state, language=None):
         language = language or self.language
