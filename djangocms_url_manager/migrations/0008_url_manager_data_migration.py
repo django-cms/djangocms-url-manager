@@ -22,7 +22,16 @@ def forwards(apps, schema_editor):
     UrlGrouper = apps.get_model("djangocms_url_manager", "UrlGrouper")
     User = apps.get_model('auth', 'User')
 
-    url_contenttype = ContentType.objects.get(app_label='djangocms_url_manager', model='url')
+    # The test suite fails to find the Content type, in this scenario we
+    # try and find the content type and create it if it doesn't yet exist using
+    # ContentType.objects.get_for_model
+    # This is the safest way because the following has been heavily manually tested already:
+    # ContentType.objects.get(app_label='djangocms_url_manager', model='url')
+    try:
+        url_contenttype = ContentType.objects.get(app_label='djangocms_url_manager', model='url')
+    except ContentType.DoesNotExist:
+        url_contenttype = ContentType.objects.get_for_model(Url)
+
     url_queryset = Url.objects.all()
 
     if djangocms_versioning_config_enabled and djangocms_versioning_installed:
