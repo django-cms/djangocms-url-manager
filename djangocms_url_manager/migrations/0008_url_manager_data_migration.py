@@ -34,7 +34,10 @@ def forwards(apps, schema_editor):
 
     url_queryset = Url.objects.all()
 
-    if djangocms_versioning_config_enabled and djangocms_versioning_installed:
+    # Only set the additional user etc if
+    # - versioning is enabled
+    # - there is url data, test suites fail when empty if not
+    if djangocms_versioning_config_enabled and djangocms_versioning_installed and len(url_queryset):
         # Get a migration user.
         migration_user = User.objects.get(id=DJANGOCMS_URL_MANAGER_VERSIONING_MIGRATION_USER_ID)
         Version = apps.get_model('djangocms_versioning', 'Version')
