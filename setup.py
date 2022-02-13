@@ -29,7 +29,7 @@ setup(
     author_email="info@divio.ch",
     maintainer='Django CMS Association and contributors',
     maintainer_email='info@django-cms.org',
-    url="htts://github.com/django-cms/djangocms-url-manager",
+    url="https://github.com/django-cms/djangocms-url-manager",
     license="BSD",
     test_suite="test_settings.run",
 )
