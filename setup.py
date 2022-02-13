@@ -27,7 +27,9 @@ setup(
     install_requires=INSTALL_REQUIREMENTS,
     author="Divio AG",
     author_email="info@divio.ch",
-    url="http://github.com/divio/djangocms-url-manager",
+    maintainer='Django CMS Association and contributors',
+    maintainer_email='info@django-cms.org',
+    url="htts://github.com/django-cms/djangocms-url-manager",
     license="BSD",
     test_suite="test_settings.run",
 )
