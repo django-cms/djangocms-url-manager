@@ -4,7 +4,7 @@ Changelog
 
 Unreleased
 ==========
-
+* Fix pinning versioning to a dj1.11 compatible version for the test suite.
 
 1.0.0.dev2 (2021-02-16)
 =======================
