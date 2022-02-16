@@ -6,6 +6,10 @@ Unreleased
 ==========
 
 
+1.0.0.dev2 (2021-02-16)
+=======================
+* Attempt at fixing installation errors
+
 1.0.0.dev1 (2021-12-06)
 =======================
 * Added djangocms-versioning support
