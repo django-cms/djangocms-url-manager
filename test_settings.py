@@ -20,6 +20,7 @@ if ENABLE_MODERATION:
     EXTRA_INSTALLED_APPS.append("djangocms_moderation")
 
 HELPER_SETTINGS = {
+    "SECRET_KEY": "djangocmsurlmanagertestsuitekey",
     "VERSIONING_CMS_MODELS_ENABLED": ENABLE_VERSIONING,
     "VERSIONING_URL_MANAGER_MODELS_ENABLED": ENABLE_VERSIONING,
     "MODERATING_URL_MANAGER_MODELS_ENABLED": ENABLE_MODERATION,
@@ -76,6 +77,7 @@ HELPER_SETTINGS = {
         ("cms.Page", get_published_pages_objects),
         ("polls.PollContent", get_all_poll_content_objects),
     ],
+    "DEFAULT_AUTO_FIELD": "django.db.models.AutoField",
 }
 
 
