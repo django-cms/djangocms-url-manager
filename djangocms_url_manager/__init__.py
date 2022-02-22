@@ -1,3 +1,3 @@
-__version__ = "1.0.0.dev2"
+__version__ = "2.0.0"
 
 default_app_config = "djangocms_url_manager.apps.UrlManagerConfig"
