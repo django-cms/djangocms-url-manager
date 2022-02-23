@@ -5,7 +5,7 @@ Changelog
 Unreleased
 ==========
 
-1.1.0 (2021-02-22)
+1.1.0 (2022-02-22)
 ==================
 * Python 3.8, 3.9 support added
 * Django 3.0, 3.1 and 3.2 support added
