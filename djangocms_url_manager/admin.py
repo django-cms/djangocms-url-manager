@@ -71,3 +71,11 @@ class UrlAdmin(*url_admin_classes):
         return super().change_view(
             request, object_id, form_url, extra_context=extra_context,
         )
+
+    def changelist_view(self, request, *args, extra_context=None, **kwargs):
+        extra_context = extra_context or {}
+        # Provide additional context to the changelist view:
+        extra_context['is_versioning_enabled'] = is_versioning_enabled()
+        return super().changelist_view(
+            request, *args, extra_context=extra_context, **kwargs
+        )
