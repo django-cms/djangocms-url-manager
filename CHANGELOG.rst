@@ -4,6 +4,7 @@ Changelog
 
 Unreleased
 ==========
+* feat: Added support for burger menu in actions column of changelist view.
 
 1.1.0 (2022-02-22)
 ==================
