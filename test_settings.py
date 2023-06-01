@@ -5,8 +5,8 @@ from djangocms_url_manager.test_utils.polls.utils import (
     get_published_pages_objects,
 )
 
-
-EXTRA_INSTALLED_APPS = []
+CMS_CONFIRM_VERSION4 = True
+EXTRA_INSTALLED_APPS = ["app_helper"]
 ENABLE_VERSIONING = bool(os.environ.get("ENABLE_VERSIONING", True))
 if ENABLE_VERSIONING:
     EXTRA_INSTALLED_APPS.append("djangocms_versioning")
@@ -24,6 +24,7 @@ HELPER_SETTINGS = {
     "VERSIONING_CMS_MODELS_ENABLED": ENABLE_VERSIONING,
     "VERSIONING_URL_MANAGER_MODELS_ENABLED": ENABLE_VERSIONING,
     "MODERATING_URL_MANAGER_MODELS_ENABLED": ENABLE_MODERATION,
+    "CMS_CONFIRM_VERSION4": True,
     "TOP_INSTALLED_APPS": ["djangocms_url_manager"],
     "INSTALLED_APPS": [
         "djangocms_url_manager.test_utils.polls",
@@ -82,7 +83,7 @@ HELPER_SETTINGS = {
 
 
 def run():
-    from djangocms_helper import runner
+    from app_helper import runner
 
     runner.cms("djangocms_url_manager", extra_args=[])
 

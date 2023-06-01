@@ -7,6 +7,8 @@ INSTALL_REQUIREMENTS = [
     "Django>=2.2,<4.0",
     "django-cms",
     "djangocms-attributes-field",
+    "django-app-helper",
+    "factory-boy",
 ]
 
 
