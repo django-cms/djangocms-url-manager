@@ -1,5 +1,6 @@
 import functools
-from collections import Iterable, OrderedDict
+from collections import OrderedDict
+from collections.abc import Iterable
 from functools import lru_cache
 
 from django.apps import apps
