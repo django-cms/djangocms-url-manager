@@ -6,7 +6,6 @@ from djangocms_url_manager.test_utils.polls.utils import (
 )
 
 
-CMS_CONFIRM_VERSION4 = True
 EXTRA_INSTALLED_APPS = ["app_helper"]
 ENABLE_VERSIONING = bool(os.environ.get("ENABLE_VERSIONING", True))
 if ENABLE_VERSIONING:
