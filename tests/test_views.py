@@ -1,8 +1,8 @@
-from unittest import skipIf, skipUnless
+from unittest import skipUnless
 
 from django.contrib.contenttypes.models import ContentType
 
-from cms.models import Page, User
+from cms.models import User
 from cms.utils.urlutils import admin_reverse
 
 from djangocms_url_manager.constants import SELECT2_URLS

@@ -1,5 +1,4 @@
 from importlib import reload
-from unittest import skipIf
 from unittest.mock import Mock
 
 from django.conf import settings

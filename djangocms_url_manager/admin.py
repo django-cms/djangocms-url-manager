@@ -65,7 +65,6 @@ class UrlAdmin(*url_admin_classes):
 
         return queryset, use_distinct
 
-
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}
         # Provide additional context to the changeform
