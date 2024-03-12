@@ -1,4 +1,4 @@
-from unittest import skipUnless
+from unittest import skip
 
 from django.apps import apps
 from django.conf import settings
@@ -7,13 +7,12 @@ from django.test import override_settings
 
 from cms.test_utils.testcases import CMSTestCase
 
-from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.test_utils.polls.models import PollContent
 from djangocms_url_manager.test_utils.polls.utils import get_all_poll_content_objects
 from djangocms_url_manager.utils import supported_models
 
 
-@skipUnless(CMS_36, "Test relevant only for CMS<4.0")
+@skip("Skip test, as dropped support for python < 3.7.")
 class CMSSettingsUnitTestCase(CMSTestCase):
     def tearDown(self):
         supported_models.cache_clear()

@@ -1,5 +1,6 @@
 import functools
-from collections import Iterable, OrderedDict
+from collections import OrderedDict
+from collections.abc import Iterable
 from functools import lru_cache
 
 from django.apps import apps
@@ -9,15 +10,13 @@ from django.db.models.base import ModelBase
 
 from cms.models import PageContent
 
-from djangocms_url_manager.compat import CMS_36
-
 
 def parse_settings(config, attr_name):
     url_manager_supported_models = OrderedDict()
     if not hasattr(config, attr_name):
         raise ImproperlyConfigured(
             "{} must be defined in your {}".format(
-                attr_name, "settings" if CMS_36 else "cms_config"
+                attr_name, "cms_config"
             )
         )
     models = getattr(config, attr_name)
