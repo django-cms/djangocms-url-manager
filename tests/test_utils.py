@@ -1,5 +1,3 @@
-from django.apps import apps
-
 from cms.models import Page, Placeholder
 
 from djangocms_url_manager.test_utils.polls.models import PollContent
