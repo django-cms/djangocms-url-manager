@@ -16,12 +16,6 @@ class UtilsTestCase(BaseUrlTestCase):
             supported_models(), {Page: None, PollContent: get_all_poll_content_objects}
         )
 
-    def test_is_model_available_method_for_cms36(self):
-        apps.get_app_config("djangocms_url_manager").ready()
-        self.assertTrue(is_model_supported(PollContent))
-        self.assertTrue(is_model_supported(Page))
-        self.assertFalse(is_model_supported(Placeholder))
-
     def test_is_model_available_method_for_cms40(self):
         self.assertTrue(is_model_supported(PollContent))
         self.assertTrue(is_model_supported(Page))
