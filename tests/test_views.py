@@ -1,11 +1,10 @@
-from unittest import skipIf, skipUnless
+from unittest import skipUnless
 
 from django.contrib.contenttypes.models import ContentType
 
-from cms.models import Page, User
+from cms.models import User
 from cms.utils.urlutils import admin_reverse
 
-from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.constants import SELECT2_URLS
 from djangocms_url_manager.test_utils.factories import UrlWithVersionFactory
 from djangocms_url_manager.utils import is_versioning_enabled
@@ -26,26 +25,7 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
         response = self.client.get(self.select2_endpoint)
         self.assertEqual(response.status_code, 403)
 
-    @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
-    def test_return_page_in_select2_view_for_cms36(self):
-        with self.login_user_context(self.superuser):
-            response = self.client.get(
-                self.select2_endpoint,
-                data={"content_id": self.page_contenttype_id, "site": self.site2.pk},
-            )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            [p["id"] for p in response.json()["results"]],
-            [
-                Page.objects.published(self.site2.pk)
-                .filter(publisher_is_draft=False)
-                .last()
-                .pk
-            ],
-        )
-
-    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
-    def test_return_page_in_select2_view_for_cms40(self):
+    def test_return_page_in_select2_view(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint, data={"content_id": self.page_contenttype_id}
@@ -55,11 +35,8 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
             [p["id"] for p in response.json()["results"]], [self.page.pk, self.page2.pk]
         )
 
-    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
-    @skipUnless(
-        BaseUrlTestCase.is_versioning_enabled(), "Test only relevant for versioning"
-    )
-    def test_return_page_in_select2_view_with_versioning_and_cms40(self):
+    @skipUnless(BaseUrlTestCase.is_versioning_enabled(), "Test only relevant for versioning")
+    def test_return_page_in_select2_view_with_versioning(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint, data={"content_id": self.page_contenttype_id}
@@ -120,22 +97,7 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
                     data={"content_id": ContentType.objects.get_for_model(User).id},
                 )
 
-    @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
-    def test_select2_view_set_limit_for_cms36(self):
-        self._create_page(title="test 3", language=self.language)
-        with self.login_user_context(self.superuser):
-            response = self.client.get(
-                self.select2_endpoint,
-                data={"content_id": self.page_contenttype_id, "limit": 1},
-            )
-
-        content = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(content["more"])
-        self.assertEqual(len(content["results"]), 1)
-
-    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
-    def test_select2_view_set_limit_for_cms40(self):
+    def test_select2_view_set_limit(self):
         self._create_page(title="test 3", language=self.language)
         with self.login_user_context(self.superuser):
             response = self.client.get(
@@ -167,26 +129,7 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["results"][0]["text"], str(self.poll_content))
 
-    @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
-    def test_select2_view_site_for_cms36(self):
-        with self.login_user_context(self.superuser):
-            response = self.client.get(
-                self.select2_endpoint,
-                data={"content_id": self.page_contenttype_id, "site": self.site2.pk},
-            )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            [a["id"] for a in response.json()["results"]],
-            [
-                Page.objects.published(self.site2.pk)
-                .filter(publisher_is_draft=False)
-                .last()
-                .pk
-            ],
-        )
-
-    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
-    def test_select2_view_site_for_cms40(self):
+    def test_select2_view_site(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,
@@ -195,28 +138,7 @@ class UrlManagerSelect2ContentObjectViewsTestCase(BaseUrlTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual([a["id"] for a in response.json()["results"]], [self.page2.pk])
 
-    @skipUnless(CMS_36, "Test relevant only for CMS<4.0")
-    def test_select2_page_view_pk_for_cms36(self):
-        page = (
-            Page.objects.published(self.site2.pk)
-            .filter(publisher_is_draft=False)
-            .last()
-            .pk
-        )
-        with self.login_user_context(self.superuser):
-            response = self.client.get(
-                self.select2_endpoint,
-                data={
-                    "content_id": self.page_contenttype_id,
-                    "site": self.site2.pk,
-                    "pk": page,
-                },
-            )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual([a["id"] for a in response.json()["results"]], [page])
-
-    @skipIf(CMS_36, "Test relevant only for CMS>=4.0")
-    def test_select2_page_view_pk_for_cms40(self):
+    def test_select2_page_view_pk(self):
         with self.login_user_context(self.superuser):
             response = self.client.get(
                 self.select2_endpoint,

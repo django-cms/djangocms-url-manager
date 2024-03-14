@@ -1,5 +1,4 @@
 from importlib import reload
-from unittest import skipIf
 from unittest.mock import Mock
 
 from django.conf import settings
@@ -9,7 +8,6 @@ from django.test import TestCase, override_settings
 from cms.models import Page
 from cms.test_utils.testcases import CMSTestCase
 
-from djangocms_url_manager.compat import CMS_36
 from djangocms_url_manager.test_utils.polls.models import Poll, PollContent
 from djangocms_url_manager.test_utils.polls.utils import (
     get_all_poll_content_objects,
@@ -22,7 +20,6 @@ from djangocms_url_manager.utils import (
 )
 
 
-@skipIf(CMS_36, "Test relevant only for CMS>=4.0")
 class UrlManagerCMSExtensionTestCase(CMSTestCase):
     def test_missing_cms_config_url_manager_supported_models_attribute(self):
         """Tests, if the url_manager_supported_models attribute has not been specified,
@@ -145,7 +142,6 @@ class UrlManagerCMSExtensionTestCase(CMSTestCase):
         )
 
 
-@skipIf(CMS_36, "Test relevant only for CMS>=4.0")
 class NavigationSettingTestCase(TestCase):
 
     def tearDownClass():
