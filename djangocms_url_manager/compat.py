@@ -1,11 +1,9 @@
-from distutils.version import LooseVersion
+import django
 
-import cms
+from packaging.version import Version
 
 
-CMS_VERSION = cms.__version__
-
-CMS_36 = LooseVersion(CMS_VERSION) < LooseVersion("3.7")
+DJANGO_4_2 = Version(django.get_version()) >= Version('4.2') and Version(django.get_version()) < Version('4.3')
 
 
 def get_page_placeholders(page, language=None):

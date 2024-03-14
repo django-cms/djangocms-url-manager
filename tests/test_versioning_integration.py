@@ -311,7 +311,7 @@ class UrlCompareViewTestCase(CMSTestCase):
         # Now do some real testing, we can't check what was actually rendered because this is
         # done by a separate call by AJAX, the best that we can do is check the query matches
         self.assertIn("version_list", context)
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             context["version_list"],
             [published_url_content.pk, draft_url_content.pk],
             transform=lambda o: o.pk,

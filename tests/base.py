@@ -9,7 +9,7 @@ from cms.test_utils.testcases import CMSTestCase
 from cms.utils.urlutils import admin_reverse
 
 from djangocms_url_manager.admin import UrlAdmin
-from djangocms_url_manager.compat import CMS_36, get_page_placeholders
+from djangocms_url_manager.compat import get_page_placeholders
 from djangocms_url_manager.constants import (
     SELECT2_CONTENT_TYPE_OBJECT_URL_NAME,
     SELECT2_URLS,
@@ -147,9 +147,6 @@ class BaseUrlTestCase(CMSTestCase):
 
         if self.is_versioning_enabled() and not kwargs.get("created_by"):
             kwargs["created_by"] = self.superuser
-
-        if CMS_36 and published:
-            kwargs["published"] = True
 
         page = create_page(
             title=title,
