@@ -2,8 +2,7 @@ import django
 
 from packaging.version import Version
 
-
-DJANGO_4_2 = Version(django.get_version()) < Version('4.3')
+DJANGO_4_1 = Version(django.get_version()) < Version('4.2')
 
 
 def get_page_placeholders(page, language=None):
