@@ -2,12 +2,13 @@
 Changelog
 =========
 
+* feat: Added support for burger menu in actions column of changelist view.
+
 1.2.0 (2024-05-16)
 ==========
 * Python 3.10 support added
 * Django 4.2 support added
 * Django < 3.2 support removed
-
 
 1.1.0 (2022-02-22)
 ==================

@@ -1,5 +1,10 @@
 from unittest import skipUnless
 
+from django.shortcuts import reverse
+
+from djangocms_url_manager.test_utils.factories import (
+    UrlFactory,
+)
 from .base import BaseUrlTestCase
 
 
@@ -70,3 +75,32 @@ class UrlManagerContentTypeSearchTestCase(BaseUrlTestCase):
         )
 
         self.assertEqual(results.count(), 0)
+
+
+class UrlAdminChangeListViewTestCase(BaseUrlTestCase):
+    
+    @skipUnless(
+        BaseUrlTestCase.is_versioning_enabled(), "Test only relevant if versioning enabled."
+    )
+    def test_get_burger_menu_on_changelist_view(self):
+        """
+        Verify that burger menu exists in actions column on changelist view.
+        With the exception of preview & edit actions, a burger menu should be created for
+        all changelist actions if UrlAdmin has inherited from ExtendedVersionAdminMixin.
+        """
+        
+        # Move this to a setup routine if more than one function uses it.
+        self.client.force_login(self.superuser)
+
+        # Import directly into function as only used here.
+        from bs4 import BeautifulSoup
+
+        list_url = reverse(
+            "admin:djangocms_url_manager_url_changelist"
+        )
+        response = self.client.get(list_url)
+
+        # Parse returned html:
+        soup = BeautifulSoup(str(response.content, response.charset), features="lxml")
+        # Assert / verify find_all() does not return an empty string:
+        self.assertTrue(soup.find_all("a", class_="cms-versioning-action-btn"))
