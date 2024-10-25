@@ -44,6 +44,9 @@ class UrlAdmin(*url_admin_classes):
     def get_urls(self):
         return urlpatterns + super().get_urls()
 
+    @admin.display(
+        description="URL"
+    )
     def get_model_url(self, obj):
         return obj.get_url(obj.site)
 
@@ -61,8 +64,6 @@ class UrlAdmin(*url_admin_classes):
             queryset |= search_helper(model, queryset, search_term)
 
         return queryset, use_distinct
-
-    get_model_url.short_description = "URL"
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}

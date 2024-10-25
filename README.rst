@@ -9,7 +9,9 @@ Installation
 Requirements
 ============
 
-django CMS URL Manager requires that you have a django CMS 3.5 (or higher) project already running and set up.
+django CMS URL Manager requires that you have a django CMS 4.0 or higher project already set up and running.
+
+For those who wish to use this app on Django <3.2 or Python <3.8 use the 4.0.x branch.
 
 
 To install
