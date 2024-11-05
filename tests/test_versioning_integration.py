@@ -184,7 +184,7 @@ class VersioningCMSPageIntegrationTestCase(CMSTestCase):
 
         request_url = get_object_edit_url(self.published_pagecontent, self.language)
         with self.login_user_context(self.user):
-            response = self.client.get(request_url)
+            response = self.client.get(request_url, follow=True)
 
         self.assertContains(response, "some/path/")
 
@@ -216,7 +216,7 @@ class VersioningCMSPageIntegrationTestCase(CMSTestCase):
 
         request_url = get_object_edit_url(self.published_pagecontent, self.language)
         with self.login_user_context(self.user):
-            response = self.client.get(request_url)
+            response = self.client.get(request_url, follow=True)
 
         self.assertContains(response, "some/path/")
 
