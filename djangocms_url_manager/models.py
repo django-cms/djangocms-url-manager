@@ -3,7 +3,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.db import models
-from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
@@ -116,21 +115,14 @@ class AbstractUrlGrouper(models.Model):
         raise NotImplementedError("Models implementing AbstractUrlGrouper should implement get_content_queryset")
 
     def get_content(self, show_draft_content=False):
-        qs = self.get_content_queryset()
-
-        if show_draft_content and is_versioning_enabled():
-            from djangocms_versioning.constants import DRAFT, PUBLISHED
-            from djangocms_versioning.helpers import remove_published_where
-
-            # Ensure that we are getting the latest valid content, the top most version can become
-            # archived with a previous version re-published
-            qs = remove_published_where(qs)
-            qs = qs.filter(Q(versions__state=DRAFT) | Q(versions__state=PUBLISHED)).order_by('-versions__created')
+        qs = self.get_content_queryset(show_draft_content)
         return qs.first()
 
 
 class UrlGrouper(AbstractUrlGrouper):
-    def get_content_queryset(self):
+    def get_content_queryset(self, show_draft_content=False):
+        if hasattr(Url, "admin_manager") and show_draft_content:
+            return Url.admin_manager.current_content().filter(url_grouper=self)
         return Url.objects.filter(url_grouper=self)
 
 
