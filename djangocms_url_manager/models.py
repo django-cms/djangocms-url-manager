@@ -130,7 +130,7 @@ class AbstractUrlGrouper(models.Model):
 
 class UrlGrouper(AbstractUrlGrouper):
     def get_content_queryset(self, show_draft_content=False):
-        if CMS_41 and hasattr(Url, "admin_manager") and show_draft_content:
+        if hasattr(Url, "admin_manager") and show_draft_content:
             return Url.admin_manager.current_content().filter(url_grouper=self)
         return Url.objects.filter(url_grouper=self)
 
