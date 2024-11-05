@@ -11,6 +11,7 @@ from cms.models import CMSPlugin
 from cms.utils.i18n import get_default_language_for_site
 
 from djangocms_attributes_field.fields import AttributesField
+
 from djangocms_url_manager.compat import CMS_41
 from djangocms_url_manager.utils import is_versioning_enabled
 
