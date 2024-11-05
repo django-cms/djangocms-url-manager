@@ -12,6 +12,7 @@ from cms.utils.i18n import get_default_language_for_site
 
 from djangocms_attributes_field.fields import AttributesField
 
+from djangocms_url_manager.compat import CMS_41
 from djangocms_url_manager.utils import is_versioning_enabled
 
 
@@ -116,9 +117,8 @@ class AbstractUrlGrouper(models.Model):
         raise NotImplementedError("Models implementing AbstractUrlGrouper should implement get_content_queryset")
 
     def get_content(self, show_draft_content=False):
-        qs = self.get_content_queryset()
-
-        if show_draft_content and is_versioning_enabled():
+        qs = self.get_content_queryset(show_draft_content)
+        if not CMS_41 and show_draft_content and is_versioning_enabled():
             from djangocms_versioning.constants import DRAFT, PUBLISHED
             from djangocms_versioning.helpers import remove_published_where
 
@@ -130,7 +130,9 @@ class AbstractUrlGrouper(models.Model):
 
 
 class UrlGrouper(AbstractUrlGrouper):
-    def get_content_queryset(self):
+    def get_content_queryset(self, show_draft_content=False):
+        if hasattr(Url, "admin_manager") and show_draft_content:
+            return Url.admin_manager.current_content().filter(url_grouper=self)
         return Url.objects.filter(url_grouper=self)
 
 
