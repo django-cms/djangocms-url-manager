@@ -3,6 +3,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.db import models
+from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
@@ -10,7 +11,7 @@ from cms.models import CMSPlugin
 from cms.utils.i18n import get_default_language_for_site
 
 from djangocms_attributes_field.fields import AttributesField
-
+from djangocms_url_manager.compat import CMS_41
 from djangocms_url_manager.utils import is_versioning_enabled
 
 
@@ -116,12 +117,20 @@ class AbstractUrlGrouper(models.Model):
 
     def get_content(self, show_draft_content=False):
         qs = self.get_content_queryset(show_draft_content)
+        if not CMS_41 and show_draft_content and is_versioning_enabled():
+            from djangocms_versioning.constants import DRAFT, PUBLISHED
+            from djangocms_versioning.helpers import remove_published_where
+
+            # Ensure that we are getting the latest valid content, the top most version can become
+            # archived with a previous version re-published
+            qs = remove_published_where(qs)
+            qs = qs.filter(Q(versions__state=DRAFT) | Q(versions__state=PUBLISHED)).order_by('-versions__created')
         return qs.first()
 
 
 class UrlGrouper(AbstractUrlGrouper):
     def get_content_queryset(self, show_draft_content=False):
-        if hasattr(Url, "admin_manager") and show_draft_content:
+        if CMS_41 and hasattr(Url, "admin_manager") and show_draft_content:
             return Url.admin_manager.current_content().filter(url_grouper=self)
         return Url.objects.filter(url_grouper=self)
 
