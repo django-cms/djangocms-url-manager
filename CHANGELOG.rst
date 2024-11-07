@@ -4,8 +4,13 @@ Changelog
 
 Unleased
 ========
+
+
+1.3.0 (2024-11-7)
+==========
 * Python 3.8 support removed
 * Django CMS 4.1 support added
+
 
 1.2.0 (2024-05-16)
 ==========
