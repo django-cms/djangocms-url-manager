@@ -2,6 +2,14 @@
 django CMS URL Manager
 **********************
 
+.. warning::
+
+    **This project has been sunset and is no longer maintained.**
+
+    `djangocms-link <https://github.com/django-cms/djangocms-link>`_ version 5
+    or later provides the functionality of django CMS URL Manager. Please
+    migrate to djangocms-link.
+
 ============
 Installation
 ============
