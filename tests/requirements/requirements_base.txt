@@ -7,6 +7,4 @@ django-treebeard
 djangocms-admin-style
 djangocms-attributes-field
 factory-boy
-flake8
-isort
 pyflakes
